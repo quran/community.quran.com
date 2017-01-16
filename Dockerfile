@@ -46,7 +46,7 @@ RUN chown app Gemfile.lock
 RUN mkdir -p /var/log/nginx/community.quran.com
 
 # precompile assets
-RUN bundle exec rake assets:precompile
+RUN bundle exec rake assets:precompile RAILS_ENV=production
 
 # cleanup apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
