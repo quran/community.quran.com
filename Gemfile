@@ -32,7 +32,7 @@ gem 'turbolinks', '~> 5'
 gem 'activeadmin', '~> 1.0.0.pre4'
 gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'paper_trail', '~> 6.0.2'
-
+gem 'htmlentities'
 #authentication
 gem 'devise'
 

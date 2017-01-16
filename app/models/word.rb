@@ -4,4 +4,8 @@ class Word < QuranApiRecord
   has_many :translations, as: :resource
   has_many :transliterations, as: :resource
   has_many :audio_files, as: :resource
+
+  def code
+    "&#x#{code_hex};"
+  end
 end
