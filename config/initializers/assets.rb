@@ -8,3 +8,4 @@ Rails.application.config.assets.precompile += %w( .svg .eot .woff .ttf .woff2 .o
 Rails.application.config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
 # Rails.application.config.assets.paths << Emoji.images_path
 Rails.application.config.assets.initialize_on_precompile = false
+Rails.configuration.assets.precompile += %w[serviceworker.js manifest.json]
