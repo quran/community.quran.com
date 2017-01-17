@@ -4,7 +4,7 @@ ActiveAdmin.register Translation do
   filter :language
   filter :resource_type, as: :select, collection: ['Verse', 'Word']
   filter :resource_id
-  filter :resource_content, as: :select, collection: ResourceContent.where(sub_type: ResourceContent::SubType::Translation)
+  filter :resource_content, as: :select, collection: -> do ResourceContent.where(sub_type: ResourceContent::SubType::Translation) end
 
   index do
     column :id do |resource|
