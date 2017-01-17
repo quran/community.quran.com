@@ -38,6 +38,9 @@ gem 'paper_trail', '~> 6.0.2'
 #gem 'svg_optimizer'
 #gem 'htmlentities'
 
+#Yumme community as PWA
+gem 'serviceworker-rails'
+
 #authentication
 gem 'devise'
 
