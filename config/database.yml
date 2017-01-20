@@ -44,8 +44,8 @@ test:
 
 production:
   <<: *default
-  host: <%= ENV['POSTGRES_PORT_5432_TCP_ADDR'] %>
-  port: <%= ENV['POSTGRES_PORT_5432_TCP_PORT'] %>
+  host: <%= ENV['COMMUNITY_DB_PORT_5432_TCP_ADDR'] %>
+  port: <%= ENV['COMMUNITY_DB_PORT_5432_TCP_PORT'] %>
   username: quran_dev
   password: dev_quran
 #  database: quran_production
