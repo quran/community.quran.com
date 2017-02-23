@@ -1,6 +1,7 @@
 ActiveAdmin.register Chapter do
   menu parent: "Quran", priority: 1
   actions :all, except: [:destroy, :new]
+  ActiveAdminViewHelpers.render_translated_name_sidebar(self)
 
   filter :chapter_number
   filter :bismillah_pre

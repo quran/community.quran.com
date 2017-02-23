@@ -7,3 +7,6 @@ $(document).on 'ready page:load turbolinks:load', ->
       audio = $(this).closest("td").find(".audio");
       audio.attr("src", audio.data("url"))
       audio[0].play()
+
+  $('.mark-btn').on 'ajax:success', (e, response) ->
+    $(@).closest('div').html(response)

@@ -4,6 +4,10 @@ ActiveAdmin.register ChapterInfo do
   filter :chapter, as: :select, collection: 1..114
   filter :language
 
+  permit_params do
+    [:text, :language_name, :language_id, :source, :short_text]
+  end
+
   index do
     column :id do |resource|
       link_to(resource.id, [:admin, resource])
@@ -26,7 +30,7 @@ ActiveAdmin.register ChapterInfo do
       row :chapter do |object|
         link_to object.chapter_id, admin_chapter_path(object.chapter)
       end
-      row :text do |resource| resource.text.to_s.html_safe end
+      row :text do |resource| div class: resource.language_name do resource.text.to_s.html_safe end end
       row :short_text
       row :language
       row :resource_content

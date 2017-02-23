@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170109065641) do
+ActiveRecord::Schema.define(version: 20170218162700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,35 @@ ActiveRecord::Schema.define(version: 20170109065641) do
     t.index ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
     t.index ["unlock_token"], name: "index_admin_users_on_unlock_token", unique: true, using: :btree
+  end
+
+  create_table "contributions", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "resource_id"
+    t.boolean  "approved"
+    t.boolean  "declined"
+    t.integer  "reviewed_by_id"
+    t.text     "reviewer_comment"
+    t.string   "title"
+    t.text     "description"
+    t.text     "changes"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["approved"], name: "index_contributions_on_approved", using: :btree
+    t.index ["declined"], name: "index_contributions_on_declined", using: :btree
+    t.index ["resource_id"], name: "index_contributions_on_resource_id", using: :btree
+    t.index ["reviewed_by_id"], name: "index_contributions_on_reviewed_by_id", using: :btree
+    t.index ["user_id"], name: "index_contributions_on_user_id", using: :btree
+  end
+
+  create_table "pause_marks", force: :cascade do |t|
+    t.integer  "word_id"
+    t.string   "verse_key"
+    t.integer  "position"
+    t.string   "mark"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["word_id"], name: "index_pause_marks_on_word_id", using: :btree
   end
 
   create_table "versions", force: :cascade do |t|

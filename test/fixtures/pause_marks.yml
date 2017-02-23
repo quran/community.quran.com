@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  verse_key: MyString
+  position: 1
+  mark: MyString
+
+two:
+  verse_key: MyString
+  position: 1
+  mark: MyString

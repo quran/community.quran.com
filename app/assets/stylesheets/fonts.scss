@@ -1,5 +1,3 @@
-//TODO: try switch to google noto font
-
 @font-face {
   font-family: 'nafees';
   src: font-url('nafees/nafees-nastaleeq-webfont.eot?#iefix') format('embedded-opentype'),
@@ -33,13 +31,57 @@
 
 .urdu {
   font-family: nafees;
+  direction: rtl;
 }
 
 .row-text_madani{
  font-family: me_quran;
+  direction: rtl;
 }
 
 
 .row-text_indopak{
   font-family: pdms;
+  direction: rtl;
+}
+
+@font-face {
+  font-family: quran_common_font;
+  src: font-url('quran-common/quran_common.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@mixin word_font($page) {
+  @font-face {
+    font-family: v2p#{$page};
+    src: font-url('ttf/v2/p#{$page}.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: v3p#{$page};
+    src: font-url('ttf/p#{$page}.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .v2p#{$page} {
+    font-family: v2p#{$page};
+    font-size: 25px;
+  }
+
+  .v3p#{$page} {
+    font-family: v3p#{$page};
+    font-size: 25px;
+
+    &.char-sajdah, &.char-end, &.char-rub-el-hizb, &.char-pause{
+      font-family: quran_common_font !important;
+    }
+  }
+}
+
+@for $i from 1 through 604 {
+  @include word_font($i);
 }

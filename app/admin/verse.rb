@@ -11,6 +11,7 @@ ActiveAdmin.register Verse do
   filter :hizb_number
   filter :rub_number
   filter :sajdah
+  filter :text_madani
   filter :page_number
   filter :sajdah_number, as: :select, collection: proc { 1..14 }
 
@@ -45,12 +46,92 @@ ActiveAdmin.register Verse do
       row :page_number
       row :sajdah_number
       row :sajdah
-      row :text_madani
-      row :text_simple
-      row :text_indopak
+      row :text_madani do |object|
+        span class: 'quran-text' do
+          object.text_madani
+        end
+      end
+      row :text_simple do |object|
+        span class: 'quran-text' do
+          object.text_simple
+        end
+      end
+      row :text_indopak do |object|
+        span class: 'quran-text' do
+          object.text_indopak.to_s.html_safe
+        end
+      end
+      row :v2_fonts do |object|
+        span do
+          object.words.includes(:char_type).order("position ASC").each do |w|
+            span class: "v2p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+              w.code.html_safe
+            end
+          end
+        end
+      end
+
+      row :v3_fonts do |object|
+        span do
+          object.words.includes(:char_type).order("position ASC").each do |w|
+            span class: "v3p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+              w.code_v3.html_safe
+            end
+          end
+        end
+      end
+
+      row :image do |object|
+        image_tag object.image_url
+      end
     end
 
-    panel "Available Recitations" do
+    panel "Words" do
+      table do
+        thead do
+          td "ID"
+          td "Position"
+          td "Text(Font)"
+          td "Text(Font v3)"
+          td "Text(Madani)"
+          td "Text(Simple)"
+          td "Text(Indopak)"
+          td "Char type"
+        end
+
+        tbody do
+          verse.words.includes(:char_type).order("position ASC").each do |w|
+            tr do
+              td link_to(w.id, admin_word_path(w))
+              td w.position
+              td class: 'quran-text' do
+                span class: "v2p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+                  w.code.html_safe
+                end
+              end
+              td class: 'quran-text' do
+                span class: "v3p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+                  w.code_v3.html_safe
+                end
+              end
+              td class: 'quran-text' do
+                w.text_madani
+              end
+              td class: 'quran-text' do
+                w.text_simple
+              end
+              td class: 'quran-text' do
+                w.text_indopak
+              end
+              td w.char_type.name
+            end
+          end
+        end
+
+      end
+    end
+
+    panel "Available Recitations(#{verse.audio_files.size})" do
       table do
         thead do
           td "ID"
@@ -68,16 +149,16 @@ ActiveAdmin.register Verse do
               td file.recitation.style
               td file.duration
               td do
-                 (link_to("play", "#_", class: 'play')+
-                 audio_tag("", data:{url: file.url},controls: true, class: 'audio') )if file.url
-                  end
+                (link_to("play", "#_", class: 'play')+
+                    audio_tag("", data: {url: file.url}, controls: true, class: 'audio')) if file.url
+              end
             end
           end
         end
       end
     end
 
-    panel "Translations", class: 'scrollable' do
+    panel "Translations(#{verse.translations.size})", class: 'scrollable' do
       table do
         thead do
           td "ID"
@@ -86,14 +167,14 @@ ActiveAdmin.register Verse do
         end
 
         tbody do
-          verse.translations.each do |trans|
+          verse.translations.includes(:resource_content).each do |trans|
             tr do
               td link_to(trans.id, admin_translation_path(trans))
-              td trans.language_name
+              td "#{trans.language_name}-#{trans.resource_content.name}"
               td do
-                div class: trans.language_name.to_s.downcase do
+                div class: trans.language_name do
                   (trans.text)
-                  end
+                end
               end
             end
           end
@@ -103,28 +184,45 @@ ActiveAdmin.register Verse do
   end
 
   sidebar "Media content", only: :show do
-   table do
-     thead do
-       td :id
-       td :language
-       td :author
-       td :language
-     end
+    table do
+      thead do
+        td :id
+        td :language
+        td :author
+      end
 
-     tbody do
-       resource.media_contents.each do |c|
-         tr do
-           td link_to(c.id, [:admin, c])
-           td c.language_name
-           td c.resource_content.author_name
-         end
-       end
-     end
-   end
+      tbody do
+        resource.media_contents.each do |c|
+          tr do
+            td link_to(c.id, [:admin, c])
+            td c.language_name
+            td c.resource_content.author_name
+          end
+        end
+      end
+    end
   end
 
   sidebar "Tafsirs", only: :show do
+    table do
+      thead do
+        td :id
+        td :name
+        td :language
+        td :author
+      end
 
+      tbody do
+        resource.tafsirs.includes(:resource_content).each do |c|
+          tr do
+            td link_to(c.id, [:admin, c])
+            td c.resource_content.name
+            td c.language_name
+            td c.resource_content.author_name
+          end
+        end
+      end
+    end
   end
 
   def scoped_collection

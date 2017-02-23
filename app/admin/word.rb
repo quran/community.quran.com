@@ -4,6 +4,37 @@ ActiveAdmin.register Word do
   filter :verse_key
   filter :char_type
   filter :page_number
+  filter :code_hex
+
+  show do
+    attributes_table do
+      row :id
+      row :verse
+      row :verse_key
+      row :verse_index
+      row :position
+      row :text_madani
+      row :text_clean
+      row :text_simple
+      row :font do |resource|
+        (span class: "v2p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
+          resource.code.html_safe
+        end)
+      end
+
+      row :font_v3 do |resource|
+        (span class: "v3p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
+          resource.code_v3.html_safe
+        end)
+      end
+
+      row :image do |resource|
+        image_tag resource.image_url
+      end
+
+      row :image_blob
+    end
+  end
 
   index do
     column :id do |resource|
@@ -19,9 +50,47 @@ ActiveAdmin.register Word do
       resource.char_type.name
     end
     column :position
+
+    column :font do |resource|
+      (span class: "v2p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
+        resource.code.html_safe
+      end)
+    end
+
+    column :pause_name do |resource|
+      if resource.char_type_id == 4
+        if resource.pause_marks.present?
+          resource.pause_marks.pluck(:mark).join ', '
+        else
+          div do
+            (link_to("Jeem", admin_pause_marks_path(word_id: resource.id, mark: 'jeem'), class: 'mark-btn', data: {method: :post, remote: true, disable_with: 'Wait'}) +
+                (link_to "Sad lam ya", admin_pause_marks_path(word_id: resource.id, mark: 'Sad lam ya'), class: 'mark-btn', data: {method: :post, remote: true, disable_with: 'Wait'})+
+                (link_to "Three dots", admin_pause_marks_path(word_id: resource.id, mark: 'Three dots'), class: 'mark-btn', data: {method: :post, remote: true, disable_with: 'Wait'})+
+                (link_to "Qaf lam ya", admin_pause_marks_path(word_id: resource.id, mark: 'qaf lam ya'), class: 'mark-btn', data: {method: :post, remote: true, disable_with: 'Wait'})+
+                (link_to "Lam Alif", admin_pause_marks_path(word_id: resource.id, mark: 'lam alif'), class: 'mark-btn', data: {method: :post, remote: true, disable_with: 'Wait'})+
+                (link_to "Meem", admin_pause_marks_path(word_id: resource.id, mark: 'Meem'), class: 'mark-btn', data: {method: :post, remote: true, disable_with: 'Wait'})+
+                (link_to "Seen", admin_pause_marks_path(word_id: resource.id, mark: 'Seen'), class: 'mark-btn', data: {method: :post, remote: true, disable_with: 'Wait'})
+            ).html_safe
+          end
+        end
+      end
+    end
+
+    column :fontv3 do |resource|
+      (span class: "v3p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
+        resource.code_v3.html_safe
+      end)
+    end
+
+    column :code_hex
+    column :code_hex_v3
+
+    column :code_dec
+
     column :text_madani
     column :text_simple
     column :text_clean
+
     actions
   end
 
