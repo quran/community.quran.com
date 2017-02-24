@@ -1,5 +1,9 @@
 ActiveAdmin.register FootNote do
   menu parent: "Content"
+  filter :language
+  filter :language
+  filter :resource_type, as: :select, collection: ['Translation']
+  filter :resource_id
 
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters

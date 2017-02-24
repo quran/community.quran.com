@@ -22,6 +22,7 @@ ActiveAdmin.register Translation do
     attributes_table do
       row :id
       row :resource
+      row :language
       row :text do |resource|
         div class: resource.language_name.to_s.downcase do
           resource.text

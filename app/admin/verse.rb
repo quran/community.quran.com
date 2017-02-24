@@ -114,13 +114,13 @@ ActiveAdmin.register Verse do
                   w.code_v3.html_safe
                 end
               end
-              td class: 'quran-text' do
+              td class: 'quran-text row-text_madani' do
                 w.text_madani
               end
-              td class: 'quran-text' do
+              td class: 'quran-text row-text_madani' do
                 w.text_simple
               end
-              td class: 'quran-text' do
+              td class: 'quran-text row-text_indopak' do
                 w.text_indopak
               end
               td w.char_type.name
@@ -172,8 +172,8 @@ ActiveAdmin.register Verse do
               td link_to(trans.id, admin_translation_path(trans))
               td "#{trans.language_name}-#{trans.resource_content.name}"
               td do
-                div class: trans.language_name do
-                  (trans.text)
+                div class: "#{trans.language_name} translation" do
+                  trans.text.html_safe
                 end
               end
             end

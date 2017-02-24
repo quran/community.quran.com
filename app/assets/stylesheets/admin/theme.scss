@@ -46,3 +46,14 @@
   font-size: 20px;
   direction: rtl;
 }
+
+table sub{
+  line-height: 0;
+  vertical-align: super;
+  color: #2CA4AB;
+  cursor: pointer;
+}
+
+.footnote-dialog{
+  padding: 5px;
+}

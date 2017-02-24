@@ -6,6 +6,10 @@ ActiveAdmin.register Word do
   filter :page_number
   filter :code_hex
 
+  permit_params do
+    [:text_indopak]
+  end
+
   show do
     attributes_table do
       row :id
