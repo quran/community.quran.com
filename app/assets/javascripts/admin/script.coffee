@@ -11,7 +11,7 @@ $(document).on 'ready page:load turbolinks:load', ->
   $('.mark-btn').on 'ajax:success', (e, response) ->
     $(@).closest('div').html(response)
 
-  if (footnote = $('.translation sub')).length
+  if (footnote = $('.translation sup')).length
     footnote.click (e)->
       e.preventDefault()
       e.stopImmediatePropagation()
