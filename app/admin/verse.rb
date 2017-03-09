@@ -46,6 +46,10 @@ ActiveAdmin.register Verse do
       row :page_number
       row :sajdah_number
       row :sajdah
+      row :verse_lemma do |object| link_to_if object.verse_lemma, object.verse_lemma&.text_madani, [:admin, object.verse_lemma] end
+      row :verse_stem do |object| link_to_if object.verse_stem, object.verse_stem&.text_madani, [:admin, object.verse_stem] end
+      row :verse_root do |object| link_to_if object.verse_root, object.verse_root&.value, [:admin, object.verse_root] end
+
       row :text_madani do |object|
         span class: 'quran-text' do
           object.text_madani
@@ -127,7 +131,6 @@ ActiveAdmin.register Verse do
             end
           end
         end
-
       end
     end
 
