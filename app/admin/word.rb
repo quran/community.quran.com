@@ -4,6 +4,7 @@ ActiveAdmin.register Word do
   filter :verse_key
   filter :char_type
   filter :page_number
+  filter :text_madani
   filter :code_hex
 
   permit_params do

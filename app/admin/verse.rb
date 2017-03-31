@@ -67,8 +67,8 @@ ActiveAdmin.register Verse do
       end
       row :v2_fonts do |object|
         span do
-          object.words.includes(:char_type).order("position ASC").each do |w|
-            span class: "v2p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+          object.words.order("position ASC").each do |w|
+            span class: "v2p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
               w.code.html_safe
             end
           end
@@ -95,8 +95,10 @@ ActiveAdmin.register Verse do
         thead do
           td "ID"
           td "Position"
-          td "Text(Font)"
-          td "Text(Font v3)"
+          td "Code"
+          td "Font v2"
+          td "Font v3"
+          td "Font (text v3)"
           td "Text(Madani)"
           td "Text(Simple)"
           td "Text(Indopak)"
@@ -107,26 +109,41 @@ ActiveAdmin.register Verse do
           verse.words.includes(:char_type).order("position ASC").each do |w|
             tr do
               td link_to(w.id, admin_word_path(w))
+
               td w.position
+
+              td do "#{w.code_hex} - #{w.code}" end
+
               td class: 'quran-text' do
                 span class: "v2p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
                   w.code.html_safe
                 end
               end
+
               td class: 'quran-text' do
                 span class: "v3p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
                   w.code_v3.html_safe
                 end
               end
+
+              td class: 'quran-text' do
+                span class: "tp#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+                  w.text_madani
+                end
+              end
+
               td class: 'quran-text row-text_madani' do
                 w.text_madani
               end
+
               td class: 'quran-text row-text_madani' do
                 w.text_simple
               end
+
               td class: 'quran-text row-text_indopak' do
                 w.text_indopak
               end
+
               td w.char_type.name
             end
           end

@@ -39,6 +39,10 @@
   direction: rtl;
 }
 
+.me_quran{
+  font-family: me_quran;
+  direction: rtl;
+}
 
 .row-text_indopak{
   font-family: pdms;
@@ -52,7 +56,18 @@
   font-style: normal;
 }
 
+.tp0, .v3p0{
+  font-family: quran_common_font;
+}
+
 @mixin word_font($page) {
+  @font-face {
+    font-family: tp#{$page};
+    src: font-url('embed_ttf/tp#{$page}.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   @font-face {
     font-family: v2p#{$page};
     src: font-url('ttf/v2/p#{$page}.ttf') format('truetype');
@@ -65,6 +80,11 @@
     src: font-url('ttf/p#{$page}.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+  }
+
+  .tp#{$page}{
+    font-family: tp#{$page};
+    font-size: 25px;
   }
 
   .v2p#{$page} {
