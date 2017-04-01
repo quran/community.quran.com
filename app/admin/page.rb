@@ -31,7 +31,7 @@ ActiveAdmin.register_page "Page" do
           verses.each do |verse|
             tr do
               td class: 'quran-text me_quran' do
-                verse.text_madani
+                link_to verse.text_madani, admin_verse_path(verse)
               end
 
               td do

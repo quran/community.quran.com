@@ -21,14 +21,24 @@ ActiveAdmin.register Word do
       row :text_madani
       row :text_clean
       row :text_simple
+      row :page_number do |resource|
+        link_to resource.page_number, "/admin/page?page#{resource.page_number}"
+      end
+
       row :font do |resource|
-        (span class: "v2p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
+        (span class: "v2p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
           resource.code.html_safe
         end)
       end
 
       row :font_v3 do |resource|
-        (span class: "v3p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
+        (span class: "v3p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
+          resource.code_v3.html_safe
+        end)
+      end
+
+      row :text_font do |resource|
+        (span class: "pt#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
           resource.code_v3.html_safe
         end)
       end
@@ -56,17 +66,10 @@ ActiveAdmin.register Word do
       link_to resource.verse_id, admin_verse_path(resource.verse_id)
     end
 
-    column :verse_key
     column :char_type do |resource|
-      resource.char_type.name
+      resource.char_type_name
     end
     column :position
-
-    column :font do |resource|
-      (span class: "v2p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
-        resource.code.html_safe
-      end)
-    end
 
     column :pause_name do |resource|
       if resource.char_type_id == 4
@@ -87,20 +90,28 @@ ActiveAdmin.register Word do
       end
     end
 
+    column :font do |resource|
+      (span class: "v2p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
+        resource.code.html_safe
+      end)
+    end
+
     column :fontv3 do |resource|
       (span class: "v3p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
         resource.code_v3.html_safe
       end)
     end
 
+    column :font_v3 do |resource|
+      (span class: "v3p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
+        resource.code_v3.html_safe
+      end)
+    end
+
     column :code_hex
     column :code_hex_v3
-
-    column :code_dec
-
     column :text_madani
     column :text_simple
-    column :text_clean
 
     actions
   end

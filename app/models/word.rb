@@ -29,8 +29,3 @@ class Word < QuranApiRecord
     "//audio.recitequran.com/wbw/arabic/wisam_sharieff/#{audio_url}"
   end
 end
-
-
-class Wore < ActiveRecord::Base
-  table_name = 'quran.word'
-end
