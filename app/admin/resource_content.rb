@@ -20,6 +20,12 @@ ActiveAdmin.register ResourceContent do
     redirect_to [:admin, resource], notice: resource.approved? ? 'Approved successfully' : 'Un approved successfully'
   end
 
+  member_action :export_sqlite, method: 'put' do
+    file_path = ExportTranslationJob.new.perform(resource.id, params[:resource_content][:name])
+
+    send_file file_path
+  end
+
   index do
     id_column
 
@@ -47,6 +53,7 @@ ActiveAdmin.register ResourceContent do
       row :cardinality_type
       row :sub_type
       row :resource_type
+      row :slug
       row :author
       row :data_source
     end
@@ -56,6 +63,7 @@ ActiveAdmin.register ResourceContent do
     f.inputs "Resource content Details" do
       f.input :name
       f.input :author_name
+      f.input :slug
       f.input :approved
       f.input :language
       f.input :cardinality_type, as: :select, collection: ResourceContent.collection_for_cardinality_type
@@ -69,7 +77,7 @@ ActiveAdmin.register ResourceContent do
   end
 
   permit_params do
-    [:name, :author_name, :approved, :language_id, :cardinality_type, :resource_type, :sub_type, :author_id, :data_source_id]
+    [:name, :author_name, :approved, :language_id, :cardinality_type, :resource_type, :sub_type, :author_id, :data_source_id, :slug]
   end
 
   def scoped_collection
@@ -90,6 +98,15 @@ ActiveAdmin.register ResourceContent do
         link_to "Media content", "/admin/media_contents?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
       elsif resource.recitation?
         link_to "Audio recitations", "/admin/recitations?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
+      end
+    end
+  end
+
+  sidebar "Export to sqlite db", only: :show, if: -> { resource.translation? || resource.tafisr? }  do
+    div do
+      semantic_form_for resource, url: export_sqlite_admin_resource_content_path(resource), html: {method: 'put'} do |form|
+        form.input(:name, label: false, hint: 'Enter file name', required: true) +
+        form.submit("Export!!")
       end
     end
   end

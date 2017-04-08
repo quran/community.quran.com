@@ -102,9 +102,9 @@ ActiveAdmin.register Word do
       end)
     end
 
-    column :font_v3 do |resource|
-      (span class: "v3p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
-        resource.code_v3.html_safe
+    column :text_font do |resource|
+      (span class: "tp#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
+        resource.text_madani
       end)
     end
 
