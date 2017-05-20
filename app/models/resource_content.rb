@@ -68,7 +68,6 @@ class ResourceContent < QuranApiRecord
       end
     end
 
-
     def collection_for_cardinality_type
       ResourceContent::CardinalityType.constants.map do |c|
         ResourceContent::CardinalityType.const_get c

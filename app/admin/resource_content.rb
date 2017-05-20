@@ -25,7 +25,7 @@ ActiveAdmin.register ResourceContent do
 
     send_file file_path
   end
-
+ 
   index do
     id_column
 
