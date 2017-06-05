@@ -2,7 +2,9 @@ class ExportTranslationJob < ApplicationJob
   queue_as :default
   STORAGE_PATH = "public/exported_databses"
 
-  def perform(resource_id, file_name)
+  def perform(resource_id, original_file_name)
+    file_name = original_file_name.chomp('.db')
+
     file_path = "#{STORAGE_PATH}/#{Time.now.to_i}"
     require 'fileutils'
     FileUtils::mkdir_p file_path
@@ -23,6 +25,7 @@ class ExportTranslationJob < ApplicationJob
     ExportRecord.establish_connection connection_config(file_path)
     ExportRecord.connection.execute "CREATE VIRTUAL TABLE verses using fts3( sura integer, ayah integer, text text, primary key(sura, ayah ))"
     ExportRecord.connection.execute "CREATE TABLE properties( property text, value text )"
+    ExportRecord.connection.execute "INSERT INTO properties(property, value) VALUES ('schema_version', 2), ('text_version', 1)"
     ExportRecord.table_name = 'verses'
   end
 
