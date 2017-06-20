@@ -206,4 +206,10 @@ ActiveAdmin.register Word do
       end
     end
   end
+
+  collection_action :export_sqlite, method: 'put' do
+    file_path = ExportWordsJob.new.perform(params[:name])
+  
+    send_file file_path
+  end
 end

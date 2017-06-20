@@ -1,4 +1,12 @@
 class ResourceContent < QuranApiRecord
+  scope :translations, -> { where sub_type: [SubType::Translation, SubType::Transliteration] }
+  scope :media, -> { where sub_type: SubType::Video }
+  scope :tafsirs, -> { where sub_type: SubType::Tafsir }
+  scope :chapter_info, -> { where sub_type: SubType::Info }
+  scope :one_verse, -> { where cardinality_type: CardinalityType::OneVerse }
+  scope :one_chapter, -> { where cardinality_type: CardinalityType::OneChapter }
+  scope :approved, -> { where approved: true }
+  
   belongs_to :author
   belongs_to :language
   belongs_to :data_source

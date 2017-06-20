@@ -26,6 +26,12 @@ ActiveAdmin.register ResourceContent do
 
     send_file file_path
   end
+
+  collection_action :export_sqlite, method: 'put' do
+    file_path = ExportTranslationJob.new.perform(params[:translation], params[:name])
+  
+    send_file file_path
+  end
  
   index do
     id_column

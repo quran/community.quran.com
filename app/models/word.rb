@@ -14,6 +14,9 @@ class Word < QuranApiRecord
   has_many :roots, through: :word_roots
   has_many :pause_marks
   has_many  :audio_files, as: :resource
+  
+  # Used for export translation
+  has_one :en_translation, -> { where(language: Language.find_by_iso_code('en')) }, class_name: 'Translation', as: :resource
 
   has_one :word_corpus
 
