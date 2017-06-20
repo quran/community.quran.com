@@ -1,28 +1,52 @@
 ActiveAdmin.register Transliteration do
   menu parent: "Content"
-
+  actions :all, except: :destroy
+  ActiveAdminViewHelpers.versionate(self)
+  
   filter :language
   filter :resource_type, as: :select, collection: ['Verse', 'Word']
   filter :resource_id
-
+  
+  show do
+    attributes_table do
+      row :id
+      row :text
+      row :language
+      row :resource
+      row :resource_content
+    end
+    
+    if params[:version]
+      panel "Changes in this version" do
+        attributes_table_for(Transliteration.find(params[:id])) do
+          row :id
+          row :changes do |res| Diffy::Diff.new(resource.text, res.text).to_s(:html).html_safe end
+          row :language
+          row :resource
+          row :resource_content
+        end
+      end
+    end
+  end
+  
   permit_params do
     [:language_id, :resource_type, :resource_id, :text, :language_name, :resource_content_id]
   end
-
+  
   index do
     id_column
-
+    
     column :language do |resource|
       link_to resource.language_name, admin_language_path(resource.language_id)
     end
-
+    
     column :resource_type
-
+    
     column :text
-
+    
     actions
   end
-
+  
   form do |f|
     f.inputs "Transliteration Detail" do
       f.input :text

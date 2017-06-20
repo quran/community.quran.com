@@ -1,5 +1,6 @@
 ActiveAdmin.register AudioFile do
   menu parent: "Media", priority: 1
+  actions :all, except: :destroy
 
   index do
     id_column

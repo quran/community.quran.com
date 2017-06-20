@@ -1,5 +1,6 @@
 ActiveAdmin.register ResourceContent do
   menu parent: "Content", priority: 10
+  actions :all, except: :destroy
 
   filter :approved
   filter :language

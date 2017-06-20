@@ -1,5 +1,7 @@
 ActiveAdmin.register Word do
   menu parent: "Quran", priority: 3
+  actions :all, except: :destroy
+  ActiveAdminViewHelpers.versionate(self)
   
   filter :verse_key
   filter :char_type
@@ -8,7 +10,32 @@ ActiveAdmin.register Word do
   filter :code_hex
   
   permit_params do
-    [:text_indopak]
+    [:verse_id, :position, :text_madani, :text_indopak, :text_simple, :verse_key, :page_number, :class_name, :line_number, :code_dec, :code_hex,
+     :code_hex_v3, :code_dec_v3, :char_type_id, :audio_url, :location, :char_type_name
+    ]
+  end
+  
+  form do |f|
+    f.inputs "Word detail" do
+      f.input :verse_id
+      f.input :position
+      f.input :text_madani, as: :text
+      f.input :text_indopak, as: :text
+      f.input :text_simple, as: :text
+      f.input :verse_key
+      f.input :page_number
+      f.input :class_name
+      f.input :line_number
+      f.input :code_dec
+      f.input :code_hex
+      f.input :code_hex_v3
+      f.input :code_dec_v3
+      f.input :char_type
+      f.input :audio_url
+      f.input :location
+      f.input :char_type_name, as: :select, collection: CharType.pluck(:name)
+    end
+    f.actions
   end
   
   show do
@@ -19,7 +46,7 @@ ActiveAdmin.register Word do
       row :verse_index
       row :position
       row :text_madani
-      row :text_clean
+      row :text_indopak
       row :text_simple
       row :page_number do |resource|
         link_to resource.page_number, "/admin/page?page#{resource.page_number}"

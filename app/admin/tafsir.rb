@@ -1,5 +1,7 @@
 ActiveAdmin.register Tafsir do
   menu parent: "Content"
+  actions :all, except: :destroy
+
   filter :verse_id
   filter :language
 

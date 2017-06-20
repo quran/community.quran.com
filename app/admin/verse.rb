@@ -1,8 +1,8 @@
 ActiveAdmin.register Verse do
   menu parent: "Quran", priority: 2
-
+  
   actions :all, except: [:destroy, :new]
-
+  
   filter :chapter_id
   filter :verse_number
   filter :verse_index
@@ -14,7 +14,7 @@ ActiveAdmin.register Verse do
   filter :text_madani
   filter :page_number
   filter :sajdah_number, as: :select, collection: proc { 1..14 }
-
+  
   index do
     column :verse_number do |verse|
       link_to verse.id, admin_verse_path(verse)
@@ -30,7 +30,7 @@ ActiveAdmin.register Verse do
     column :page_number
     column :text_madani
   end
-
+  
   show do
     attributes_table do
       row :id
@@ -46,10 +46,16 @@ ActiveAdmin.register Verse do
       row :page_number
       row :sajdah_number
       row :sajdah
-      row :verse_lemma do |object| link_to_if object.verse_lemma, object.verse_lemma&.text_madani, [:admin, object.verse_lemma] end
-      row :verse_stem do |object| link_to_if object.verse_stem, object.verse_stem&.text_madani, [:admin, object.verse_stem] end
-      row :verse_root do |object| link_to_if object.verse_root, object.verse_root&.value, [:admin, object.verse_root] end
-
+      row :verse_lemma do |object|
+        link_to_if object.verse_lemma, object.verse_lemma&.text_madani, [:admin, object.verse_lemma]
+      end
+      row :verse_stem do |object|
+        link_to_if object.verse_stem, object.verse_stem&.text_madani, [:admin, object.verse_stem]
+      end
+      row :verse_root do |object|
+        link_to_if object.verse_root, object.verse_root&.value, [:admin, object.verse_root]
+      end
+      
       row :text_madani do |object|
         span class: 'quran-text' do
           object.text_madani
@@ -74,22 +80,22 @@ ActiveAdmin.register Verse do
           end
         end
       end
-
+      
       row :v3_fonts do |object|
         span do
           object.words.includes(:char_type).order("position ASC").each do |w|
-            span class: "v3p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+            span class: "v3p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
               w.code_v3.html_safe
             end
           end
         end
       end
-
+      
       row :image do |object|
         image_tag object.image_url
       end
     end
-
+    
     panel "Words" do
       table do
         thead do
@@ -104,53 +110,55 @@ ActiveAdmin.register Verse do
           td "Text(Indopak)"
           td "Char type"
         end
-
+        
         tbody do
-          verse.words.includes(:char_type).order("position ASC").each do |w|
+          verse.words.order("position ASC").each do |w|
             tr do
               td link_to(w.id, admin_word_path(w))
-
+              
               td w.position
-
-              td do "#{w.code_hex} - #{w.code}" end
-
+              
+              td do
+                "#{w.code_hex} - #{w.code}"
+              end
+              
               td class: 'quran-text' do
-                span class: "v2p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+                span class: "v2p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
                   w.code.html_safe
                 end
               end
-
+              
               td class: 'quran-text' do
-                span class: "v3p#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+                span class: "v3p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
                   w.code_v3.html_safe
                 end
               end
-
+              
               td class: 'quran-text' do
-                span class: "tp#{w.page_number} char-#{w.char_type.name.to_s.downcase}" do
+                span class: "tp#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
                   w.text_madani
                 end
               end
-
+              
               td class: 'quran-text row-text_madani' do
                 w.text_madani
               end
-
+              
               td class: 'quran-text row-text_madani' do
                 w.text_simple
               end
-
+              
               td class: 'quran-text row-text_indopak' do
                 w.text_indopak
               end
-
-              td w.char_type.name
+              
+              td w.char_type_name
             end
           end
         end
       end
     end
-
+    
     panel "Available Recitations(#{verse.audio_files.size})" do
       table do
         thead do
@@ -160,9 +168,9 @@ ActiveAdmin.register Verse do
           td "Duration"
           td "Audio"
         end
-
+        
         tbody do
-          verse.audio_files.includes(:recitation).each do |file|
+          verse.audio_files.each do |file|
             tr do
               td link_to(file.id, admin_audio_file_path(file))
               td file.recitation.reciter_name
@@ -170,14 +178,14 @@ ActiveAdmin.register Verse do
               td file.duration
               td do
                 (link_to("play", "#_", class: 'play')+
-                    audio_tag("", data: {url: file.url}, controls: true, class: 'audio')) if file.url
+                  audio_tag("", data: { url: file.url }, controls: true, class: 'audio')) if file.url
               end
             end
           end
         end
       end
     end
-
+    
     panel "Translations(#{verse.translations.size})", class: 'scrollable' do
       table do
         thead do
@@ -185,9 +193,9 @@ ActiveAdmin.register Verse do
           td "Language"
           td "Text"
         end
-
+        
         tbody do
-          verse.translations.includes(:resource_content).each do |trans|
+          verse.translations.each do |trans|
             tr do
               td link_to(trans.id, admin_translation_path(trans))
               td "#{trans.language_name}-#{trans.resource_content.name}"
@@ -202,7 +210,7 @@ ActiveAdmin.register Verse do
       end
     end
   end
-
+  
   sidebar "Media content", only: :show do
     table do
       thead do
@@ -210,7 +218,7 @@ ActiveAdmin.register Verse do
         td :language
         td :author
       end
-
+      
       tbody do
         resource.media_contents.each do |c|
           tr do
@@ -222,7 +230,7 @@ ActiveAdmin.register Verse do
       end
     end
   end
-
+  
   sidebar "Tafsirs", only: :show do
     table do
       thead do
@@ -231,9 +239,9 @@ ActiveAdmin.register Verse do
         td :language
         td :author
       end
-
+      
       tbody do
-        resource.tafsirs.includes(:resource_content).each do |c|
+        resource.tafsirs.each do |c|
           tr do
             td link_to(c.id, [:admin, c])
             td c.resource_content.name
@@ -244,8 +252,10 @@ ActiveAdmin.register Verse do
       end
     end
   end
-
-  def scoped_collection
-    super.includes :chapter, :translations, :audio_files # prevents N+1 queries to your database
+  
+  controller do
+    def find_resource
+      scoped_collection.includes(:chapter, :media_contents, tafsirs: :resource_content, translations: :resource_content, audio_files: :recitation).find(params[:id]) # prevents N+1 queries to your database
+    end
   end
 end

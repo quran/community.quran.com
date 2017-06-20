@@ -1,5 +1,6 @@
 ActiveAdmin.register Recitation do
   menu parent: "Settings", priority: 1
+  actions :all, except: :destroy
 
   filter :reciter
   filter :recitation_style

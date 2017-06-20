@@ -1,5 +1,7 @@
 ActiveAdmin.register Language do
   menu parent: "Settings", priority: 1
+  actions :all, except: :destroy
+
   ActiveAdminViewHelpers.render_translated_name_sidebar(self)
 
   filter :name

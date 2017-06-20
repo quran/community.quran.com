@@ -1,5 +1,6 @@
 ActiveAdmin.register MediaContent do
   menu parent: "Media", priority: 2
+  actions :all, except: :destroy
 
   show do
     attributes_table do

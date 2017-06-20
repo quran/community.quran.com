@@ -1,5 +1,7 @@
 ActiveAdmin.register FootNote do
   menu parent: "Content"
+  actions :all, except: :destroy
+
   filter :language
   filter :language
   filter :resource_type, as: :select, collection: ['Translation']

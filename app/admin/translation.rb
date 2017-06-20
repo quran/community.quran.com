@@ -1,5 +1,8 @@
 ActiveAdmin.register Translation do
   menu parent: "Content"
+  actions :all, except: :destroy
+  
+  ActiveAdminViewHelpers.versionate(self)
   
   filter :language
   filter :resource_type, as: :select, collection: ['Verse', 'Word']
@@ -34,6 +37,20 @@ ActiveAdmin.register Translation do
       end
       row :resource_content
     end
+    
+    if params[:version]
+      panel "Changes in this version" do
+        attributes_table_for(Translation.find(params[:id])) do
+          row :id
+          row :changes do |res|
+            Diffy::Diff.new(resource.text, res.text).to_s(:html).html_safe
+          end
+          row :language
+          row :resource
+          row :resource_content
+        end
+      end
+    end
   end
   
   def scoped_collection
@@ -43,7 +60,7 @@ ActiveAdmin.register Translation do
   permit_params do
     [:language_id, :resource_type, :resource_id, :text, :language_name, :resource_content_id]
   end
-
+  
   form do |f|
     f.inputs "Translation Detail" do
       f.input :text
@@ -55,7 +72,7 @@ ActiveAdmin.register Translation do
     end
     f.actions
   end
-
+  
   collection_action :import_translation, method: 'post' do
     success, resource = Translation.import_translations(params[:import])
     if success
@@ -69,10 +86,10 @@ ActiveAdmin.register Translation do
     div do
       semantic_form_for "import", url: import_translation_admin_translations_path, method: 'post' do |form|
         form.input(:author_id, as: :select, collection: Author.pluck(:name, :id), hint: "Select author OR add new #{link_to "add new", "/admin/authors/new"}".html_safe) +
-        form.input(:language_id, as: :select, collection: Language.pluck(:name, :id), hint: "Select language of this translation", required: true) +
-        form.input(:data_source_id, as: :select, collection: DataSource.pluck(:name, :id), hint: "Select data source OR add new #{link_to "add new", "/admin/data_sources/new"}".html_safe) +
-        form.input(:file, as: :file, hint: "Select translation file, must be txt file and translation of each verse in one line") +
-        form.submit("Import", data: {disable_with: 'Importing...'})
+          form.input(:language_id, as: :select, collection: Language.pluck(:name, :id), hint: "Select language of this translation", required: true) +
+          form.input(:data_source_id, as: :select, collection: DataSource.pluck(:name, :id), hint: "Select data source OR add new #{link_to "add new", "/admin/data_sources/new"}".html_safe) +
+          form.input(:file, as: :file, hint: "Select translation file, must be txt file and translation of each verse in one line") +
+          form.submit("Import", data: { disable_with: 'Importing...' })
       end
     end
   end

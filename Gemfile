@@ -32,7 +32,10 @@ gem 'turbolinks', '~> 5'
 #Admin panel
 gem 'activeadmin', '~> 1.0.0.pre4'
 gem 'inherited_resources', github: 'activeadmin/inherited_resources'
+gem 'activeadmin-async_panel'
 gem 'paper_trail', '~> 6.0.2'
+
+gem 'diffy'
 
 #
 # gem 'convert_font'

@@ -1,5 +1,6 @@
 ActiveAdmin.register ChapterInfo do
   menu parent: "Content", priority: 3
+  actions :all, except: :destroy
 
   filter :chapter, as: :select, collection: 1..114
   filter :language
