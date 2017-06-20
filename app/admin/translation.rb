@@ -41,7 +41,19 @@ ActiveAdmin.register Translation do
   end
   
   permit_params do
-    [:language_id, :resource_type, :resource_id, :text]
+    [:language_id, :resource_type, :resource_id, :text, :language_name, :resource_content_id]
+  end
+
+  form do |f|
+    f.inputs "Translation Detail" do
+      f.input :text
+      f.input :language
+      f.input :resource_content
+      f.input :language_name
+      f.input :resource_id
+      f.input :resource_type, as: :select, collection: ['Verse', 'Word']
+    end
+    f.actions
   end
 
   collection_action :import_translation, method: 'post' do

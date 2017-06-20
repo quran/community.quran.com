@@ -17,6 +17,8 @@ class Word < QuranApiRecord
 
   has_one :word_corpus
 
+  has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
+
   def code
     "&#x#{code_hex};"
   end

@@ -6,4 +6,6 @@ class Chapter < QuranApiRecord
   serialize :pages
 
   alias_method :name, :id
+
+  has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
 end

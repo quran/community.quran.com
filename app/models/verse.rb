@@ -12,4 +12,6 @@ class Verse < QuranApiRecord
   has_many :audio_files, as: :resource
   has_many :recitations, through: :audio_files
   has_many :roots, through: :words
+
+  has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
 end

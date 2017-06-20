@@ -5,6 +5,10 @@ ActiveAdmin.register Transliteration do
   filter :resource_type, as: :select, collection: ['Verse', 'Word']
   filter :resource_id
 
+  permit_params do
+    [:language_id, :resource_type, :resource_id, :text, :language_name, :resource_content_id]
+  end
+
   index do
     id_column
 
@@ -17,5 +21,17 @@ ActiveAdmin.register Transliteration do
     column :text
 
     actions
+  end
+
+  form do |f|
+    f.inputs "Transliteration Detail" do
+      f.input :text
+      f.input :language
+      f.input :resource_content
+      f.input :language_name
+      f.input :resource_id
+      f.input :resource_type, as: :select, collection: ['Verse', 'Word']
+    end
+    f.actions
   end
 end
