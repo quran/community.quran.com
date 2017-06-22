@@ -96,7 +96,6 @@ GEM
       responders
       warden (~> 1.2.3)
     differ (0.1.2)
-    diffy (3.2.0)
     erubis (2.7.0)
     execjs (2.7.0)
     faraday (0.10.1)
@@ -263,7 +262,6 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   devise
   differ
-  diffy
   inherited_resources!
   jquery-rails
   listen (~> 3.0.5)

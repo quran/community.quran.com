@@ -4,9 +4,10 @@ ActiveAdmin.register_page "Dashboard" do
   
   content title: proc { I18n.t("active_admin.dashboard") } do
     div class: "blank_slate_container", id: "dashboard_default_message" do
-      panel "Recent changes" do
+      panel "Recent changes (Total #{PaperTrail::Version.count}) #{link_to 'View all changes', '/admin/content_changes'}".html_safe do
         table_for PaperTrail::Version.order('id desc').limit(20) do # Use PaperTrail::Version if this throws an error
           column ("Item") { |v| link_to v.item_type.underscore.humanize, [:admin, v.item, version: v.id] }
+          column ("Event") { |v| v.event }
           column ("Modified at") { |v| v.created_at.to_s :long }
           column ("Admin") { |v| link_to AdminUser.find(v.whodunnit).email, [:admin, AdminUser.find(v.whodunnit)] }
         end
