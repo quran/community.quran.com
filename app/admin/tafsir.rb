@@ -21,4 +21,20 @@ ActiveAdmin.register Tafsir do
       link_to resource.resource_content.name, [:admin, resource.resource_content]
     end
   end
+  
+  show do
+  
+    attributes_table do
+      row :id
+      row :verse
+      row :language
+      row :verse_key
+      row :resource_content
+      row :text
+    end
+    
+    if params[:version]
+      ActiveAdminViewHelpers.diff_panel(self, resource)
+    end
+  end
 end

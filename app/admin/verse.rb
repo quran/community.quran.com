@@ -1,6 +1,7 @@
 ActiveAdmin.register Verse do
   menu parent: "Quran", priority: 2
-  
+  ActiveAdminViewHelpers.versionate(self)
+
   actions :all, except: [:destroy, :new]
   
   filter :chapter_id
@@ -208,6 +209,10 @@ ActiveAdmin.register Verse do
           end
         end
       end
+    end
+
+    if params[:version]
+      ActiveAdminViewHelpers.diff_panel(self, resource)
     end
   end
   

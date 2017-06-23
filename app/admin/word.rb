@@ -82,6 +82,10 @@ ActiveAdmin.register Word do
         end
       end
     end
+
+    if params[:version]
+      ActiveAdminViewHelpers.diff_panel(self, resource)
+    end
   end
   
   index do
