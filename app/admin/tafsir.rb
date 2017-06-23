@@ -1,6 +1,7 @@
 ActiveAdmin.register Tafsir do
   menu parent: "Content"
   actions :all, except: :destroy
+  ActiveAdminViewHelpers.versionate(self)
 
   filter :verse_id
   filter :language
@@ -18,6 +19,22 @@ ActiveAdmin.register Tafsir do
 
     column :name do |resource|
       link_to resource.resource_content.name, [:admin, resource.resource_content]
+    end
+  end
+  
+  show do
+  
+    attributes_table do
+      row :id
+      row :verse
+      row :language
+      row :verse_key
+      row :resource_content
+      row :text
+    end
+    
+    if params[:version]
+      ActiveAdminViewHelpers.diff_panel(self, resource)
     end
   end
 end

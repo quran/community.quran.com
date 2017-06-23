@@ -35,8 +35,6 @@ gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'activeadmin-async_panel'
 gem 'paper_trail', '~> 6.0.2'
 
-gem 'diffy'
-
 #
 # gem 'convert_font'
 #gem 'svg_optimizer'
@@ -57,7 +55,7 @@ gem "sentry-raven"
 gem 'video_info'
 
 #github.com/JeremyGeros/differ
-gem 'differ'
+gem 'diffy'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

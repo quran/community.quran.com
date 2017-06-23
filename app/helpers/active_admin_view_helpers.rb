@@ -1,5 +1,23 @@
 module ActiveAdminViewHelpers
   class << self
+    def diff_panel(context, resource)
+      context.panel "Changes diff for this version" do
+        if previous = resource.paper_trail.previous_version
+          previous = previous
+          current  = resource
+
+          context.attributes_table_for previous do
+            current.attributes.each do |key, val|
+              context.row key do
+                diff = Diffy::Diff.new(previous.send(key).to_s, val.to_s, allow_empty_diff: false).to_s(:html).html_safe
+                diff.present? ? diff : val
+              end
+            end
+          end
+        end
+      end
+    end
+    
     def versionate(context)
       context.controller do
         def original_resource
@@ -10,7 +28,7 @@ module ActiveAdminViewHelpers
           item = scoped_collection.includes(:versions).find(params[:id])
           
           if params[:version]
-            item.versions.find(params[:version]).reify
+            item.versions[params[:version].to_i].reify
           else
             item
           end
@@ -24,14 +42,17 @@ module ActiveAdminViewHelpers
           table do
             thead do
               td :version
+              td :changes
               td :created_at
               td :user
             end
             
             tbody do
-              resource.versions.each_with_index do |version, index|
+              (resource.versions.size - 1).downto(0) do |index|
+                version = resource.versions[index]
                 tr do
-                  td link_to index, version: version.id
+                  td link_to index, version: version.index
+                  td link_to index, "/admin/content_changes/#{version.id}"
                   td l(version.created_at, format: :short)
                   td AdminUser.find_by_id(version.whodunnit).try(:email)
                 end

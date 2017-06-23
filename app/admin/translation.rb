@@ -39,17 +39,7 @@ ActiveAdmin.register Translation do
     end
     
     if params[:version]
-      panel "Changes in this version" do
-        attributes_table_for(Translation.find(params[:id])) do
-          row :id
-          row :changes do |res|
-            Diffy::Diff.new(resource.text, res.text).to_s(:html).html_safe
-          end
-          row :language
-          row :resource
-          row :resource_content
-        end
-      end
+      ActiveAdminViewHelpers.diff_panel(self, resource)
     end
   end
   

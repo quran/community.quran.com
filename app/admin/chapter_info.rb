@@ -1,6 +1,7 @@
 ActiveAdmin.register ChapterInfo do
   menu parent: "Content", priority: 3
   actions :all, except: :destroy
+  ActiveAdminViewHelpers.versionate(self)
 
   filter :chapter, as: :select, collection: 1..114
   filter :language
@@ -35,6 +36,10 @@ ActiveAdmin.register ChapterInfo do
       row :short_text
       row :language
       row :resource_content
+    end
+
+    if params[:version]
+      ActiveAdminViewHelpers.diff_panel(self, resource)
     end
   end
 end
