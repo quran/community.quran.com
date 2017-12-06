@@ -16,7 +16,9 @@ class Word < QuranApiRecord
   has_many  :audio_files, as: :resource
   
   # Used for export translation
-  has_one :en_translation, -> { where(language: Language.find_by_iso_code('en')) }, class_name: 'Translation', as: :resource
+  ['en', 'id', 'bn', 'ur'].each do |lang|
+    has_one "#{lang}_translation".to_sym, -> { where(language: Language.find_by_iso_code(lang)) }, class_name: 'Translation', as: :resource
+  end
 
   has_one :word_corpus
 

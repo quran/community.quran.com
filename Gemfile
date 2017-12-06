@@ -72,6 +72,7 @@ group :development do
   gem 'pry-byebug'
   gem 'annotate'
   gem 'pry-rails'
+  gem 'mechanize', require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

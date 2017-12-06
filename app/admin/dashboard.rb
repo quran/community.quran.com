@@ -10,7 +10,7 @@ ActiveAdmin.register_page "Dashboard" do
           column ("Item") { |v| link_to v.item_type, [:admin, v.item, version: v.index] }
           column ("Event") { |v| v.event }
           column ("Modified at") { |v| v.created_at.to_s :long }
-          column ("Admin") { |v| link_to AdminUser.find(v.whodunnit).email, [:admin, AdminUser.find(v.whodunnit)] }
+          column ("Admin") { |v| link_to(AdminUser.find(v.whodunnit).email, [:admin, AdminUser.find(v.whodunnit)]) if AdminUser.find_by_id(v.whodunnit) }
         end
       end
     end
