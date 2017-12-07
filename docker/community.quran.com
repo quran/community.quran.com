@@ -16,12 +16,11 @@ server {
     proxy_set_header Host $http_host;
   }
 
-  location /admin/ {
+  location /admin/* {
     passenger_max_request_queue_size 200;
     proxy_send_timeout          600;
     proxy_read_timeout          600;
     send_timeout                600;
-    proxy_read_timeout          600;
   }
 
   location  ~^/assets/ {
