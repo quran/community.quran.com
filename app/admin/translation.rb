@@ -38,7 +38,7 @@ ActiveAdmin.register Translation do
       row :resource_content
     end
     
-    if params[:version]
+    if params[:version].to_i > 0
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
   end

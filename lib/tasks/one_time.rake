@@ -56,7 +56,7 @@ namespace :one_time do
           
           text = text.gsub!("[#{number}]#{number}", "<sup foot_note=#{footnote.id}>#{f_i+1}</sup>")
         end
-       
+        
         translation.text          = text.strip
         translation.language      =language
         translation.language_name =language.name.downcase
@@ -67,6 +67,22 @@ namespace :one_time do
     end
   end
   
+  def process_foot_note_text(foot_note_node)
+    foot_note_node.search("span").each do |node|
+      if node.attr('class').to_s.strip == 'c15'
+        node.name= "sup"
+        node.remove_attribute("class")
+      end
+    end
+    
+    # remove links
+    foot_note_node.search("a").remove
+
+    white_list_sanitizer = Rails::Html::WhiteListSanitizer.new
+
+    white_list_sanitizer.sanitize(foot_note_node.to_s.strip, tags: %w(div sup p ol ul li), attributes: []).gsub(/[\r\n]+/, "<br/>")
+  end
+  
   task import_musfata_khitab_with_footnote: :environment do
     PaperTrail.enabled = false
     
@@ -74,8 +90,14 @@ namespace :one_time do
     language = Language.find_by_name 'English'
     
     url = "https://raw.githubusercontent.com/naveed-ahmad/Quran-text/master/cleanquran.html"
+
+    text= if Rails.env.development?
+           File.open("lib/data/cleanquran.html").read
+          else
+            open(url).read
+          end
     
-    docs = Nokogiri.parse(open(url).read)
+    docs = Nokogiri.parse(text)
     
     resource_content = ResourceContent.where({
                                                author_id:        author.id,
@@ -102,7 +124,7 @@ namespace :one_time do
                                                         slug:             'clearquran-with-tafsir-footnote' }).first_or_create
     
     
-    docs.search('ol .c2').each_with_index do |verse_node, v_index|
+    docs.search('ol .c0').each_with_index do |verse_node, v_index|
       text        = verse_node.text.strip
       verse       = Verse.find_by_verse_index(v_index+1)
       translation = verse.translations.where(resource_content: resource_content).first_or_create
@@ -111,11 +133,9 @@ namespace :one_time do
       verse_node.search("a").each_with_index do |footnote_node, f_i|
         footnote_id   = footnote_node.attributes['href'].value
         number        = footnote_id.scan(/\d/).join('')
-        # footnote_text = docs.search(footnote_id).first.parent.search('span').text.strip
-        # TODO: text or html here? how about formating?
-        footnote_text = docs.search(footnote_id).first.parent.parent.text.strip.gsub("[#{number}]", '')
         
-        footnote = translation.foot_notes.create(text: footnote_text, language: language, language_name: 'english', resource_content: footnote_resource_content)
+        footnote_text = process_foot_note_text(docs.search(footnote_id).first.parent.parent)
+        footnote      = translation.foot_notes.create(text: footnote_text, language: language, language_name: 'english', resource_content: footnote_resource_content)
         
         text = text.gsub!("[#{number}]", "<sup foot_note=#{footnote.id}>#{f_i+1}</sup>")
       end
@@ -125,7 +145,7 @@ namespace :one_time do
       translation.language_name ='english'
       translation.resource_name = resource_content.name
       translation.save
-      puts "update translation #{translations.id}"
+      puts "update translation #{translation.id}"
     end
   end
   
@@ -173,7 +193,6 @@ namespace :one_time do
           quran_word  = quran_words[quran_word_index]
           text_madani = quran_word.try(:text_madani).to_s
           
-          binding.pry
           if join_trans && final_words[i+1+word_joined]
             #urdu_trans = "#{urdu_trans} #{urdu}"
             next_word      = final_words[i+1+word_joined]

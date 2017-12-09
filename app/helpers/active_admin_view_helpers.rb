@@ -2,16 +2,15 @@ module ActiveAdminViewHelpers
   class << self
     def diff_panel(context, resource)
       context.panel "Changes diff for this version" do
-        if previous = resource.paper_trail.previous_version
-          previous = previous
-          current  = resource
-
-          context.attributes_table_for previous do
-            current.attributes.each do |key, val|
-              context.row key do
-                diff = Diffy::Diff.new(previous.send(key).to_s, val.to_s, allow_empty_diff: false).to_s(:html).html_safe
-                diff.present? ? diff : val
-              end
+        previous = resource.paper_trail.previous_version
+        previous = previous
+        current  = resource
+        
+        context.attributes_table_for previous do
+          current.attributes.each do |key, val|
+            context.row key do
+              diff = Diffy::Diff.new(previous.try(key).to_s, val.to_s, allow_empty_diff: false).to_s(:html).html_safe
+              diff.present? ? diff : val
             end
           end
         end
@@ -27,7 +26,7 @@ module ActiveAdminViewHelpers
         def find_resource
           item = scoped_collection.includes(:versions).find(params[:id])
           
-          if params[:version]
+          if params[:version].to_i > 0
             item.versions[params[:version].to_i].reify
           else
             item
