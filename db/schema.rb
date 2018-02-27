@@ -62,9 +62,12 @@ ActiveRecord::Schema.define(version: 20180227011435) do
 
   create_table "arabic_transliterations", force: :cascade do |t|
     t.bigint "word_id"
+    t.bigint "verse_id"
     t.string "text"
+    t.string "indopak_text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["verse_id"], name: "index_arabic_transliterations_on_verse_id"
     t.index ["word_id"], name: "index_arabic_transliterations_on_word_id"
   end
 

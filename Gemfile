@@ -37,6 +37,7 @@ gem 'paper_trail', '~> 6.0.2'
 
 gem "twitter-bootstrap-rails"
 gem 'bootstrap-kaminari-views'
+gem 'rails_script', '~> 2.0'
 
 #
 # gem 'convert_font'

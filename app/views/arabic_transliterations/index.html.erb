@@ -1,42 +1,82 @@
-<table class="table table-hover">
-  <thead>
-  <tr>
-    <th>Ayah key</th>
-    <th>Progress</th>
-    <th>Text</th>
-    <th>Actions</th>
-  </tr>
-  </thead>
+<div class="bs-docs-section">
+  <h1 class="page-header">
+    Arabic/Urdu Transliterations
+  </h1>
   
-  <tbody>
-  <% @verses_without_transliteration.each do |verse| %>
-    <tr>
-      <th scope="row"><%= verse.verse_key %></th>
-      
-      <td>
-        <div class="progress">
-          <div class="progress-bar" role="progressbar" aria-valuenow="<%= verse.arabic_transliteration_progress %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= verse.arabic_transliteration_progress %>%;">
-            <%= verse.arabic_transliteration_progress %>%
+  <p class="lead">
+    User filters to find ayah you're looking for, click on <code>Contribute</code> button to add transliteration for
+    specific ayah.
+  </p>
+  
+  <div class="bs-example">
+    <div class="filters row">
+      <div class="col-lg-12">
+        <%= form_tag arabic_transliterations_path, method: :get, class: 'form-inline' do %>
+          <div class="form-group">
+            <%= select_tag :filter_chapter, options_for_select(1..114, params[:filter_chapter]), include_blank: true, class: 'form-control', data: { placeholder: 'Filter by surah' } %>
+            <p class="help-block">Filter by Surah</p>
           </div>
-        </div>
-      </td>
-      
-      <td class="indopak">
-        <%= verse.text_indopak %>
-      </td>
-      
-      <td>
-        <button type="button" class="btn btn-success">Success</button>
-      </td>
-    </tr>
-  <% end %>
+          
+          <div class="form-group">
+            <%= select_tag :filter_verse, options_for_select(1..114, params[:filter_verse]), include_blank: true, class: 'form-control', data: { placeholder: 'Filter by surah' } %>
+            <p class="help-block">Filter by Ayah</p>
+          </div>
+          
+          <div class="form-group">
+            <%= select_tag :filter_progress, options_for_select([['Ayah with missing transliteration', 'missing'], ['Ayah with full transliteration', 'completed'], ['All ayah', 'all']], params[:filter_progress]), class: 'form-control', data: { placeholder: 'Filter by progress' } %>
+            <p class="help-block">Filter by Ayah progress</p>
+          </div>
+          
+          <div class="form-group">
+            <%= submit_tag 'Filter', class: 'btn btn-success', data: { disable_with: 'Please wait..' } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
   
-  <tr>
-    <td colspan="4">
-      <%= paginate @verses_without_transliteration, theme: 'twitter-bootstrap-3' %>
-    </td>
-  </tr>
-  </tbody>
-</table>
+  <figure class="highlight">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th><%= sort_order_link 'Ayah key', :verse_key %></th>
+        <th>Progress</th>
+        <th>Text</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      
+      <tbody>
+      <% @verses.each do |verse| %>
+        <tr>
+          <th scope="row"><%= verse.verse_key %></th>
+          
+          <td>
+            <div class="progress">
+              <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="<%= verse.arabic_transliteration_progress %>" aria-valuemin="0" aria-valuemax="100" style="min-width: 1em;width: <%= verse.arabic_transliteration_progress %>%;">
+                <%= verse.arabic_transliteration_progress %>%
+              </div>
+            </div>
+          </td>
+          
+          <td class="indopak">
+            <%= verse.text_indopak %>
+          </td>
+          
+          <td>
+            <%= link_to 'Contribute', new_arabic_transliteration_path(ayah: verse.id), class: 'btn btn-success' %>
+          </td>
+        </tr>
+      <% end %>
+      
+      <tr>
+        <td colspan="4">
+          <%= paginate @verses, theme: 'twitter-bootstrap-3' %>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </figure>
+</div>
 
 

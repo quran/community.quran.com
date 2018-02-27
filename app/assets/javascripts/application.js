@@ -13,3 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require rails_script
+//= require_tree ./controllers
+//= require_tree ./utilities

@@ -215,6 +215,8 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
+    rails_script (2.0.3)
+      coffee-rails (~> 4.0, >= 4.0.0)
     railties (5.1.4)
       actionpack (= 5.1.4)
       activesupport (= 5.1.4)
@@ -326,6 +328,7 @@ DEPENDENCIES
   pry-rails
   puma (~> 3.0)
   rails (>= 5.0.0.1)
+  rails_script (~> 2.0)
   sass-rails (~> 5.0)
   sentry-raven
   serviceworker-rails
