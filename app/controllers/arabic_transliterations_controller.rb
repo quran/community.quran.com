@@ -1,7 +1,9 @@
 class ArabicTransliterationsController < ApplicationController
   def new
      @verse = Verse.find(params[:ayah])
-     to_javascript page_number: @verse.page_number
+     @predicted_page = (@verse.page_number * 1.6666).to_i
+     
+     to_javascript page_number: @predicted_page
   end
   
   def index

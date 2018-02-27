@@ -51,7 +51,12 @@ body {
 }
 
 .bs-callout-info {
-  border-left-color: #1b809e;
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid !important;
+  border-left-width: 5px !important;
+  border-radius: 3px;
+  border-left-color: #1b809e !important;
 
   h4 {
     color: #1b809e;

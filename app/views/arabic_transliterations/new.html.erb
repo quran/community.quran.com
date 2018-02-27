@@ -1,5 +1,16 @@
 <div class="row" id="editor-wrap">
+  <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4>Don't mix with other components</h4>
+    <p>Icon classes cannot be directly combined with other components. They should not be used along with other classes on the same element. Instead, add a nested <code>&lt;span&gt;</code> and apply the icon classes to the <code>&lt;span&gt;</code>.</p>
+  </div>
+  
   <div class="col-lg-12">
+    <div class="form-group">
+      <%= select_tag :change_page, options_for_select(1..980, @predicted_page), class: 'form-control', data: { placeholder: 'Jump to page' } %>
+      <p class="help-block">Jump to page number</p>
+    </div>
+    
     <canvas></canvas>
   </div>
   

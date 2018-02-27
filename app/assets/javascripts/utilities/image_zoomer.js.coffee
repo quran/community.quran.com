@@ -9,7 +9,12 @@ class Utility.ImageZoomer
     @bindEvents()
     
     return this
-  
+    
+  changeImage: (newUrl) =>
+    @image.src = newUrl
+    @trackTransforms @ctx
+    @redraw()
+
   zoom: (clicks) =>
     scaleFactor = 1.1
     pt = @ctx.transformedPoint(@lastX, @lastY)
@@ -37,19 +42,19 @@ class Utility.ImageZoomer
     that = @
     @canvas.addEventListener 'mousedown', ((evt) ->
       document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none'
-      @lastX = evt.offsetX or evt.pageX - (@canvas.offsetLeft)
-      @lastY = evt.offsetY or evt.pageY - (@canvas.offsetTop)
-      dragStart = that.ctx.transformedPoint(@lastX, @lastY)
+      lastX = evt.offsetX or evt.pageX - (that.canvas.offsetLeft)
+      lastY = evt.offsetY or evt.pageY - (that.canvas.offsetTop)
+      dragStart = that.ctx.transformedPoint(lastX, lastY)
       dragged = false
       return
     ), false
     
     @canvas.addEventListener 'mousemove', ((evt) ->
-      @lastX = evt.offsetX or evt.pageX - (canvas.offsetLeft)
-      @lastY = evt.offsetY or evt.pageY - (canvas.offsetTop)
+      lastX = evt.offsetX or evt.pageX - (that.canvas.offsetLeft)
+      lastY = evt.offsetY or evt.pageY - (that.canvas.offsetTop)
       dragged = true
       if dragStart
-        pt = that.ctx.transformedPoint(@lastX, @lastY)
+        pt = that.ctx.transformedPoint(lastX, lastY)
         that.ctx.translate pt.x - (dragStart.x), pt.y - (dragStart.y)
         that.redraw()
       return
@@ -58,7 +63,7 @@ class Utility.ImageZoomer
     @canvas.addEventListener 'mouseup', ((evt) ->
       dragStart = null
       if !dragged
-        zoom if evt.shiftKey then -1 else 1
+        that.zoom if evt.shiftKey then -1 else 1
       return
     ), false
   
