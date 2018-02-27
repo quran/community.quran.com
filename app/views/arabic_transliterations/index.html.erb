@@ -1,0 +1,42 @@
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th>Ayah key</th>
+    <th>Progress</th>
+    <th>Text</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  
+  <tbody>
+  <% @verses_without_transliteration.each do |verse| %>
+    <tr>
+      <th scope="row"><%= verse.verse_key %></th>
+      
+      <td>
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" aria-valuenow="<%= verse.arabic_transliteration_progress %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= verse.arabic_transliteration_progress %>%;">
+            <%= verse.arabic_transliteration_progress %>%
+          </div>
+        </div>
+      </td>
+      
+      <td class="indopak">
+        <%= verse.text_indopak %>
+      </td>
+      
+      <td>
+        <button type="button" class="btn btn-success">Success</button>
+      </td>
+    </tr>
+  <% end %>
+  
+  <tr>
+    <td colspan="4">
+      <%= paginate @verses_without_transliteration, theme: 'twitter-bootstrap-3' %>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+

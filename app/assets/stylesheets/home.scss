@@ -1,0 +1,93 @@
+// Place all the styles related to the home controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+body {
+  min-height: 2000px;
+  padding-top: 70px;
+}
+
+.navbar-brand {
+  small {
+    color: #2CA4AB;
+    font-weight: bold;
+  }
+}
+
+.text-white {
+  color: #fff !important;
+}
+
+.pb-5, .py-5 {
+  padding-bottom: 3rem !important;
+}
+
+.pink-text {
+  color: #e91e63 !important;
+}
+
+.pt-2, .py-2 {
+  padding-top: .5rem !important;
+}
+
+.pt-5, .py-5 {
+  padding-top: 3rem !important;
+}
+
+.pl-4, .px-4 {
+  padding-left: 1.5rem !important;
+}
+
+.pr-4, .px-4 {
+  padding-right: 1.5rem !important;
+}
+
+.align-items-center {
+  -webkit-box-align: center !important;
+  -ms-flex-align: center !important;
+  align-items: center !important;
+}
+.rgba-indigo-strong {
+  background-color: rgba(63,81,181,.7);
+}
+
+.card {
+  border: 0;
+  border-radius: .25rem;
+  font-weight: 400;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+
+  &.card-image {
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+  }
+
+  .rgba-black-strong {
+    background-color: rgba(0, 0, 0, .7);
+  }
+
+  .card.card-image [class*=rgba-] {
+    border-radius: .25rem;
+  }
+
+  .card-title {
+    margin-bottom: .75rem;
+  }
+
+  .btn-success{
+    margin-top: 20px;
+  }
+}

@@ -1,0 +1,10 @@
+class CreateArabicTransliterations < ActiveRecord::Migration[5.1]
+  def change
+    create_table :arabic_transliterations do |t|
+      t.belongs_to :word, index: true
+      t.string :text
+
+      t.timestamps
+    end
+  end
+end
