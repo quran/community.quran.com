@@ -27,5 +27,29 @@
     border: 1px solid #ccc;
     height: 416px;
   }
+
+  #ayah_text{
+    word-spacing: 2rem;
+    line-height: 2;
+  }
+
+  form #words{
+    overflow-y: scroll;
+    max-height: 200px;
+
+    .well{
+      margin: 10px;
+    }
+
+    .form-control{
+      font-size: 30px;
+      height: 50px;
+    }
+  }
+
+  .btn, .help-block{font-family: Roboto;}
 }
 
+table .indopak{
+  direction: ltr;
+}

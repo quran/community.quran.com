@@ -4,15 +4,16 @@ class Utility.ImageZoomer
     @image = new Image
     @ctx = @canvas.getContext('2d')
     @image.src = imgUrl
+    @lastX = @canvas.width / 2
+    @lastY = @canvas.height / 2
+
     @trackTransforms @ctx
     @redraw()
     @bindEvents()
-    
     return this
     
   changeImage: (newUrl) =>
     @image.src = newUrl
-    @trackTransforms @ctx
     @redraw()
 
   zoom: (clicks) =>
@@ -32,8 +33,6 @@ class Utility.ImageZoomer
     evt.preventDefault() and false
     
   bindEvents: =>
-    @lastX = @canvas.width / 2
-    @lastY = @canvas.height / 2
     dragStart = undefined
     dragged = undefined
     
@@ -61,6 +60,7 @@ class Utility.ImageZoomer
     ), false
     
     @canvas.addEventListener 'mouseup', ((evt) ->
+      document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'auto'
       dragStart = null
       if !dragged
         that.zoom if evt.shiftKey then -1 else 1
