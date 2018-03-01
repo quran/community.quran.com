@@ -32,22 +32,22 @@ class Utility.ArabicKeyboard
           '{accept} {alt} {space} {alt} {custom}'
         ],
         'shift' : [
-          "ٓ َ ً ُ ٌ ّ ْ ِ ٍ ء ي ئ {bksp}",
-          "{tab} ك(Q) ّ(W) ے(Y) ث(T)",
+          "ٓ(`) َ(1) ً(2) ُ(3) ٌ(4) ّ(5) ْ(6) ِ(7) ٍ(8) ء(9) ي(0) ئ(-)  ۛ(+){bksp}",
+          "{tab} ك(Q) ّ(W) ے(Y) ث(T) ى(I)",
           "{lock} آ(A) ص(S) ض(D) ق(F) غ(G) ه(H) ج(J) خ(K) إ(L) : \" {enter}"
-          "{shift} خ(K) > < / {shift}",
+          "{shift} ذ(Z) ط(X) ظ(C) {empty} {empty} ں(N)  > < / {shift}",
           "{accept} {alt} {space}"
         ],
         'normal': [
           "ٓ(`) َ(1) ً(2) ُ(3) ٌ(4) ّ(5) ْ(6) ِ(7) ٍ(8) ء(9) ي(0) ئ(-) {bksp}",
-          "{tab} ق(q) و(w) ع(e) ر(r) ت(t) ے(y) ِ(u) ي(i) ُ(o) ّ(p) [ ] \ ",
+          "{tab} ق(q) و(w) ع(e) ر(r) ت(t) ے(y) ِ(u) ي(i) ُ(o) ّ(p) ۛ([) ] \ ",
           "{lock} ا(a) س(s) د(d) ف(f) ع(g) ح(h) ج(j) ك(k) ل(l) ؛(;) '(') {enter}",
-          "{shift} ز(z) ش(x) چ(c) ْ(v) ب(b) ن(n) م(m) ْ(,) . / {shift}",
+          "{shift} ز(z) ش(x) چ(c) ث(v) ب(b) ن(n) م(m) ْ(,) . / {shift}",
           "{cancel} {alt} {space} {accept}"
         ],
         'alt': [
-          "ْ ِ ٌ َ ً ُ ",
-          "ء ي ئ ؤ ة إ أ آ",
+          "ْ ِ ٌ َ ً ُ   ٓ",
+          "ء ي ئ ؤ ة إ أ آ ۛ",
           "{alt} {space} "
         ]
         
