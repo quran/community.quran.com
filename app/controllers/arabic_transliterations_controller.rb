@@ -1,0 +1,66 @@
+class ArabicTransliterationsController < ApplicationController
+  def show
+    @verse = Verse.includes(words: :arabic_transliteration).find(params[:id])
+  end
+  
+  def new
+    @verse          = Verse.includes(:chapter).find(params[:ayah])
+    @predicted_page = (@verse.page_number * 1.6666).to_i
+    
+    indopak          = @verse.text_indopak.strip.split(/\s+/)
+    pause_mark_count = 0
+    
+    @verse.words.order('position asc').each_with_index do |word, i|
+      next if word.char_type_name == 'end'
+      transliteration = @verse.arabic_transliterations.find_or_initialize_by(word_id: word.id)
+      
+      if word.char_type_name == 'word'
+        transliteration.indopak_text ||= indopak[i-pause_mark_count]
+      else
+        pause_mark_count += 1
+      end
+    end
+    
+    to_javascript page_number: @predicted_page
+  end
+  
+  def index
+    verses = case params[:filter_progress]
+               when 'completed'
+                 Verse.verse_with_full_arabic_transliterations
+               when 'all'
+                 Verse.verse_with_words_and_arabic_transliterations
+               else
+                 Verse.verses_with_missing_arabic_translitration
+             end
+    
+    
+    if params[:filter_chapter].to_i > 0
+      verses = verses.where(chapter_id: params[:filter_chapter].to_i)
+    end
+    
+    if params[:filter_verse].to_i > 0
+      verses = verses.where(verse_number: params[:filter_verse].to_i)
+    end
+    
+    order = if params[:sort_order] && params[:sort_order] == 'desc'
+              'desc'
+            else
+              'asc'
+            end
+    
+    @verses = verses.order("verse_index #{order}").page(params[:page]).per(20)
+  end
+  
+  def create
+    verse = Verse.find(params[:verse_id])
+    verse.update_attributes(arabic_transliterations_params)
+    redirect_to arabic_transliteration_path(verse), notice: "Saved successfully"
+  end
+  
+  protected
+  def arabic_transliterations_params
+    params.require(:verse).permit arabic_transliterations_attributes: [:id, :indopak_text, :text, :word_id]
+  end
+
+end

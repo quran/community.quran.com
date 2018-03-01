@@ -1,0 +1,23 @@
+<%= nav_bar fixed: :top, brand: "Quran.com Community <small>beta</small>".html_safe, responsive: true do %>
+  <%= menu_group do %>
+    <%= menu_divider %>
+    
+    <%= drop_down 'Quran.com' do %>
+      <%= menu_item 'Quran.com', 'https://quran.com', target: :blank %>
+      <%= menu_item 'Audio', 'https://quranicaudio.com/', target: :blank %>
+      <%= menu_item 'Salah', 'http://salah.com/', target: :blank %>
+      <%= menu_item 'Sunnah', 'http://sunnah.com/', target: :blank %>
+    <% end %>
+    
+    <%= menu_item 'About Us', 'https://quran.com/about', target: :blank %>
+    <%= menu_item 'Contact Us', 'https://quran.zendesk.com/hc/en-us/requests/new', target: :blank %>
+  <% end %>
+  
+  <%= menu_group pull: :right do %>
+    <% if current_user %>
+      <%= menu_item 'Log out', destroy_user_session_path, method: :delete %>
+    <% else %>
+      <%= menu_item 'Log in', new_user_session_path %>
+    <% end %>
+  <% end %>
+<% end %>

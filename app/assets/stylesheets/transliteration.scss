@@ -1,0 +1,74 @@
+.filters {
+  select {
+    min-width: 200px;
+  }
+
+  input[type='submit'] {
+    margin-bottom: 30px;
+    margin-left: 30px;
+  }
+}
+
+.highlight {
+  .progress {
+    background: #3C3741;
+  }
+  .progress-bar-success {
+    background: #2ca4ab;
+  }
+}
+
+#editor-wrap {
+  canvas {
+    width: 100%;
+    display: block;
+    margin: 1em auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    height: 416px;
+  }
+
+  #ayah_text{
+    word-spacing: 2rem;
+    line-height: 2;
+  }
+
+  form #words{
+    overflow-y: scroll;
+    max-height: 200px;
+
+    .well{
+      margin: 10px;
+    }
+
+    .form-control{
+      font-size: 30px;
+      height: 50px;
+    }
+  }
+
+  .btn, .help-block{font-family: Roboto;}
+}
+
+table .indopak{
+  direction: ltr;
+}
+
+.ui-keyboard-preview {
+  font-size: 30px !important;
+  height: 60px !important;
+  font-family: pdms;
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+
+.ui-keyboard-button {
+  height: 3em !important;
+  min-width: 3em !important;
+
+  span{
+    font-weight: bold !important;
+    font-size: 25px !important;
+  }
+}

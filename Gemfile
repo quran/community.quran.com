@@ -35,6 +35,10 @@ gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'activeadmin-async_panel'
 gem 'paper_trail', '~> 6.0.2'
 
+gem "twitter-bootstrap-rails"
+gem 'bootstrap-kaminari-views'
+gem 'rails_script', '~> 2.0'
+
 #
 # gem 'convert_font'
 #gem 'svg_optimizer'
@@ -45,7 +49,6 @@ gem 'serviceworker-rails'
 
 #authentication
 gem 'devise'
-
 gem 'newrelic_rpm'
 
 #exception tracking

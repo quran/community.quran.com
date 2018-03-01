@@ -21,6 +21,7 @@ class Word < QuranApiRecord
   end
 
   has_one :word_corpus
+  has_one :arabic_transliteration
 
   has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
 

@@ -1,0 +1,75 @@
+<div class="bs-docs-section">
+  <h1 class="page-header">
+    Arabic/Urdu Transliterations of <%= @verse.verse_key %>
+  
+    <%= link_to 'Contribute', new_arabic_transliteration_path(ayah: @verse.id), class: 'btn btn-success pull-right' %>
+  </h1>
+  
+  <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+    </button>
+    <h2>
+      Click on <code>Contribute</code> button and update transliteration if you found any issue.
+    </h2>
+    <p>
+    <ul>
+      <li>
+        <b>Text Madani:</b> <span class="indopak"> <%= @verse.text_madani %></span>
+      </li>
+      
+      <li>
+        <b>Text Madani:</b> <span class="indopak"> <%= @verse.text_indopak %></span>
+      </li>
+    </ul>
+    </p>
+  </div>
+  
+  <p class="lead">
+    Transliteration progress
+  <div class="progress">
+    <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="<%= @verse.arabic_transliteration_progress %>" aria-valuemin="0" aria-valuemax="100" style="min-width: 1em;width: <%= @verse.arabic_transliteration_progress %>%;">
+      <%= @verse.arabic_transliteration_progress %>%
+    </div>
+  </div>
+  </p>
+  
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th>Word id</th>
+      <th>IndoPak text</th>
+      <th>Simple text</th>
+      <th>Uthmani text</th>
+      <th>Translitetation</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+    <% @verse.words.order('position asc').each do |word| %>
+      <tr>
+        <th scope="row"><%= word.position %></th>
+        
+        <td class="indopak"><%= word.arabic_transliteration&.indopak_text %></td>
+        
+        <td class="indopak">
+          <%= word.text_simple %>
+        </td>
+        
+        <td class="indopak">
+          <%= word.text_madani %>
+        </td>
+        
+        <td class="indopak">
+          <%= word.text_indopak %>
+        </td>
+        
+        <td class="indopak">
+          <%= word.arabic_transliteration&.text %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+

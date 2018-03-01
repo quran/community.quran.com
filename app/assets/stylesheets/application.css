@@ -11,4 +11,8 @@
  * It is generally better to create a new file per style scope.
  *
  *= require_self
+ *= require home
+ *= require fonts
+ *= require jquery-ui-position.min
+ *= require transliteration
  */

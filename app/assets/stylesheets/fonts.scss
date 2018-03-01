@@ -1,3 +1,6 @@
+body{
+  font-family: Roboto, "Helvetica Neue",Helvetica,Arial,sans-serif !important;
+}
 @font-face {
   font-family: 'nafees';
   src: font-url('nafees/nafees-nastaleeq-webfont.eot?#iefix') format('embedded-opentype'),
@@ -49,6 +52,11 @@
   direction: rtl;
 }
 
+.indopak{
+  font-family: pdms;
+  direction: rtl;
+  font-size: 30px;
+}
 @font-face {
   font-family: quran_common_font;
   src: font-url('quran-common/quran_common.ttf') format('truetype');
