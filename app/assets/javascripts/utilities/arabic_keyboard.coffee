@@ -32,14 +32,14 @@ class Utility.ArabicKeyboard
           '{accept} {alt} {space} {alt} {custom}'
         ],
         'shift' : [
-          "َ ً ُ ٌ ّ ْ ِ ٍ ء ي ئ {bksp}",
+          "ٓ َ ً ُ ٌ ّ ْ ِ ٍ ء ي ئ {bksp}",
           "{tab} ك(Q) ّ(W) ے(Y) ث(T)",
           "{lock} آ(A) ص(S) ض(D) ق(F) غ(G) ه(H) ج(J) خ(K) إ(L) : \" {enter}"
           "{shift} خ(K) > < / {shift}",
           "{accept} {alt} {space}"
         ],
         'normal': [
-          "َ ً ُ ٌ ّ ْ ِ ٍ ء ي ئ {bksp}",
+          "ٓ(`) َ(1) ً(2) ُ(3) ٌ(4) ّ(5) ْ(6) ِ(7) ٍ(8) ء(9) ي(0) ئ(-) {bksp}",
           "{tab} ق(q) و(w) ع(e) ر(r) ت(t) ے(y) ِ(u) ي(i) ُ(o) ّ(p) [ ] \ ",
           "{lock} ا(a) س(s) د(d) ف(f) ع(g) ح(h) ج(j) ك(k) ل(l) ؛(;) '(') {enter}",
           "{shift} ز(z) ش(x) چ(c) ْ(v) ب(b) ن(n) م(m) ْ(,) . / {shift}",
