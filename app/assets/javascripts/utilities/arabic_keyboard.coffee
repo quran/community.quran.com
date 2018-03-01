@@ -1,6 +1,13 @@
 class Utility.ArabicKeyboard
   constructor:  ->
-    $('input.transliteration').keyboard(
+    $(document).on 'click', 'textarea.transliteration', ->
+      alert("d");
+      setTimeout (->
+        alert('done')
+        $('.ui-keyboard').draggable()
+      ), 2000
+      
+    $('textarea.transliteration').keyboard(
       autoAccept: false
       stayOpen: true
       layout: 'custom'
@@ -25,26 +32,25 @@ class Utility.ArabicKeyboard
           '{accept} {alt} {space} {alt} {custom}'
         ],
         'shift' : [
-          "~ ! @ # $ \u066a ^ \u06d6 \u066d ) ( _ + {bksp}",
-          "{tab} \u0638 \u0636 \u0630 \u0688 \u062b \u0651 \u06c3 \u0640 \u0686 \u062e } { |",
-          "{lock} \u0698 \u0632 \u0691 \u06ba \u06c2 \u0621 \u0622 \u06af \u064a : \" {enter}",
-          "{shift} | \u200d \u200c \u06d3 \u200e \u0624 \u0626 \u200f > < / {shift}",
+          "َ ً ُ ٌ ّ ْ ِ ٍ ء ي ئ {bksp}",
+          "{tab} ك(Q) ّ(W) ے(Y) ث(T)",
+          "{lock} آ(A) ص(S) ض(D) ق(F) غ(G) ه(H) ج(J) خ(K) إ(L) : \" {enter}"
+          "{shift} خ(K) > < / {shift}",
           "{accept} {alt} {space}"
         ],
         'normal': [
-          "؏(~) \u0661 \u0662 \u0663 \u0664 \u0665 \u0666 \u0667 \u0668 \u0669 \u0660 - = {bksp}",
-          "{tab} ق(q) و(w) ع(e) ر(r) ت(t) ے(y) ِ(u) َ(i) ُ(o) ّ(p) [ ] \ ",
+          "َ ً ُ ٌ ّ ْ ِ ٍ ء ي ئ {bksp}",
+          "{tab} ق(q) و(w) ع(e) ر(r) ت(t) ے(y) ِ(u) ي(i) ُ(o) ّ(p) [ ] \ ",
           "{lock} ا(a) س(s) د(d) ف(f) ع(g) ح(h) ج(j) ك(k) ل(l) ؛(;) '(') {enter}",
-          "{shift} ز(z) خ(x) چ(c) ڢ(v) ب(b) ن(n) م(m) ْ(,) . / {shift}",
+          "{shift} ز(z) ش(x) چ(c) ْ(v) ب(b) ن(n) م(m) ْ(,) . / {shift}",
           "{cancel} {alt} {space} {accept}"
         ],
-        'zab': [
-          "A"
+        'alt': [
+          "ْ ِ ٌ َ ً ُ ",
+          "ء ي ئ ؤ ة إ أ آ",
+          "{alt} {space} "
         ]
         
       }
     ).addTyping(showTyping:true).previewKeyset()
-
-    setTimeout (->
-      $('.ui-keyboard').draggable()
-    ), 2000
+    
