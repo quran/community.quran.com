@@ -39,6 +39,7 @@ gem "twitter-bootstrap-rails"
 gem 'bootstrap-kaminari-views'
 gem 'rails_script', '~> 2.0'
 
+gem 'nokogiri', '= 1.8.2'
 #
 # gem 'convert_font'
 #gem 'svg_optimizer'
