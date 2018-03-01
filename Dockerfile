@@ -39,6 +39,7 @@ RUN mkdir /home/app/community
 ADD . /home/app/community/
 
 WORKDIR /home/app/community
+RUN mkdir -p log
 RUN chown -R app log
 RUN chown -R app public
 RUN chown app Gemfile
