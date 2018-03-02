@@ -1,12 +1,5 @@
 class Utility.ArabicKeyboard
   constructor:  ->
-    $(document).on 'click', 'textarea.transliteration', ->
-      alert("d");
-      setTimeout (->
-        alert('done')
-        $('.ui-keyboard').draggable()
-      ), 2000
-      
     $('textarea.transliteration').keyboard(
       autoAccept: false
       stayOpen: true
@@ -16,6 +9,10 @@ class Utility.ArabicKeyboard
       closeByClickEvent: false
       enterNavigation: false
       usePreview: true
+      visible: ->
+        setTimeout (->
+          $('.ui-keyboard').draggable()
+        ), 2000
       css:
         input: 'form-control'
         container: 'center-block dropdown-menu'
@@ -53,4 +50,3 @@ class Utility.ArabicKeyboard
         
       }
     ).addTyping(showTyping:true).previewKeyset()
-    
