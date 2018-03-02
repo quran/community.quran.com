@@ -24,6 +24,13 @@
       <li>
         <b>Text Madani:</b> <span class="indopak"> <%= @verse.text_indopak %></span>
       </li>
+  
+      <li>
+        <b>Transliteration:</b>
+        <span class="indopak">
+          <%= @verse.words.order('position asc').map do |w| w.arabic_transliteration&.text end.join(' ') %>
+        </span>
+      </li>
     </ul>
     </p>
   </div>
