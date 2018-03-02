@@ -1,5 +1,5 @@
 ActiveAdmin.register PauseMark do
-  menu parent: "Setting", priority: 1
+  menu parent: "Settings", priority: 1
   filter :word_id
   filter :mark
   filter :verse_key
