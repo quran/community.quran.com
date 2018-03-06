@@ -1,6 +1,8 @@
+window.Utility ||= {}
+
 class Utility.ArabicKeyboard
   constructor:  ->
-    $('textarea.transliteration').keyboard(
+    $('textarea.transliteration, #arabic_transliteration_text').keyboard(
       autoAccept: false
       stayOpen: true
       layout: 'custom'
