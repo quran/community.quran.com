@@ -17,7 +17,7 @@ class Verse < QuranApiRecord
   
   has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
   
-  accepts_nested_attributes_for :arabic_transliterations
+  accepts_nested_attributes_for :arabic_transliterations, reject_if: -> (word) {  word['text'].blank? }
   
   def self.verses_with_missing_arabic_translitration
     Verse

@@ -32,7 +32,7 @@ class Utility.ArabicKeyboard
         ],
         'shift' : [
           "ٓ(`) َ(1) ً(2) ُ(3) ٌ(4) ّ(5) ْ(6) ِ(7) ٍ(8) ء(9) ي(0) ئ(-)  ۛ(+){bksp}",
-          "{tab} ك(Q) ّ(W) {empty} {empty} ث(T) ے(Y) {empty}  ى(I) {empty}  ٰ (})",
+          "{tab} ك(Q) ّ(W) {empty} {empty} ث(T) ے(Y) ة(U) ى(I) {empty}  ٰ (})",
           "{lock} آ(A) ص(S) ض(D) ق(F) غ(G) ه(H) ج(J) خ(K) إ(L) : \" {enter}"
           "{shift} ذ(Z) ط(X) ظ(C) {empty} {empty} ں(N)  > < / {shift}",
           "{accept} {alt} {space}"
