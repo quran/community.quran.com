@@ -49,6 +49,11 @@
       <div id="words">
         <%= form.fields_for :arabic_transliterations do |trans_form| %>
           <%= trans_form.hidden_field :word_id %>
+          <%= trans_form.hidden_field :page_number, class: 'word-page' %>
+          <%= trans_form.hidden_field :position_x, class: 'word-pos-x' %>
+          <%= trans_form.hidden_field :position_y, class: 'word-pos-y' %>
+          <%= trans_form.hidden_field :zoom, class: 'word-zoom' %>
+    
           <div class="well">
             <p>Word# <%= trans_form.object.location %></p>
             <div class="row">

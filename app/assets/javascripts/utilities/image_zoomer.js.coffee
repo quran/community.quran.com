@@ -15,8 +15,14 @@ class Utility.ImageZoomer
   changeImage: (newUrl) =>
     @image.src = newUrl
     @redraw()
-
+  
+  transform: (x, y) =>
+    @lastX = x
+    @lastY = y
+    
   zoom: (clicks) =>
+    $(".word-zoom").val(clicks)
+
     scaleFactor = 1.1
     pt = @ctx.transformedPoint(@lastX, @lastY)
     @ctx.translate pt.x, pt.y

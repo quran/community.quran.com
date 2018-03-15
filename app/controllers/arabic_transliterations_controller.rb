@@ -4,8 +4,7 @@ class ArabicTransliterationsController < ApplicationController
   end
   
   def new
-    @verse          = Verse.includes(:chapter).find(params[:ayah])
-    @predicted_page = (@verse.page_number * 1.6666).to_i
+    @verse = Verse.includes(:chapter).find(params[:ayah])
     
     indopak          = @verse.text_indopak.strip.split(/\s+/)
     pause_mark_count = 0
@@ -21,7 +20,13 @@ class ArabicTransliterationsController < ApplicationController
       end
     end
     
-    to_javascript page_number: @predicted_page
+    saved_page      = @verse.arabic_transliterations.detect(&:page_number)
+    @predicted_page = saved_page&.page_number || (@verse.page_number * 1.6666).to_i
+    
+    to_javascript page_number: @predicted_page,
+                  page_zoom:   saved_page&.zoom,
+                  page_pos_x:  saved_page&.position_x,
+                  page_pos_y:  saved_page&.position_y
   end
   
   def index
@@ -60,7 +65,17 @@ class ArabicTransliterationsController < ApplicationController
   
   protected
   def arabic_transliterations_params
-    params.require(:verse).permit arabic_transliterations_attributes: [:id, :indopak_text, :text, :word_id]
+    params.require(:verse).permit arabic_transliterations_attributes:
+                                    [
+                                      :id,
+                                      :indopak_text,
+                                      :text,
+                                      :word_id,
+                                      :page_number,
+                                      :position_x,
+                                      :position_y,
+                                      :zoom
+                                    ]
   end
 
 end
