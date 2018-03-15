@@ -24,9 +24,9 @@ class ArabicTransliterationsController < ApplicationController
     @predicted_page = saved_page&.page_number || (@verse.page_number * 1.6666).to_i
     
     to_javascript page_number: @predicted_page,
-                  page_zoom:   0.75, #saved_page&.zoom,
-                  page_pos_x:  324,# saved_page&.position_x,
-                  page_pos_y:  280 #saved_page&.position_y
+                  page_zoom:   saved_page&.zoom,
+                  page_pos_x:  saved_page&.position_x,
+                  page_pos_y:  saved_page&.position_y
   end
   
   def index
