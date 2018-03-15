@@ -20,15 +20,15 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
     column :created_at
   end
   
-  action_item :show, only: :show do
+  action_item :next, only: :show do
     link_to "Next version", "/admin/content_changes/#{resource.next.id}" if resource.next
   end
   
-  action_item :show, only: :show do
+  action_item :previous, only: :show do
     link_to "Previous version", "/admin/content_changes/#{resource.previous.id}" if resource.previous
   end
   
-  action_item :show, only: :show do
+  action_item :revert, only: :show do
     link_to revert_admin_content_change_path(resource.id), method: :put, data: { confirm: "Are you sure?" } do
       "Revert #{resource.item_type} to this version!"
     end
@@ -37,8 +37,8 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
   member_action :revert, method: 'put' do
     item = resource.reify
     item.save
-   
-    redirect_to  [:admin, item], notice: 'Reverted successfully!'
+    
+    redirect_to [:admin, item], notice: 'Reverted successfully!'
   end
   
   show do
@@ -65,7 +65,7 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
       end
     end
     
-    panel "Changes diff for this version" do
+    panel "Diff with previous version" do
       if previous = resource.previous
         previous = previous.reify
         current  = resource.reify
