@@ -1,6 +1,14 @@
 class ArabicTransliterationsController < ApplicationController
   def show
     @verse = Verse.includes(words: :arabic_transliteration).find(params[:id])
+
+    saved_page      = @verse.arabic_transliterations.detect(&:page_number)
+    @predicted_page = saved_page&.page_number || (@verse.page_number * 1.6666).to_i
+
+    to_javascript page_number: @predicted_page,
+                  page_zoom:   saved_page&.zoom,
+                  page_pos_x:  saved_page&.position_x,
+                  page_pos_y:  saved_page&.position_y
   end
   
   def new
@@ -8,7 +16,7 @@ class ArabicTransliterationsController < ApplicationController
     
     indopak          = @verse.text_indopak.strip.split(/\s+/)
     pause_mark_count = 0
-    
+    @arabic_transliterations = []
     @verse.words.order('position asc').each_with_index do |word, i|
       next if word.char_type_name == 'end'
       transliteration = @verse.arabic_transliterations.find_or_initialize_by(word_id: word.id)
@@ -18,6 +26,8 @@ class ArabicTransliterationsController < ApplicationController
       else
         pause_mark_count += 1
       end
+
+      @arabic_transliterations << transliteration
     end
     
     saved_page      = @verse.arabic_transliterations.detect(&:page_number)
