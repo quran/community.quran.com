@@ -14,6 +14,10 @@ class App.ArabicTransliterations extends App.Base
 
 
   show: =>
+    $('select.form-control').chosen()
+    predictedPage = parseInt(Utility.RailsVars.page_number)
+    window.pageZoomer = new Utility.ImageZoomer("http://static.quran.com/urdu_transliteration/#{predictedPage}.jpg")
+
     return
 
 

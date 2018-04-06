@@ -47,7 +47,7 @@
     <p class="indopak" id="ayah_text"><%= @verse.verse_key %>  <%= @verse.text_indopak %> </p>
     <%= form_for @verse, url: arabic_transliterations_path(verse_id: @verse.id), method: :post, html: { class: 'form', dir: 'rtl', autocomplete: 'off' } do |form| %>
       <div id="words">
-        <%= form.fields_for :arabic_transliterations do |trans_form| %>
+        <%= form.fields_for :arabic_transliterations, @arabic_transliterations do |trans_form| %>
           <%= trans_form.hidden_field :word_id %>
           <%= trans_form.hidden_field :page_number, class: 'word-page' %>
           <%= trans_form.hidden_field :position_x, class: 'word-pos-x' %>

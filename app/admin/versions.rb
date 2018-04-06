@@ -55,11 +55,14 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
     end
     
     panel "Attributes of #{resource.item_type} at this version" do
-      current = resource.reify
-      attributes_table_for current do
-        current.attributes.each do |key, val|
-          row key do
-            current.send(key).to_s.html_safe
+      if resource.event != 'create'
+        current = resource.reify
+        
+        attributes_table_for current do
+          current.attributes.each do |key, val|
+            row key do
+              current.send(key).to_s.html_safe
+            end
           end
         end
       end
