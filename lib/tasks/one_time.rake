@@ -1,5 +1,50 @@
 namespace :one_time do
   
+  task import_quranenc_translations: :environment do
+    require 'csv'
+    
+    resource_content_mapping = {
+      albanian_nahi:       88,
+      amharic_sadiq:       87,
+      assamese_rafeeq:     { language: 10, author_name: 'Shaykh Rafeequl Islam Habibur-Rahman' },
+      bosnian_korkut:      25,
+      chinese_makin:       { language: 185, author_name: 'Makin' },
+      english_hilali_khan: { language: 38, author_name: 'Muhammad Taqi-ud-Din al-Hilali and Muhammad Muhsin Khan' },
+      english_saheeh:      20,
+      french_hameedullah:  31,
+      hausa_gummi:         { language: 188, author_name: 'Abubakar Mahmood Jummi' },
+      hindi_omari:         { language: 60, author_name: 'Maulana Azizul Haque al-Umari' },
+      indonesian_sabiq:    { language: 33, author_name: 'Sabiq' },
+      japanese_meta:       35,
+      kazakh_altai:        { language: 189, author_name: 'Khalifah Altai' },
+      khmer_cambodia:      { language: 190, author_name: 'Cambodian Muslim Community Development' },
+      nepali_central:      { language: 116, author_name: 'Ahl Al-Hadith Central Society of Nepal' },
+      oromo_ababor:        { language: 126, author_name: 'Ghali Apapur Apaghuna' },
+      pashto_zakaria:      { language: 132, author_name: 'Zakaria' },
+      portuguese_nasr:     { language: 133, author_name: 'Nasr' },
+      turkish_shaban:      { language: 167, author_name: 'Shaban Britch' },
+      turkish_shahin:      { language: 167, author_name: 'Muslim Shahin' },
+      urdu_junagarhi:      54,
+      uzbek_sadiq:         55,
+      uzbek_mansour:       { language: 175, author_name: 'Alauddin Mansour' },
+      yoruba_mikail:       { language: 183, author_name: 'Shaykh Abu Rahimah Mikael Aykyuni' }
+    }
+    
+    Dir['data/csv/*'].each do |file|
+      translation_name = split('/').last.split('.').first
+      resource = if resource_content_mapping[translation_name.to_sym].is_a?(Hash)
+                   language = Language.find(resource_content_mapping[translation_name.to_sym][:language])
+                   ResourceContent.create()
+                 else
+                   ResourceContent.find(resource_content_mapping[translation_name.to_sym])
+                 end
+      
+      rows = CSV.open(file).read
+    
+    end
+  
+  end
+  
   task import_ukrainian_with_footnote: :environment do
     PaperTrail.enabled = false
     author             = Author.where(name: 'Mykhaylo Yakubovych').first_or_create
@@ -31,35 +76,35 @@ namespace :one_time do
     
     url = "https://gist.githubusercontent.com/naveed-ahmad/b642d6b22ca020f5f385b7e983e1ceb9/raw/21ee6a78b92c929e175b1151e478cc4bbf1e8d07/transaction.docx.html"
     
-    text= if Rails.env.development?
-            File.open("lib/data/transaction.docx.html").read
-          else
-            open(url).read
-          end
+    text = if Rails.env.development?
+             File.open("lib/data/transaction.docx.html").read
+           else
+             open(url).read
+           end
     
     docs = Nokogiri.parse(text)
     
     docs.search("body > .c1").each_with_index do |verse_node, v_index|
       text = verse_node.text.to_s.split("|")[2].to_s.strip
       
-      if verse = Verse.find_by_verse_index(v_index+1)
+      if verse = Verse.find_by_verse_index(v_index + 1)
         translation = verse.translations.where(resource_content: resource_content).first_or_create
         translation.foot_notes.delete_all
         
         verse_node.search("a").each_with_index do |footnote_node, f_i|
-          footnote_id   = footnote_node.attributes['href'].value
-          number        = footnote_id.scan(/\d/).join('')
+          footnote_id = footnote_node.attributes['href'].value
+          number      = footnote_id.scan(/\d/).join('')
           # footnote_text = docs.search(footnote_id).first.parent.search('span').text.strip
           footnote_text = docs.search(footnote_id).first.parent.search('.c4').text.strip
           
           footnote = translation.foot_notes.create(text: footnote_text, language: language, language_name: language.name.downcase, resource_content: footnote_resource_content)
           
-          text = text.gsub!("[#{number}]#{number}", "<sup foot_note=#{footnote.id}>#{f_i+1}</sup>")
+          text = text.gsub!("[#{number}]#{number}", "<sup foot_note=#{footnote.id}>#{f_i + 1}</sup>")
         end
         
         translation.text          = text.strip
-        translation.language      =language
-        translation.language_name =language.name.downcase
+        translation.language      = language
+        translation.language_name = language.name.downcase
         translation.resource_name = resource_content.name
         translation.save
         puts "update translation #{translation.id}"
@@ -70,16 +115,16 @@ namespace :one_time do
   def process_foot_note_text(foot_note_node)
     foot_note_node.search("span").each do |node|
       if node.attr('class').to_s.strip == 'c15'
-        node.name= "sup"
+        node.name = "sup"
         node.remove_attribute("class")
       end
     end
     
     # remove links
     foot_note_node.search("a").remove
-
+    
     white_list_sanitizer = Rails::Html::WhiteListSanitizer.new
-
+    
     white_list_sanitizer.sanitize(foot_note_node.to_s.strip, tags: %w(div sup p ol ul li), attributes: []).gsub(/[\r\n]+/, "<br/>")
   end
   
@@ -90,12 +135,12 @@ namespace :one_time do
     language = Language.find_by_name 'English'
     
     url = "https://raw.githubusercontent.com/naveed-ahmad/Quran-text/master/cleanquran.html"
-
-    text= if Rails.env.development?
-           File.open("lib/data/cleanquran.html").read
-          else
-            open(url).read
-          end
+    
+    text = if Rails.env.development?
+             File.open("lib/data/cleanquran.html").read
+           else
+             open(url).read
+           end
     
     docs = Nokogiri.parse(text)
     
@@ -126,23 +171,23 @@ namespace :one_time do
     
     docs.search('ol .c0').each_with_index do |verse_node, v_index|
       text        = verse_node.text.strip
-      verse       = Verse.find_by_verse_index(v_index+1)
+      verse       = Verse.find_by_verse_index(v_index + 1)
       translation = verse.translations.where(resource_content: resource_content).first_or_create
       translation.foot_notes.delete_all
       
       verse_node.search("a").each_with_index do |footnote_node, f_i|
-        footnote_id   = footnote_node.attributes['href'].value
-        number        = footnote_id.scan(/\d/).join('')
+        footnote_id = footnote_node.attributes['href'].value
+        number      = footnote_id.scan(/\d/).join('')
         
         footnote_text = process_foot_note_text(docs.search(footnote_id).first.parent.parent)
         footnote      = translation.foot_notes.create(text: footnote_text, language: language, language_name: 'english', resource_content: footnote_resource_content)
         
-        text = text.gsub!("[#{number}]", "<sup foot_note=#{footnote.id}>#{f_i+1}</sup>")
+        text = text.gsub!("[#{number}]", "<sup foot_note=#{footnote.id}>#{f_i + 1}</sup>")
       end
       
       translation.text          = text.strip
-      translation.language      =language
-      translation.language_name ='english'
+      translation.language      = language
+      translation.language_name = 'english'
       translation.resource_name = resource_content.name
       translation.save
       puts "update translation #{translation.id}"
@@ -193,15 +238,15 @@ namespace :one_time do
           quran_word  = quran_words[quran_word_index]
           text_madani = quran_word.try(:text_madani).to_s
           
-          if join_trans && final_words[i+1+word_joined]
+          if join_trans && final_words[i + 1 + word_joined]
             #urdu_trans = "#{urdu_trans} #{urdu}"
-            next_word      = final_words[i+1+word_joined]
+            next_word      = final_words[i + 1 + word_joined]
             arabic_n, urdu = next_word.split(':').map(&:strip!)
             urdu_trans     = nil
           else
-            if text_madani.include?(arabic) && text_madani != arabic && final_words[i+1+word_joined]
+            if text_madani.include?(arabic) && text_madani != arabic && final_words[i + 1 + word_joined]
               #join translation with next word
-              next_word           = final_words[i+1+word_joined]
+              next_word           = final_words[i + 1 + word_joined]
               arabic_n, urdu_next = next_word.split(':').map(&:strip!)
               
               urdu_trans = "#{urdu} #{urdu_next}".strip
@@ -266,15 +311,15 @@ namespace :one_time do
           quran_word  = quran_words[i]
           text_madani = quran_word.try(:text_madani).to_s
           
-          if join_trans && final_words[i+1]
+          if join_trans && final_words[i + 1]
             #urdu_trans = "#{urdu_trans} #{urdu}"
-            next_word      = final_words[i+1]
+            next_word      = final_words[i + 1]
             arabic_n, urdu = next_word.split(':').map(&:strip!)
             urdu_trans     = nil
           else
-            if text_madani.include?(arabic) && text_madani != arabic && final_words[i+1]
+            if text_madani.include?(arabic) && text_madani != arabic && final_words[i + 1]
               #join translation with next word
-              next_word           = final_words[i+1]
+              next_word           = final_words[i + 1]
               arabic_n, urdu_next = next_word.split(':').map(&:strip!)
               
               urdu_trans = "#{urdu} #{urdu_next}".strip
@@ -295,4 +340,3 @@ namespace :one_time do
     end
   end
 end
-  
