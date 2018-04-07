@@ -1,48 +1,574 @@
+$ABC = true
 namespace :one_time do
+  def encode_and_clean_text(text)
+    if text.valid_encoding?
+      text
+    else
+      text.scrub!
+    end.to_s
+      .sub('#', '')
+      .sub('#VALUE!', '')
+      .strip
+  end
+  
+  def parse_indonesian_sabiq(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s).sub(/\d+./, '')
+      footnote = encode_and_clean_text(row[4].to_s)
+      
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+      
+      footnote_ids = text.scan(/[\*]+\(\d+\)/)
+      footnotes    = footnote.split(/[\*]+\d+./).select(&:present?)
+      
+      footnote_ids.each_with_index do |node, i|
+        footnote = translation.foot_notes.create(text: footnotes[i].to_s.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = text.gsub("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
+      end
+      
+      if footnote_ids.blank? && footnotes.present?
+        footnote = translation.foot_notes.create(text: footnotes.join("\n"), language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = ("#{text}" "<sup foot_note=#{footnote.id}>1</sup>")
+      end
+      
+      translation.text = text
+      translation.save
+      
+      puts translation.id
+    end
+  end
+  
+  def parse_portuguese_nasr(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s)
+      footnote = encode_and_clean_text(row[4].to_s)
+      
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+      
+      if footnote.present?
+        _footnote = translation.foot_notes.create(text: footnote, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = ("#{text}" "<sup foot_note=#{_footnote.id}>1</sup>")
+      end
+      
+      translation.text = text
+      translation.save
+      
+      puts translation.id
+    end
+  end
+  
+  def parse_uzbek_mansour(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+  
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+    
+      text     = encode_and_clean_text(row[3].to_s).sub(/\d+./, '')
+      footnote = encode_and_clean_text(row[4].to_s)
+      next if text.blank?
+    
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+    
+      if footnote.present?
+        _footnote = translation.foot_notes.create(text: footnote.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+      
+        text = ("#{text}" "<sup foot_note=#{_footnote.id}>1</sup>")
+      end
+    
+      translation.text = text
+      translation.save
+    
+      puts translation.id
+    end
+  end
+  
+  def parse_uzbek_sadiq(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+  
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+    
+      text     = encode_and_clean_text(row[3].to_s).sub(/\d+./, '')
+      footnote = encode_and_clean_text(row[4].to_s)
+      next if text.blank?
+    
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+    
+      if footnote.present?
+        _footnote = translation.foot_notes.create(text: footnote.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+      
+        text = ("#{text}" "<sup foot_note=#{_footnote.id}>1</sup>")
+      end
+    
+      translation.text = text
+      translation.save
+    
+      puts translation.id
+    end
+  end
+  
+  def parse_yoruba_mikail(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+  
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+    
+      text     = encode_and_clean_text(row[3].to_s).sub(/\d+./, '')
+      footnote = encode_and_clean_text(row[4].to_s)
+      next if text.blank?
+    
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+    
+      if footnote.present?
+        _footnote = translation.foot_notes.create(text: footnote.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+      
+        text = ("#{text}" "<sup foot_note=#{_footnote.id}>1</sup>")
+      end
+    
+      translation.text = text
+      translation.save
+    
+      puts translation.id
+    end
+  end
+  
+  def parse_urdu_junagarhi(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s)
+      footnote = encode_and_clean_text(row[4].to_s)
+      next if text.blank?
+      
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+      
+      footnote_ids = text.scan(/[\*]+/)
+      footnotes    = footnote.split(/[\*]+/).select(&:present?)
+      
+      footnotes.present? && footnote_ids.each_with_index do |node, i|
+        if footnotes[i]
+          footnote = translation.foot_notes.create(text: footnotes[i].strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+          
+          text = text.sub("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
+        end
+      end
+      
+      if footnote_ids.blank? && footnotes.present?
+        footnote = translation.foot_notes.create(text: footnotes.join("\n"), language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = ("#{text}" "<sup foot_note=#{footnote.id}>1</sup>")
+      end
+      
+      translation.text = text
+      translation.save
+      
+      puts translation.id
+    end
+  end
+  
+  def parse_hindi_omari(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s)
+      footnote = encode_and_clean_text(row[4].to_s)
+      
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+      
+      footnote_ids = text.scan(/\[\d+\]/)
+      footnotes    = footnote.split(/\d+./).select(&:present?)
+      
+      footnote_ids.each_with_index do |node, i|
+        footnote = translation.foot_notes.create(text: footnotes[i].to_s.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = text.gsub("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
+      end
+      
+      if footnote_ids.blank? && footnotes.present?
+        footnote = translation.foot_notes.create(text: footnotes.join("\n"), language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = ("#{text}" "<sup foot_note=#{footnote.id}>1</sup>")
+      end
+      
+      translation.text = text
+      translation.save
+      
+      puts translation.id
+    end
+  end
+  
+  def parse_hausa_gummi(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s)
+      footnote = encode_and_clean_text(row[4].to_s)
+      next if text.blank?
+      
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+      
+      footnote_ids = text.scan(/[\*]+/)
+      footnotes    = footnote.split(/[\*]+/).select(&:present?)
+      
+      footnotes.present? && footnote_ids.each_with_index do |node, i|
+        footnote = translation.foot_notes.create(text: footnotes[i].strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = text.gsub("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
+      end
+      
+      
+      if footnote_ids.blank? && footnotes.present?
+        footnote = translation.foot_notes.create(text: footnotes.join("\n"), language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = ("#{text}" "<sup foot_note=#{footnote.id}>1</sup>")
+      end
+      
+      translation.text = text
+      translation.save
+      
+      puts translation.id
+    end
+  end
+  
+  def parse_english_saheeh(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s).sub(/\d+./, '')
+      footnote = encode_and_clean_text(row[4].to_s)
+      
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+      
+      
+      if footnote.present?
+        _footnote = translation.foot_notes.create(text: footnote, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = ("#{text}" "<sup foot_note=#{_footnote.id}>1</sup>")
+      end
+      
+      translation.text = text
+      translation.save
+      
+      puts translation.id
+    end
+  end
+  
+  def parse_english_hilali_khan(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s).sub(/\d+./, '')
+      footnote = encode_and_clean_text(row[4].to_s)
+      
+      translation               = verse.translations.where(resource_content: resource).first_or_create
+      translation.language      = resource.language
+      translation.language_name = resource.language.name.downcase
+      translation.resource_name = resource.name
+      translation.foot_notes.delete_all
+      
+      footnote_ids = text.scan(/\[\d+\]/)
+      footnotes    = footnote.split(/\[\d+\]/).select(&:present?)
+      
+      footnote_ids.each_with_index do |node, i|
+        footnote = translation.foot_notes.create(text: footnotes[i].to_s.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = text.gsub("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
+      end
+      
+      if footnote_ids.blank? && footnotes.present?
+        footnote = translation.foot_notes.create(text: footnotes.join("\n"), language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+        
+        text = ("#{text}" "<sup foot_note=#{footnote.id}>1</sup>")
+      end
+      
+      translation.text = text
+      translation.save
+      
+      puts translation.id
+    end
+  end
+  
+  def parse_albanian_nahi(rows, resource)
+    footnote_resource_content = ResourceContent.where({
+                                                        author_id:        resource.author_id,
+                                                        author_name:      resource.author.name,
+                                                        resource_type:    "content",
+                                                        sub_type:         "footnote",
+                                                        name:             resource.name,
+                                                        description:      "#{resource.name} footnotes",
+                                                        cardinality_type: "1_ayah",
+                                                        language_id:      resource.language.id,
+                                                        language_name:    resource.language.name.downcase,
+                                                      }).first_or_create
+    
+    rows.each do |row|
+      verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+      
+      text     = encode_and_clean_text(row[3].to_s)
+      footnote = encode_and_clean_text(row[4].to_s)
+      
+      if footnote.blank?
+        parse_translation_and_footnote(verse, encode_and_clean_text(row[3].to_s), resource)
+      else
+        translation               = verse.translations.where(resource_content: resource).first_or_create
+        translation.language      = resource.language
+        translation.language_name = resource.language.name.downcase
+        translation.resource_name = resource.name
+        translation.foot_notes.delete_all
+        
+        footnote_ids = text.scan(/\[\d+\]/)
+        footnotes    = footnote.split(/\[\d+\]/).select(&:present?)
+        
+        footnote_ids.each_with_index do |node, i|
+          footnote = translation.foot_notes.create(text: footnotes[i].to_s.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
+          
+          text = text.gsub("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
+        end
+        translation.text = text
+        translation.save
+        
+        puts translation.id
+      end
+    end
+  end
+  
+  def parse_translation_and_footnote(verse, text, resource)
+    translation               = verse.translations.where(resource_content: resource).first_or_create
+    translation.language      = resource.language
+    translation.language_name = resource.language.name.downcase
+    translation.resource_name = resource.name
+    
+    translation.text = text.strip
+    translation.save
+    puts translation.id
+  end
   
   task import_quranenc_translations: :environment do
+    PaperTrail.enabled = false
+    
     require 'csv'
+    data_source = DataSource.find_or_create_by(name: 'Quranenc', url: 'https://quranenc.com')
     
     resource_content_mapping = {
-      albanian_nahi:       88,
-      amharic_sadiq:       87,
-      assamese_rafeeq:     { language: 10, author_name: 'Shaykh Rafeequl Islam Habibur-Rahman' },
-      bosnian_korkut:      25,
+      albanian_nahi: { language: 187, author_name: 'Hasan Efendi Nahi' }, #88,
+      amharic_sadiq: { language: 6, author_name: 'Sadiq and Sani' }, #87,
+      assamese_rafeeq: { language: 10, author_name: 'Shaykh Rafeequl Islam Habibur-Rahman' },
+      bosnian_korkut:  { language: 23, author_name: 'Besim Korkut' }, #25,
       chinese_makin:       { language: 185, author_name: 'Makin' },
       english_hilali_khan: { language: 38, author_name: 'Muhammad Taqi-ud-Din al-Hilali and Muhammad Muhsin Khan' },
-      english_saheeh:      20,
-      french_hameedullah:  31,
-      hausa_gummi:         { language: 188, author_name: 'Abubakar Mahmood Jummi' },
-      hindi_omari:         { language: 60, author_name: 'Maulana Azizul Haque al-Umari' },
-      indonesian_sabiq:    { language: 33, author_name: 'Sabiq' },
-      japanese_meta:       35,
-      kazakh_altai:        { language: 189, author_name: 'Khalifah Altai' },
-      khmer_cambodia:      { language: 190, author_name: 'Cambodian Muslim Community Development' },
-      nepali_central:      { language: 116, author_name: 'Ahl Al-Hadith Central Society of Nepal' },
-      oromo_ababor:        { language: 126, author_name: 'Ghali Apapur Apaghuna' },
-      pashto_zakaria:      { language: 132, author_name: 'Zakaria' },
-      portuguese_nasr:     { language: 133, author_name: 'Nasr' },
-      turkish_shaban:      { language: 167, author_name: 'Shaban Britch' },
-      turkish_shahin:      { language: 167, author_name: 'Muslim Shahin' },
-      urdu_junagarhi:      54,
-      uzbek_sadiq:         55,
-      uzbek_mansour:       { language: 175, author_name: 'Alauddin Mansour' },
-      yoruba_mikail:       { language: 183, author_name: 'Shaykh Abu Rahimah Mikael Aykyuni' }
+      english_saheeh:      { language: 38, author_name: 'Saheeh International' }, #20,
+      french_hameedullah: { language: 49, author_name: 'Muhammad Hamidullah' }, #31,
+      hausa_gummi:      { language: 188, author_name: 'Abubakar Mahmood Jummi' },
+      hindi_omari:      { language: 60, author_name: 'Maulana Azizul Haque al-Umari' },
+      indonesian_sabiq: { language: 33, author_name: 'Sabiq' },
+      japanese_meta:    { language: 76, author_name: 'Ryoichi Mita' }, #35,
+      kazakh_altai:    { language: 189, author_name: 'Khalifah Altai' },
+      khmer_cambodia:  { language: 190, author_name: 'Cambodian Muslim Community Development' },
+      nepali_central:  { language: 116, author_name: 'Ahl Al-Hadith Central Society of Nepal' },
+      oromo_ababor:    { language: 126, author_name: 'Ghali Apapur Apaghuna' },
+      pashto_zakaria:  { language: 132, author_name: 'Zakaria' },
+      portuguese_nasr: { language: 133, author_name: 'Nasr' },
+      turkish_shaban:  { language: 167, author_name: 'Shaban Britch' },
+      turkish_shahin:  { language: 167, author_name: 'Muslim Shahin' },
+      urdu_junagarhi:  { language: 174, author_name: 'مولانا محمد جوناگڑھی' }, #54,
+      uzbek_sadiq: { language: 175, author_name: 'Muhammad Sodik Muhammad Yusuf' }, #55,
+      uzbek_mansour: { language: 175, author_name: 'Alauddin Mansour' },
+      yoruba_mikail: { language: 183, author_name: 'Shaykh Abu Rahimah Mikael Aykyuni' }
     }
     
-    Dir['data/csv/*'].each do |file|
-      translation_name = split('/').last.split('.').first
+    footnotes = ['albanian_nahi', 'english_hilali_khan', 'english_saheeh', 'hausa_gummi', 'hindi_omari', 'indonesian_sabiq', 'portuguese_nasr',
+                 'urdu_junagarhi', 'uzbek_mansour', 'uzbek_sadiq', 'yoruba_mikail'
+    ]
+    
+    Dir['csv/*'].each do |file|
+      translation_name = file.split('/').last.split('.').first
+      
       resource = if resource_content_mapping[translation_name.to_sym].is_a?(Hash)
                    language = Language.find(resource_content_mapping[translation_name.to_sym][:language])
-                   ResourceContent.create()
+                   author   = Author.find_or_create_by(name: resource_content_mapping[translation_name.to_sym][:author_name])
+                   ResourceContent.find_or_create_by(
+                     language:         language,
+                     data_source:      data_source,
+                     author_name:      author.name,
+                     author:           author,
+                     language_name:    language.name.downcase,
+                     cardinality_type: ResourceContent::CardinalityType::OneVerse,
+                     sub_type:         ResourceContent::SubType::Translation,
+                     resource_type:    ResourceContent::ResourceType::Content,
+                     )
                  else
                    ResourceContent.find(resource_content_mapping[translation_name.to_sym])
                  end
       
+      resource.update_attribute :name, author.name
       rows = CSV.open(file).read
-    
+      if footnotes.include?(translation_name)
+        send "parse_#{translation_name}", rows[1..rows.length], resource
+      else
+        rows[1..rows.length].each do |row|
+          verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+          
+          parse_translation_and_footnote(verse, encode_and_clean_text(row[3].to_s), resource)
+        end
+      end
     end
-  
   end
   
   task import_ukrainian_with_footnote: :environment do
@@ -99,7 +625,7 @@ namespace :one_time do
           
           footnote = translation.foot_notes.create(text: footnote_text, language: language, language_name: language.name.downcase, resource_content: footnote_resource_content)
           
-          text = text.gsub!("[#{number}]#{number}", "<sup foot_note=#{footnote.id}>#{f_i + 1}</sup>")
+          text = text.gsub("[#{number}]#{number}", "<sup foot_note=#{footnote.id}>#{f_i + 1}</sup>")
         end
         
         translation.text          = text.strip
@@ -182,7 +708,7 @@ namespace :one_time do
         footnote_text = process_foot_note_text(docs.search(footnote_id).first.parent.parent)
         footnote      = translation.foot_notes.create(text: footnote_text, language: language, language_name: 'english', resource_content: footnote_resource_content)
         
-        text = text.gsub!("[#{number}]", "<sup foot_note=#{footnote.id}>#{f_i + 1}</sup>")
+        text = text.gsub("[#{number}]", "<sup foot_note=#{footnote.id}>#{f_i + 1}</sup>")
       end
       
       translation.text          = text.strip
