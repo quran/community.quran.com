@@ -1,4 +1,3 @@
-$ABC = true
 namespace :one_time do
   def encode_and_clean_text(text)
     if text.valid_encoding?
