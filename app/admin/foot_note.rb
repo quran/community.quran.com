@@ -22,6 +22,7 @@ ActiveAdmin.register FootNote do
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
   end
+  
 # See permitted parameters documentation:
 # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 #
@@ -29,11 +30,9 @@ ActiveAdmin.register FootNote do
 #
 # or
 #
-# permit_params do
-#   permitted = [:permitted, :attributes]
-#   permitted << :other if params[:action] == 'create' && current_user.admin?
-#   permitted
-# end
+ permit_params do
+  [:language_id, :resource_content_id, :text, :resource_type, :language_name]
+ end
 
 
 end
