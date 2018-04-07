@@ -14,6 +14,12 @@
 # Configure Using Gemfile
 # gem 'pg'
 #
+quran_api_db_dev:
+  adapter: postgresql
+  encoding: unicode
+  database: quran_dev
+  schema_search_path: quran,"$user",public
+
 quran_api_db:
   adapter: postgresql
   encoding: unicode
