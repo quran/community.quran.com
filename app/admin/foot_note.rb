@@ -33,6 +33,4 @@ ActiveAdmin.register FootNote do
  permit_params do
   [:language_id, :resource_content_id, :text, :resource_type, :language_name]
  end
-
-
 end
