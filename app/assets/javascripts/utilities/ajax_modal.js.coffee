@@ -16,7 +16,7 @@ class Utility.AjaxModal
       @modal.find('.modal-content').html data
       that.modal.modal('show')
       callback(that.modal) if callback?
-      $("body").trigger "ajax_modal:loaded", [@modal]
+      $('body').modalmanager('removeLoading');
 
   body: ->
     @modal
@@ -33,11 +33,10 @@ class Utility.AjaxModal
       "aria-hidden": "true"
       'data-backdrop': "static"
       'data-keyboard': "false"
-    ).html('<div class="modal-content"> </div>')
+    ).html('<div class="modal-dialog" role="document"><div class="modal-content"></div></div>')
 
     dialog.appendTo "body"
-
-    if @dialogClass?
-      dialog.addClass(@dialogClass)
-
     $('#ajax-modal')
+
+
+  

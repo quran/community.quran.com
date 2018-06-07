@@ -92,7 +92,7 @@
         </td>
         <td>
           <% if word.arabic_transliteration %>
-            <%= link_to '#_', remote: true, data: {url: proof_read_comments_path(id: word.arabic_transliteration.id, resource: word.arabic_transliteration.class.to_s), toggle: "ajax-modal"} do %>
+            <%= link_to '#_', remote: true, data: {url: proof_read_comments_path(resource_id: word.arabic_transliteration.id, resource: word.arabic_transliteration.class.to_s), toggle: "ajax-modal"} do %>
               <i class="fa fa-comment"></i> Comments
             <% end %>
           <% end %>

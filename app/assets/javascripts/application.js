@@ -13,6 +13,7 @@
 //= require jquery3
 //= require jquery_ujs
 //= require turbolinks
+//= require bootstrap-modalmanager
 //= require jquery-ui-position.min
 //= require rails_script
 //= require_tree ./controllers

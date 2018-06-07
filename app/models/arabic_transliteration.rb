@@ -5,4 +5,8 @@ class ArabicTransliteration < QuranApiRecord
   has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
 
   delegate :text_simple, :location, to: :word
+  
+  def name
+    text
+  end
 end
