@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   resources :arabic_transliterations
+  resources :proof_read_comments
 end
