@@ -73,6 +73,8 @@ ActiveAdmin.register ResourceContent do
       f.input :slug
       f.input :approved
       f.input :language
+      f.input :language_name
+
       f.input :cardinality_type, as: :select, collection: ResourceContent.collection_for_cardinality_type
       f.input :resource_type, as: :select, collection: ResourceContent.collection_for_resource_type
       f.input :sub_type, as: :select, collection: ResourceContent.collection_for_sub_type
