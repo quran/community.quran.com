@@ -18,6 +18,17 @@ class Verse < QuranApiRecord
   has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
   
   accepts_nested_attributes_for :arabic_transliterations
+
+  def self.verses_with_no_arabic_translitration
+    Verse
+      .select('verses.*, count(words.*) as missing_transliteration_count')
+      .joins(:words)
+      .joins("left OUTER JOIN arabic_transliterations on arabic_transliterations.word_id = words.id")
+      .where('arabic_transliterations.text is null')
+      .where('words.char_type_id = 1')
+      .preload(:actual_words)
+      .group('verses.id')
+  end
   
   def self.verses_with_missing_arabic_translitration
     Verse

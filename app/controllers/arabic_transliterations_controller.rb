@@ -45,6 +45,8 @@ class ArabicTransliterationsController < ApplicationController
     verses = case params[:filter_progress]
                when 'completed'
                  Verse.verse_with_full_arabic_transliterations
+               when 'missing'
+                 Verse.verses_with_no_arabic_translitration
                when 'all'
                  Verse.verse_with_words_and_arabic_transliterations
                else
