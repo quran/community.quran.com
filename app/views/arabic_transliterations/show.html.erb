@@ -4,7 +4,10 @@
     
     <span class=" pull-right">
       <%= link_to 'Contribute', new_arabic_transliteration_path(ayah: @verse.id), class: 'btn btn-success' %>
-      <%= link_to 'Next ayah', new_arabic_transliteration_path(ayah: @verse.id + 1), class: 'btn btn-success' %>
+  
+      <%= link_to 'Previous ayah', arabic_transliteration_path(@verse.id + 1), class: 'btn btn-success' %>
+      <%= link_to 'Next ayah', arabic_transliteration_path(@verse.id + 1), class: 'btn btn-success' %>
+      
       <%= link_to 'Back to filter', arabic_transliterations_path, class: 'btn btn-success' %>
     </span>
   </h1>
@@ -37,6 +40,15 @@
       </li>
     </ul>
     </p>
+  </div>
+  
+  <div id="editor-wrap">
+    <div class="form-group">
+      <%= select_tag :change_page, options_for_select(1..980, @predicted_page), class: 'form-control', data: { placeholder: 'Jump to page' } %>
+      <p class="help-block">Jump to page number</p>
+    </div>
+    
+    <canvas></canvas>
   </div>
   
   <p class="lead">

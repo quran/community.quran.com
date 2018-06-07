@@ -3,6 +3,7 @@ class ExportTranslationJob < ApplicationJob
   STORAGE_PATH = "public/exported_databses"
 
   def perform(resource_id, original_file_name)
+    require 'mechanize'
     file_name = original_file_name.chomp('.db')
 
     file_path = "#{STORAGE_PATH}/#{Time.now.to_i}"

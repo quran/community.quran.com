@@ -17,6 +17,9 @@ class ArabicTransliterationsController < ApplicationController
     indopak          = @verse.text_indopak.strip.split(/\s+/)
     pause_mark_count = 0
     @arabic_transliterations = []
+    saved_page      = @verse.arabic_transliterations.detect(&:page_number)
+    @predicted_page = saved_page&.page_number || (@verse.page_number * 1.6666).to_i
+
     @verse.words.order('position asc').each_with_index do |word, i|
       next if word.char_type_name == 'end'
       transliteration = @verse.arabic_transliterations.find_or_initialize_by(word_id: word.id)
@@ -26,12 +29,11 @@ class ArabicTransliterationsController < ApplicationController
       else
         pause_mark_count += 1
       end
+      
+      transliteration.page_number ||= @predicted_page
 
       @arabic_transliterations << transliteration
     end
-    
-    saved_page      = @verse.arabic_transliterations.detect(&:page_number)
-    @predicted_page = saved_page&.page_number || (@verse.page_number * 1.6666).to_i
     
     to_javascript page_number: @predicted_page,
                   page_zoom:   saved_page&.zoom,
@@ -69,23 +71,23 @@ class ArabicTransliterationsController < ApplicationController
   
   def create
     verse = Verse.find(params[:verse_id])
+
     verse.update_attributes(arabic_transliterations_params)
     redirect_to arabic_transliteration_path(verse), notice: "Saved successfully"
   end
   
   protected
   def arabic_transliterations_params
-    params.require(:verse).permit arabic_transliterations_attributes:
-                                    [
-                                      :id,
-                                      :indopak_text,
-                                      :text,
-                                      :word_id,
-                                      :page_number,
-                                      :position_x,
-                                      :position_y,
-                                      :zoom
-                                    ]
+    params.require(:verse).permit arabic_transliterations_attributes: [
+                                                                        :id,
+                                                                        :indopak_text,
+                                                                        :text,
+                                                                        :word_id,
+                                                                        :page_number,
+                                                                        :position_x,
+                                                                        :position_y,
+                                                                        :zoom
+                                                                      ]
   end
 
 end
