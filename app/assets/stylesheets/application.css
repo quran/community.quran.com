@@ -13,6 +13,8 @@
  *= require_self
  *= require home
  *= require fonts
+ *= require bootstrap-modal
  *= require jquery-ui-position.min
  *= require transliteration
+ *= require proof_read_comments
  */
