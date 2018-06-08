@@ -74,7 +74,8 @@ class ArabicTransliterationsController < ApplicationController
   def create
     verse = Verse.find(params[:verse_id])
 
-    verse.update_attributes(arabic_transliterations_params)
+    verse.attributes = arabic_transliterations_params
+    verse.save validate: false
     redirect_to arabic_transliteration_path(verse), notice: "Saved successfully"
   end
   
