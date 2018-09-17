@@ -3,6 +3,10 @@ ActiveAdmin.register Tafsir do
   actions :all, except: :destroy
   ActiveAdminViewHelpers.versionate(self)
 
+  permit_params do
+    [:text, :verse_id, :language_name, :language_id, :resource_content_id, :resource_name, :verse_key]
+  end
+  
   filter :verse_id
   filter :language
 

@@ -499,6 +499,28 @@ namespace :one_time do
     puts translation.id
   end
   
+  task import_ur_ibne_kathir: :environment do
+    class UrTafsir < ActiveRecord::Base
+    end
+    PaperTrail.enabled = false
+
+    UrTafsir.establish_connection({
+                                    adapter:  'sqlite3',
+                                    database: "#{Rails.root}/ibnekathir.ur.db"
+    
+                                  })
+
+    UrTafsir.table_name='verses'
+    l = Language.find_by_iso_code('ur')
+    data_source = DataSource.where(name: "GreentechApps", url: 'https://github.com/GreentechApps/').first_or_create
+    resource = ResourceContent.where(author_id: 96, data_source: data_source, author_name: "ابن كثير", resource_type: "content", sub_type: "tafsir", name: "ابن كثيراردو", description: nil, cardinality_type: "1_ayah", language_id: l.id, language_name: l.name.downcase, slug: "ur_ibn_kathir").first_or_create
+  
+    UrTafsir.all.each do |t|
+      verse = Verse.find_by_verse_key("#{t.sura}:#{t.ayah}")
+      Tafsir.where(verse_key: verse.verse_key, verse_id: verse.id, language_id: l.id, resource_content_id: resource.id).first_or_create.update_attributes(text: t.text, language_name: l.name.downcase, resource_name: resource.name)
+    end
+  end
+  
   task import_quranenc_translations: :environment do
     PaperTrail.enabled = false
     
