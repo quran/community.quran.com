@@ -4,10 +4,10 @@ module SystemUtils
   class DbBackup
     include ActionView::Helpers::NumberHelper
     STORAGE_PATH = "#{Rails.root}/database_dumps/"
-    attr_writer :config, :backup_name
+    attr_reader :config, :backup_name
     
     def self.run
-      databases.each do |db, config|
+      databases.each do |key, config|
         SystemUtils::DbBackup.new(key, config).run
       end
     end
@@ -25,11 +25,11 @@ module SystemUtils
       system pg_dump_command
       
       compress
-      upload_to_gcs
+      upload
       clean_up
     end
     
-    def upload_to_gcs
+    def upload
       # Upload file to google cloud storage
       backup      = DatabaseBackup.new(database_name: backup_name)
       backup.size = number_to_human_size(File.size(dump_file_name))
@@ -51,11 +51,10 @@ module SystemUtils
     protected
     
     def pg_dump_command
-      password_argument = "PGPASSWORD='#{config['password']}'" if config['password'].present?
-      host_argument     = "--host=#{config['host']}" if config['host'].present?
-      port_argument     = "--port=#{config['port']}" if config['port'].present?
-      username_argument = "--username=#{config['username']}" if config['username'].present?
-      
+      password_argument = "PGPASSWORD='#{config[:password]}'" if config[:password].present?
+      host_argument     = "--host=#{config[:host]}" if config[:host].present?
+      port_argument     = "--port=#{config[:port]}" if config[:port].present?
+      username_argument = "--username=#{config[:username]}" if config[:username].present?
       
       [password_argument, # pass the password to pg_dump (if any)
        'pg_dump', # the pg_dump command
@@ -66,18 +65,21 @@ module SystemUtils
        host_argument, # the hostname to connect to (if any)
        port_argument, # the port to connect to (if any)
        username_argument, # the username to connect as (if any)
-       db_conf['database'] # the name of the database to dump
+       config[:database] # the name of the database to dump
       ].join(' ')
     end
     
     def dump_file_name
-      @dump_filename ||= "#{STORAGE_PATH}/#{config[:database_name]}-#{Time.now.strftime('%b-%d-%Y-%I:%M-%P')}.sql"
+      @dump_filename ||= "#{STORAGE_PATH}/#{backup_name}-#{Time.now.strftime('%b-%d-%Y-%I:%M-%P')}.sql"
     end
     
     def self.databases
       {
         community_staging: {
-          database: 'quran_community',
+          host: ENV['COMMUNITY_DB_PORT_5432_TCP_ADDR'],
+          port: ENV['COMMUNITY_DB_PORT_5432_TCP_PORT'],
+          database: 'quran_dev',
+          password: 'dev_quran'
         },
         api_stagging: {
           host: ENV['POSTGRES_PORT_5432_TCP_ADDR'],

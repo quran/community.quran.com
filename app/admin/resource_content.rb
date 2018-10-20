@@ -22,8 +22,10 @@ ActiveAdmin.register ResourceContent do
   end
 
   member_action :export_sqlite, method: 'put' do
+    resource = ResourceContent.find_by(id: params[:translation] || params[:id])
+    #TODO: use sidekie
     file_path = ExportTranslationJob.new.perform(resource.id, params[:resource_content][:name])
-
+    
     send_file file_path
   end
  

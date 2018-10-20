@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class BackupJob < ApplicationJob
-  include Sidekiq::Worker
+  queue_as :default
 
   def perform
-    if Rails.env.production?
-      require "#{Rails.root}/lib/system_utils/db_backup.rb"
+    if Rails.env.staging? || true
+      require "#{Rails.root}/lib/utils/db_backup.rb"
       SystemUtils::DbBackup.run
 
       # Delete old dumps

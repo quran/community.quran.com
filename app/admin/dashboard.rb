@@ -7,7 +7,7 @@ ActiveAdmin.register_page "Dashboard" do
       panel "Recent changes (Total #{PaperTrail::Version.count}) #{link_to 'View all changes', '/admin/content_changes'}".html_safe do
         table_for PaperTrail::Version.order('id desc').limit(20) do # Use PaperTrail::Version if this throws an error
           column ("ID") { |v| link_to v.id, "/admin/content_changes/#{v.id}" }
-          column ("Item") { |v| link_to v.item_type, [:admin, v.item, version: v.index] }
+          column ("Item") { |v| v.item_type }
           column ("Event") { |v| v.event }
           column ("Modified at") { |v| v.created_at.to_s :long }
           column ("Admin") { |v| link_to(AdminUser.find(v.whodunnit).email, [:admin, AdminUser.find(v.whodunnit)]) if AdminUser.find_by_id(v.whodunnit) }
@@ -18,7 +18,7 @@ ActiveAdmin.register_page "Dashboard" do
     columns do
       column do
         panel "Export Translation as SQLite DB" do
-          form_tag export_sqlite_admin_resource_contents_path, method: 'put' do |form|
+          form_tag export_sqlite_admin_resource_content_path(1), method: 'put' do |form|
             translations = ResourceContent.translations.one_verse.approved
             label_tag(:translation, "Select translation") +
             select_tag(:translation, options_from_collection_for_select(translations, :id, :name)) +

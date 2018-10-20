@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.3.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 5.0.0.1'
+gem 'rails', '>= 5.2.1'
 # Use postgresql as the database for Active Record
 gem 'pg'
 gem 'sqlite3'
@@ -33,7 +33,7 @@ gem 'turbolinks', '~> 5'
 gem 'activeadmin', '~> 1.3.1'
 gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'activeadmin-async_panel'
-gem 'paper_trail', '~> 6.0.2'
+gem 'paper_trail', '~> 10.0.1'
 
 gem "twitter-bootstrap-rails"
 gem 'bootstrap-kaminari-views'
@@ -44,9 +44,6 @@ gem 'nokogiri', '= 1.8.2'
 # authentication
 gem 'devise'
 gem 'newrelic_rpm'
-
-# exception tracking
-gem "sentry-raven"
 
 # Generate embed code and get metadata of video etc
 gem 'video_info'
@@ -62,6 +59,11 @@ group :development, :test do
   gem 'byebug', platform: :mri
 end
 
+group :staging do
+  # exception tracking
+  gem "sentry-raven", require: false
+end
+
 group :development do
   # Gems we used for optimizing fonts. Might need them in future.
   # gem 'convert_font'
@@ -72,8 +74,8 @@ group :development do
   gem 'web-console'
   gem 'listen', '~> 3.0.5'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  # gem 'spring'
+  # gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'pry-byebug'
   gem 'annotate'
   gem 'pry-rails'
@@ -86,5 +88,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'sidekiq', '~> 5.2.2'
 gem 'sidekiq-scheduler', '~> 3.0.0'
 gem 'sinatra', require: false
-gem 'carrierwave', '~> 1.0'
+gem 'carrierwave', '~> 1.2.3'
 gem "fog-aws"

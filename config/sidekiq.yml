@@ -1,4 +1,6 @@
 :concurrency: 1
+:queues:
+  - [default, 1]
 :schedule:
   daily_backup_job:
     class: BackupJob
