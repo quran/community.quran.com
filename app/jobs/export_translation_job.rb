@@ -1,9 +1,8 @@
 class ExportTranslationJob < ApplicationJob
   queue_as :default
-  STORAGE_PATH = "public/exported_databses"
+  STORAGE_PATH = "public/assets/exported_databses"
 
   def perform(resource_id, original_file_name)
-    require 'mechanize'
     resource_content = ResourceContent.find(resource_id)
     
     file_name = (original_file_name.presence || resource_content).chomp('.db')
@@ -14,17 +13,11 @@ class ExportTranslationJob < ApplicationJob
 
     prepare_db("#{file_path}/#{file_name}.db")
 
-    ExportRecord.connection.execute " INSERT INTO verses (sura, ayah, text)
-                                     VALUES #{prepare_import_sql(resource_id)}
-                                   "
+    ExportRecord.connection.execute("INSERT INTO verses (sura, ayah, text)
+                                     VALUES #{prepare_import_sql(resource_content)}")
     # zip the file
     `bzip2 #{file_path}/#{file_name}.db`
 
-    src_path = "#{Rails.root}/#{file_path}/#{file_name}.db.bz2"
-    dest_path =  "#{Rails.root}/public/assets/#{file_name}.db.bz2"
-    
-    `cp #{src_path} #{dest_path}`
-    
     # return the db file path
     "#{file_path}/#{file_name}.db.bz2"
   end
@@ -37,13 +30,21 @@ class ExportTranslationJob < ApplicationJob
     ExportRecord.table_name = 'verses'
   end
 
-  def prepare_import_sql(resource_id)
-    Verse.eager_load(:translations).
-      where('translations.resource_content_id': resource_id).
-      map do |v|
-      translation = ExportRecord.connection.quote(v.translations.first.text)
-      "(#{v.chapter_id}, #{v.verse_number}, #{translation})"
-    end.join(',')
+  def prepare_import_sql(resource)
+    if resource.tafisr?
+      Tafsir.where(resource_content: resource).map do |tafsir|
+        verse_key =  tafsir.verse_key.split(':')
+        text = ExportRecord.connection.quote(tafsir.text)
+        "(#{verse_key[0]}, #{verse_key[1]}, #{text})"
+      end.join(',')
+    else
+      Verse.eager_load(:translations).
+        where('translations.resource_content_id': resource.id)
+        .map do |v|
+          translation = ExportRecord.connection.quote(v.translations.first.text)
+          "(#{v.chapter_id}, #{v.verse_number}, #{translation})"
+        end.join(',')
+    end
   end
 
   def connection_config(file_name)

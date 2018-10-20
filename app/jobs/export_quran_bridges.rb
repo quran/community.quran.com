@@ -24,21 +24,29 @@ class ExportQuranBridges < ApplicationJob
   def prepare_db(file_path)
     BSurah.establish_connection connection_config(file_path)
     BAyah.establish_connection connection_config(file_path)
-    
-    # Object.connection.execute "CREATE VIRTUAL TABLE objects using fts3( id integer, name string)"
+    BJuz.establish_connection connection_config(file_path)
+
     BSurah.connection.execute "CREATE TABLE surah(surah_number integer, name_english string, name_arabic string, en_translated_name string, ayah_count integer, revelation_place string, revelation_order integer, bismillah_pre boolean, pages string, primary key(surah_number))"
-
-    BAyah.connection.execute "CREATE TABLE ayah(ayah_number integer,surah_id integer, page integer, arabic text,ayah_key string, id integer, primary key(id))"
-
+    BAyah.connection.execute "CREATE TABLE ayah(ayah_number integer,surah_id integer, page integer, arabic_uthmani text, arabic_indopak text,ayah_key string, id integer, ayah_group integer, primary key(id))"
+    BJuz.connection.execute "CREATE TABLE juzs(juz_number integer, ayah_mapping text, primary key(juz_number))"
 
     BSurah.table_name         = 'surah'
     BAyah.table_name = 'ayah'
-    
-    #ObjectProperty.connection.execute "CREATE  INDEX 'index_objects_properties' ON 'objects_properties' ('version')"
-    #ObjectFilter.connection.execute "CREATE  INDEX 'index_filters' ON 'filters' ('filter')"
+    BJuz.table_name = 'juzs'
+
+    BAyah.connection.execute "CREATE  INDEX 'index_ayah_group' ON 'ayah' ('ayah_group')"
   end
   
   def prepare_import_sql()
+    Juz.order('juz_number asc').each do |juz|
+      BJuz.create(
+            {
+              juz_number: juz.juz_number,
+              ayah_mapping: juz.verse_mapping.to_json
+            }
+      )
+    end
+    
     Chapter.order('chapter_number asc').each do |chapter|
       BSurah.create({
                      surah_number: chapter.chapter_number,
@@ -57,7 +65,8 @@ class ExportQuranBridges < ApplicationJob
                        ayah_number: verse.verse_number,
                        surah_id: verse.chapter_id,
                        page: verse.page_number,
-                       arabic: verse.text_madani,
+                       arabic_uthmani: verse.text_madani,
+                       arabic_indopak: verse.text_indopak,
                        ayah_key: verse.verse_key,
                        id: verse.verse_index
                      })
@@ -76,5 +85,9 @@ class ExportQuranBridges < ApplicationJob
 
   class BAyah < ActiveRecord::Base
   end
+
+  class BJuz < ActiveRecord::Base
+  end
+
 end
 

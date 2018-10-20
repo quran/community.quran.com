@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 namespace :exports do
+=begin
   task export_wbw_for_mobile: :environment do
     #
     # style,resource,source,author,tafsir,surah_infos,
@@ -111,4 +112,5 @@ namespace :exports do
       database: file_name
     }
   end
+=end
 end

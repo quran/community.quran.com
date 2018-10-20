@@ -26,12 +26,6 @@ ActiveAdmin.register ResourceContent do
 
     send_file file_path
   end
-
-  collection_action :export_sqlite, method: 'put' do
-    file_path = ExportTranslationJob.new.perform(params[:translation], params[:name])
-  
-    send_file file_path
-  end
  
   index do
     id_column
@@ -74,6 +68,8 @@ ActiveAdmin.register ResourceContent do
       f.input :approved
       f.input :language
       f.input :language_name
+      f.input :priority
+
 
       f.input :cardinality_type, as: :select, collection: ResourceContent.collection_for_cardinality_type
       f.input :resource_type, as: :select, collection: ResourceContent.collection_for_resource_type

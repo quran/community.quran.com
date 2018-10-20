@@ -53,6 +53,7 @@ ActiveAdmin.register Verse do
       row :verse_stem do |object|
         link_to_if object.verse_stem, object.verse_stem&.text_madani, [:admin, object.verse_stem]
       end
+      
       row :verse_root do |object|
         link_to_if object.verse_root, object.verse_root&.value, [:admin, object.verse_root]
       end

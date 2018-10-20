@@ -1,4 +1,5 @@
 namespace :one_time do
+=begin
   def encode_and_clean_text(text)
     if text.valid_encoding?
       text
@@ -886,4 +887,6 @@ namespace :one_time do
       end
     end
   end
+  
+=end
 end

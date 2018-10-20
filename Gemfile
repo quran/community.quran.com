@@ -30,7 +30,7 @@ gem 'turbolinks', '~> 5'
 # gem 'capistrano-rails', group: :development
 
 #Admin panel
-gem 'activeadmin', '~> 1.0.0.pre4'
+gem 'activeadmin', '~> 1.3.1'
 gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'activeadmin-async_panel'
 gem 'paper_trail', '~> 6.0.2'
@@ -40,25 +40,18 @@ gem 'bootstrap-kaminari-views'
 gem 'rails_script', '~> 2.0'
 
 gem 'nokogiri', '= 1.8.2'
-#
-# gem 'convert_font'
-#gem 'svg_optimizer'
-#gem 'htmlentities'
 
-#Yumme community as PWA
-gem 'serviceworker-rails'
-
-#authentication
+# authentication
 gem 'devise'
 gem 'newrelic_rpm'
 
-#exception tracking
+# exception tracking
 gem "sentry-raven"
 
 # Generate embed code and get metadata of video etc
 gem 'video_info'
 
-#github.com/JeremyGeros/differ
+# github.com/JeremyGeros/differ
 gem 'diffy'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -70,6 +63,11 @@ group :development, :test do
 end
 
 group :development do
+  # Gems we used for optimizing fonts. Might need them in future.
+  # gem 'convert_font'
+  # gem 'svg_optimizer'
+  # gem 'htmlentities'
+  
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console'
   gem 'listen', '~> 3.0.5'
@@ -84,3 +82,9 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+gem 'sidekiq', '~> 5.2.2'
+gem 'sidekiq-scheduler', '~> 3.0.0'
+gem 'sinatra', require: false
+gem 'carrierwave', '~> 1.0'
+gem "fog-aws"

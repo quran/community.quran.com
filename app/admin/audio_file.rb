@@ -12,6 +12,12 @@ ActiveAdmin.register AudioFile do
   end
 
   permit_params do
-    [:resource_type, :resource_id, :url, :duration, :segments, :recitation_id]
+    [
+      :resource_type,
+      :resource_id, :url,
+      :duration,
+      :segments,
+      :recitation_id
+    ]
   end
 end

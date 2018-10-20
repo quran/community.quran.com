@@ -1,6 +1,7 @@
 ActiveAdmin.register Tafsir do
   menu parent: "Content"
   actions :all, except: :destroy
+ 
   ActiveAdminViewHelpers.versionate(self)
 
   permit_params do
@@ -9,6 +10,9 @@ ActiveAdmin.register Tafsir do
   
   filter :verse_id
   filter :language
+  filter :resource_content, as: :select, collection: -> do
+    ResourceContent.where(sub_type: ResourceContent::SubType::Tafsir)
+  end
 
   index do
     id_column

@@ -1,0 +1,6 @@
+:concurrency: 1
+:schedule:
+  daily_backup_job:
+    class: BackupJob
+    cron: '0 12 * * *'
+    description: 'Daily DB backup job'

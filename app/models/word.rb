@@ -33,8 +33,4 @@ class Word < QuranApiRecord
   def code_v3
     "&#x#{code_hex_v3};"
   end
-
-  def audio
-    "//audio.recitequran.com/wbw/arabic/wisam_sharieff/#{audio_url}"
-  end
 end

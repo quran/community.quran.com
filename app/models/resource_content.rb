@@ -10,6 +10,8 @@ class ResourceContent < QuranApiRecord
   belongs_to :author
   belongs_to :language
   belongs_to :data_source
+  
+  after_update :update_related_content
 
   module CardinalityType
     OneVerse = '1_ayah'
@@ -80,6 +82,13 @@ class ResourceContent < QuranApiRecord
       ResourceContent::CardinalityType.constants.map do |c|
         ResourceContent::CardinalityType.const_get c
       end
+    end
+  end
+  
+  protected
+  def update_related_content
+    if translation? && priority_changed?
+      Translation.where(resource_content_id: id).update_all priority: priority
     end
   end
 end
