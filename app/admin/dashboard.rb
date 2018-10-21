@@ -38,5 +38,11 @@ ActiveAdmin.register_page "Dashboard" do
         end
       end
     end
+    
+    columns do
+      column do
+        p ENV['REDIS_TOGO_URL']
+      end
+    end
   end
 end
