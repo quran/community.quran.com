@@ -30,6 +30,8 @@ ActiveAdmin.register_page "Dashboard" do
       
       column do
         panel "Export Word as SQLite DB" do
+          p "REDIS: #{ENV['REDIS_TOGO_URL']}"
+  
           form_tag export_sqlite_admin_words_path, method: 'put' do |form|
             label_tag(:name, "Filename") +
             text_field_tag(:name, 'words', placeholder: 'Enter filename') +
@@ -41,7 +43,7 @@ ActiveAdmin.register_page "Dashboard" do
     
     columns do
       column do
-        p ENV['REDIS_TOGO_URL']
+        p "REDIS: #{ENV['REDIS_TOGO_URL']}"
       end
     end
   end
