@@ -10,6 +10,8 @@ module SystemUtils
       databases.each do |key, config|
         SystemUtils::DbBackup.new(key, config).run
       end
+
+      FileUtils.rm_rf(STORAGE_PATH)
     end
     
     def initialize(key, db_config)
@@ -22,7 +24,6 @@ module SystemUtils
       FileUtils.mkdir_p STORAGE_PATH
       
       # create the dump
-      "docker exec -i -t community.db.quran.com  #{command}"
       system pg_dump_command
       
       compress
@@ -39,7 +40,6 @@ module SystemUtils
     end
     
     def clean_up
-      FileUtils.rm_rf(STORAGE_PATH)
     end
     
     def compress
@@ -79,8 +79,9 @@ module SystemUtils
         community_staging: {
           host: ENV['COMMUNITY_DB_PORT_5432_TCP_ADDR'],
           port: ENV['COMMUNITY_DB_PORT_5432_TCP_PORT'],
-          database: 'quran_dev',
-          password: 'dev_quran'
+          database: 'quran_community',
+          password: 'dev_quran',
+          username: 'quran_dev'
         },
         api_stagging: {
           host: ENV['POSTGRES_PORT_5432_TCP_ADDR'],
