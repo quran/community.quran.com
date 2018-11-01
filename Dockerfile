@@ -29,10 +29,6 @@ ADD docker/gzip.conf /etc/nginx/conf.d/gzip.conf
 COPY docker/nginx.logrotate.conf /etc/logrotate.d/nginx
 RUN cp /etc/cron.daily/logrotate /etc/cron.hourly
 
-# pg_dump utility
-ADD . /pg_dump_install.sh
-RUN /pg_dump_install.sh
-
 # setup gems
 WORKDIR /tmp
 ADD Gemfile Gemfile
