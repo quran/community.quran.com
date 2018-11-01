@@ -10,6 +10,7 @@ CMD ["/sbin/my_init"]
 RUN /pd_build/ruby-2.3.*.sh
 RUN /pd_build/redis.sh
 
+
 ENV RAILS_ENV production
 
 # native passenger

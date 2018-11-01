@@ -3,13 +3,15 @@
 module SystemUtils
   class DbBackup
     include ActionView::Helpers::NumberHelper
-    STORAGE_PATH = "#{Rails.root}/database_dumps/"
+    STORAGE_PATH = "#{Rails.root}/database_dumps"
     attr_reader :config, :backup_name
     
     def self.run
       databases.each do |key, config|
         SystemUtils::DbBackup.new(key, config).run
       end
+
+      FileUtils.rm_rf(STORAGE_PATH)
     end
     
     def initialize(key, db_config)
@@ -38,7 +40,6 @@ module SystemUtils
     end
     
     def clean_up
-      FileUtils.rm_rf(STORAGE_PATH)
     end
     
     def compress
@@ -78,8 +79,9 @@ module SystemUtils
         community_staging: {
           host: ENV['COMMUNITY_DB_PORT_5432_TCP_ADDR'],
           port: ENV['COMMUNITY_DB_PORT_5432_TCP_PORT'],
-          database: 'quran_dev',
-          password: 'dev_quran'
+          database: 'quran_community',
+          password: 'dev_quran',
+          username: 'quran_dev'
         },
         api_stagging: {
           host: ENV['POSTGRES_PORT_5432_TCP_ADDR'],
