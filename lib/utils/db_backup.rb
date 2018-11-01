@@ -3,7 +3,7 @@
 module SystemUtils
   class DbBackup
     include ActionView::Helpers::NumberHelper
-    STORAGE_PATH = "#{Rails.root}/database_dumps/"
+    STORAGE_PATH = "#{Rails.root}/database_dumps"
     attr_reader :config, :backup_name
     
     def self.run
@@ -22,6 +22,7 @@ module SystemUtils
       FileUtils.mkdir_p STORAGE_PATH
       
       # create the dump
+      "docker exec -i -t community.db.quran.com  #{command}"
       system pg_dump_command
       
       compress
