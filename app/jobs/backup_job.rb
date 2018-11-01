@@ -4,7 +4,7 @@ class BackupJob < ApplicationJob
   queue_as :default
 
   def perform
-    if Rails.env.staging? || true
+    if Rails.env.production?
       require "#{Rails.root}/lib/utils/db_backup.rb"
       SystemUtils::DbBackup.run
 

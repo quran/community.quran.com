@@ -57,9 +57,10 @@ module SystemUtils
       port_argument     = "--port=#{config[:port]}" if config[:port].present?
       username_argument = "--username=#{config[:username]}" if config[:username].present?
       
-      [password_argument, # pass the password to pg_dump (if any)
+      # '--schema=public', # only public schema
+  
+        [password_argument, # pass the password to pg_dump (if any)
        'pg_dump', # the pg_dump command
-       '--schema=public', # only public schema
        "--file='#{dump_file_name}'", # output to the dump.sql file
        '--no-owner', # do not output commands to set ownership of objects
        '--no-privileges', # prevent dumping of access privileges
