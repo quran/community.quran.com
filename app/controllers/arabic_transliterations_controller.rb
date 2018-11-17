@@ -84,6 +84,7 @@ class ArabicTransliterationsController < ApplicationController
     params.require(:verse).permit arabic_transliterations_attributes: [
                                                                         :id,
                                                                         :indopak_text,
+                                                                        :ur_translation,
                                                                         :text,
                                                                         :word_id,
                                                                         :page_number,

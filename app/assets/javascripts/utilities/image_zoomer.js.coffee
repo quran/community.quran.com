@@ -1,5 +1,6 @@
 class Utility.ImageZoomer
   constructor: (imgUrl) ->
+    @zoomVal=0;
     @canvas = document.getElementsByTagName('canvas')[0]
     @image = new Image
     @ctx = @canvas.getContext('2d')
@@ -11,7 +12,7 @@ class Utility.ImageZoomer
     @redraw()
     @bindEvents()
     return this
-    
+
   changeImage: (newUrl) =>
     @image.src = newUrl
     @redraw()
@@ -20,8 +21,13 @@ class Utility.ImageZoomer
     @lastX = x
     @lastY = y
     
+  savePosition: (x,y)=>
+    $(".pos-x").val(x)
+    $(".pos-y").val(y)
+    
   zoom: (clicks) =>
-    $(".word-zoom").val(clicks)
+    @zoomVal += clicks
+    $(".zoom").val(@zoomVal)
 
     scaleFactor = 1.1
     pt = @ctx.transformedPoint(@lastX, @lastY)
@@ -47,9 +53,10 @@ class Utility.ImageZoomer
     that = @
     @canvas.addEventListener 'mousedown', ((evt) ->
       document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none'
-      lastX = evt.offsetX or evt.pageX - (that.canvas.offsetLeft)
-      lastY = evt.offsetY or evt.pageY - (that.canvas.offsetTop)
-      dragStart = that.ctx.transformedPoint(lastX, lastY)
+      that.lastX = evt.offsetX or evt.pageX - (that.canvas.offsetLeft)
+      that.lastY = evt.offsetY or evt.pageY - (that.canvas.offsetTop)
+      that.savePosition(that.lastX, that.lastY)
+      dragStart = that.ctx.transformedPoint(that.lastX, that.lastY)
       dragged = false
       return
     ), false
@@ -78,10 +85,10 @@ class Utility.ImageZoomer
     # Clear the entire canvas
     p1 = @ctx.transformedPoint(0, 0)
     p2 = @ctx.transformedPoint(@canvas.width, @canvas.height)
-    @ctx.clearRect p1.x, p1.y, p2.x - (p1.x), p2.y - (p1.y)
     @ctx.save()
     @ctx.setTransform 1, 0, 0, 1, 0, 0
     @ctx.clearRect 0, 0, @canvas.width, @canvas.height
+
     @ctx.restore()
     @ctx.drawImage @image, 0, 0
     return
