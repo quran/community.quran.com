@@ -71,7 +71,7 @@ ActiveAdmin.register Word do
       end
       
       row :image do |resource|
-        image_tag resource.image_url if resource.image_url
+        # image_tag resource.image_url if resource.image_url
       end
       
       row :image_blob
