@@ -59,6 +59,8 @@ ActiveAdmin.register ResourceContent do
       row :slug
       row :author
       row :data_source
+      row :mobile_translation_id
+      row :sqlite_file_url
     end
   end
 
@@ -71,6 +73,7 @@ ActiveAdmin.register ResourceContent do
       f.input :language
       f.input :language_name
       f.input :priority
+      f.input :mobile_translation_id
 
 
       f.input :cardinality_type, as: :select, collection: ResourceContent.collection_for_cardinality_type
@@ -84,7 +87,19 @@ ActiveAdmin.register ResourceContent do
   end
 
   permit_params do
-    [:name, :author_name, :approved, :language_id, :cardinality_type, :resource_type, :sub_type, :author_id, :data_source_id, :slug]
+    [
+        :name,
+        :author_name,
+        :approved,
+        :language_id,
+        :cardinality_type,
+        :resource_type,
+        :sub_type,
+        :author_id,
+        :data_source_id,
+        :slug,
+        :mobile_translation_id
+    ]
   end
 
   def scoped_collection

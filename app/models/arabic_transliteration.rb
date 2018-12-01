@@ -9,4 +9,8 @@ class ArabicTransliteration < QuranApiRecord
   def name
     text
   end
+  
+  def get_word
+    
+  end
 end
