@@ -1,4 +1,6 @@
 class Verse < QuranApiRecord
+  has_paper_trail on: [:update, :destroy], ignore: [:created_at, :updated_at]
+
   belongs_to :chapter, inverse_of: :verses, counter_cache: true
   belongs_to :verse_root
   belongs_to :verse_lemma
@@ -14,9 +16,7 @@ class Verse < QuranApiRecord
   has_many :recitations, through: :audio_files
   has_many :roots, through: :words
   has_many :arabic_transliterations
-  
-  has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
-  
+
   accepts_nested_attributes_for :arabic_transliterations
 
   def self.verses_with_no_arabic_translitration

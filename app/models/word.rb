@@ -1,4 +1,6 @@
 class Word < QuranApiRecord
+  has_paper_trail on: [:update, :destroy], ignore: [:created_at, :updated_at]
+
   belongs_to :verse
   belongs_to :char_type
   belongs_to :topic
@@ -23,8 +25,6 @@ class Word < QuranApiRecord
 
   has_one :word_corpus
   has_one :arabic_transliteration
-
-  has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
 
   def code
     "&#x#{code_hex};"

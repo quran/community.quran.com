@@ -45,8 +45,13 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
     attributes_table "Version details" do
       row :id
       row :item_type do
-        link_to resource.item_type, [:admin, resource.item, version: resource.index]
+        if resource.item
+          link_to resource.item_type, [:admin, resource.item, version: resource.index]
+        else
+          resource.item_type
+        end
       end
+
       row :event
       row :user do
         link_to AdminUser.find_by_id(resource.whodunnit).try(:email), [:admin, AdminUser.find_by_id(resource.whodunnit)] rescue "Unknown"
@@ -72,7 +77,7 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
       if previous = resource.previous
         previous = previous.reify
         current  = resource.reify
-        
+
         attributes_table_for previous do
           current.attributes.each do |key, val|
             row key do
@@ -81,6 +86,8 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
             end
           end
         end
+      else
+        "This resource don't have previous version."
       end
     end
   end
