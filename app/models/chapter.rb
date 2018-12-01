@@ -7,5 +7,5 @@ class Chapter < QuranApiRecord
 
   alias_method :name, :id
 
-  has_paper_trail on: [:update, :destroy, :create], ignore: [:created_at, :updated_at]
+  has_paper_trail on: :update, ignore: [:created_at, :updated_at]
 end

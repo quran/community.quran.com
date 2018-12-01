@@ -60,10 +60,10 @@
               <div class="col-lg-3">
                 <div class="form-group">
                   <% ur = trans_form.object.ur_translation.presence ||  trans_form.object&.word&.ur_translation&.text %>
-                  <%= trans_form.text_field :ur_translation, value: ur, class: 'form-control indopak' %>
+                  <%= trans_form.text_field :ur_translation, value: ur, class: 'form-control' %>
                   <p class="help-block">
-                    <span class="indopak">
-                       <%= trans_form.object&.word&.ur_translation&.text %>
+                    <span>
+                       <%= trans_form.object&.word&.en_translation&.text %>
                     </span>
                   </p>
                 </div>
