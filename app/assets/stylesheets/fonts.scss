@@ -20,7 +20,7 @@ body{
 
 @font-face {
   font-family: 'pdms';
-  src: font-url('_PDMS_Saleem_QuranFont.ttf') format('truetype');
+  src: font-url('PDMS_Saleem_QuranFont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -54,9 +54,10 @@ body{
 
 .indopak{
   font-family: pdms;
-  direction: rtl;
   font-size: 30px;
+  color: #000;
 }
+
 @font-face {
   font-family: quran_common_font;
   src: font-url('quran-common/quran_common.ttf');

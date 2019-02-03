@@ -3,8 +3,8 @@ class Word < QuranApiRecord
 
   belongs_to :verse
   belongs_to :char_type
-  belongs_to :topic
-  belongs_to :token
+  belongs_to :topic, optional: true
+  belongs_to :token, optional: true
 
   has_many :translations, as: :resource
   has_many :transliterations, as: :resource
@@ -17,7 +17,9 @@ class Word < QuranApiRecord
   has_one :root, through: :word_root
   has_one :pause_mark
   has_one  :audio_file, as: :resource
-  
+
+  has_one :ur_transliteration, -> { where language_name: 'urdu'}, class_name: 'Transliteration', as: :resource
+
   # Used for export translation
   ['en', 'id', 'bn', 'ur'].each do |lang|
     has_one "#{lang}_translation".to_sym, -> { where(language: Language.find_by_iso_code(lang)) }, class_name: 'Translation', as: :resource

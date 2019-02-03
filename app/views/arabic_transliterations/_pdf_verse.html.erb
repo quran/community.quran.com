@@ -1,0 +1,26 @@
+<div class="row verse">
+  <div class="col-md-12">
+    <p class="indopak wp-10 dotted">
+      <%= verse.verse_key %> <%= verse.text_indopak %>
+    </p>
+
+    <p class="indopak text-transliteration">
+      <%= verse.ur_transliteration.text.html_safe %>
+    </p>
+
+
+    <p class="indopak">
+      <% verse.words.order('position asc').each do |w| %>
+      <span class="word">
+        <span class="text">
+          <%= w.text_indopak %>
+        </span>
+
+        <span class="text">
+          <%= w.ur_transliteration&.text %>
+        </span>
+      </span>
+      <% end %>
+    </p>
+  </div>
+</div>

@@ -1,4 +1,6 @@
-class ArabicTransliterationsController < ApplicationController
+class ArabicTransliterationsController < CommunityController
+  skip_before_action :authenticate_user!, only: :render_surah
+
   def show
     @verse = Verse.includes(words: :arabic_transliteration).find(params[:id])
 
@@ -9,6 +11,12 @@ class ArabicTransliterationsController < ApplicationController
                   page_zoom:   saved_page&.zoom,
                   page_pos_x:  saved_page&.position_x,
                   page_pos_y:  saved_page&.position_y
+  end
+
+  def render_surah
+    @surah = Chapter.find(params[:id])
+
+    render layout: 'pdf'
   end
   
   def new

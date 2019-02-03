@@ -12,4 +12,8 @@
 class WordLemma < QuranApiRecord
   belongs_to :word
   belongs_to :lemma
+
+  def to_s
+    lemma&.text_madani
+  end
 end

@@ -76,11 +76,7 @@ ActiveAdmin.register Word do
       
       row :image_blob
       row :word_corpus
-      row :word_lemmas do |resource|
-        resource.word_lemmas.map do |w|
-          link_to w, [:admin, w]
-        end
-      end
+      row :word_lemma
     end
 
     if params[:version]

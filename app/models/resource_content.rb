@@ -87,8 +87,8 @@ class ResourceContent < QuranApiRecord
   
   protected
   def update_related_content
-    if translation? && priority_changed?
-      Translation.where(resource_content_id: id).update_all priority: priority
+    if translation? #&& priority_changed?
+      # Translation.where(resource_content_id: id).update_all priority: priority
     end
   end
 end

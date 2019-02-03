@@ -1,5 +1,235 @@
 namespace :one_time do
-=begin
+  task move_urdu_transliteration: :environment do
+    PaperTrail.enabled = false
+
+    urdu = Language.find_by(name: 'Urdu')
+    data_source = DataSource.find_by(name: 'Quran.com')
+    author = Author.where(name: "Quran.com").first_or_create
+    ur_translation_resource = ResourceContent.find(104)
+
+    ur_wbw_transliteration_resource = ResourceContent.where(
+        cardinality_type: ResourceContent::CardinalityType::OneWord,
+        resource_type: ResourceContent::ResourceType::Content,
+        sub_type: ResourceContent::SubType::Translation,
+        language: urdu,
+        author: author,
+        author_name: author.name,
+        data_source: data_source,
+        language_name: urdu.name.downcase,
+        slug: 'urdu-wbw-translation'
+     ).first_or_create
+
+    ur_ayah_transliteration_resource = ResourceContent.where(
+        cardinality_type: ResourceContent::CardinalityType::OneVerse,
+        resource_type: ResourceContent::ResourceType::Content,
+        sub_type: ResourceContent::SubType::Translation,
+        language: urdu,
+        author: author,
+        author_name: author.name,
+        data_source: data_source,
+        language_name: urdu.name.downcase,
+        slug: 'urdu-transliteration',
+        name: 'Urdu/Arabic Transliteration'
+    ).first_or_create
+
+
+    Translation.where(resource_content:ur_ayah_transliteration_resource).delete_all
+    Transliteration.where(resource_content:ur_wbw_transliteration_resource).delete_all
+
+
+    ArabicTransliteration.includes(:word).find_each do |a|
+       a.word.update_attributes!(text_indopak:  a.indopak_text) if a.indopak_text.presence
+
+       a.word.translations.where(language: urdu).first_or_create.update_attributes!(text: a.ur_translation, resource_content: ur_translation_resource, language_name: urdu.name.downcase)
+       a.word.transliterations.where(language: urdu).first_or_create!(text: a.text, resource_content: ur_wbw_transliteration_resource, language_name: urdu.name.downcase)
+    end
+
+    Verse.find_each do |v|
+     ur_transliteration = v.words.order('position asc').map do |w| "<span>#{w.arabic_transliteration&.text}</span>" end.join(' ')
+      # v.transliterations.where(language: urdu).first_or_create(text: ur_transliteration, resource_content: ur_ayah_transliteration_resource, language_name: urdu.name.downcase)
+     v.translations.where(resource_content: ur_ayah_transliteration_resource).first_or_create(text: ur_transliteration, language: urdu, language_name: urdu.name.downcase)
+    end
+
+  end
+
+  task format_indopak_num: :environment do
+    def change_number(n)
+      mapping = {
+          "٠" => "۰﻿",
+          "١" => "۱﻿",
+          "٢" => "۲﻿",
+          "٣" => "۳﻿",
+          "٤" => "۴﻿",
+          "٥" => "۵﻿",
+          "٦" => "۶﻿",
+          "٧" => "۷",
+          "٨" => "۸",
+          "٩" => "۹﻿"
+      }
+      n.chars.map do |c|
+        mapping[c]
+      end.join('')
+    end
+
+    ayah_marker= "(%{number})"
+    marker = "﴿%{number}﻿﴾"
+
+
+
+    File.open("output_6.txt", "wb") do |f|
+      content = File.open("input.txt").read
+      output = content.gsub(reg) do
+        format marker, number: change_number($1)
+      end
+      f << output
+    end
+  end
+
+  def process_foot_note_text_for_chechen(foot_note_node, chapter)
+      bold_dom = {
+          2 => 'c26',
+          4 => "c21",
+          5 => "c3 c13 c40",
+          10 => "c12 c30"
+      }
+     foot_note_node.search("span").each do |node|
+      if bold_dom[chapter.id]  && node.attr('class').to_s.strip == bold_dom[chapter.id]
+        node.name = "b"
+        node.remove_attribute("class")
+      end
+    end
+
+    # remove links
+    foot_note_node.search("a").remove
+
+    white_list_sanitizer = Rails::Html::WhiteListSanitizer.new
+
+    white_list_sanitizer.sanitize(foot_note_node.to_s.strip, tags: %w(div sup p ol ul li b), attributes: []).gsub(/[\r\n]+/, "<br/>")
+  end
+
+  task import_chechen_with_footnote: :environment do
+    PaperTrail.enabled = false
+
+    # issues
+    # 23 last ayah
+    # 35 last ayah
+    # 1 last ayah
+    # 62
+    # 9 last three ayah
+
+    # TODO: Fix author name
+    author   = Author.where(name: 'Magomed Magomedov').first_or_create
+    language = Language.find_by_name 'Chechen'
+    data_source = DataSource.where(name: "Movsar Bekaev - bekaev.movsar@gmail.com").first_or_create
+
+    resource_content = ResourceContent.where({
+                                                 author_id:        author.id,
+                                                 author_name:      author.name,
+                                                 resource_type:    "content",
+                                                 sub_type:         "translation",
+                                                 name:             author.name,
+                                                 description:      'Chechen',
+                                                 cardinality_type: "1_ayah",
+                                                 language_id:      language.id,
+                                                 language_name:    "chechen",
+                                                 slug:             'chechen-translation',
+                                                 data_source: data_source
+                                             }).first_or_create
+
+    footnote_resource_content = ResourceContent.where({
+                                                          author_id:        author.id,
+                                                          author_name:      author.name,
+                                                          resource_type:    "content",
+                                                          sub_type:         "footnote",
+                                                          name:             author.name,
+                                                          description:      "#{author.name} - Chechen translation",
+                                                          cardinality_type: "1_ayah",
+                                                          language_id:      language.id,
+                                                          language_name:    "chechen",
+                                                          slug:             'chechen-footnote',
+                                                          data_source: data_source
+                                                      }).first_or_create
+
+    translation=nil
+    Dir['chechen/*'].each do |f|
+      text = File.open(f).read
+      docs = Nokogiri.parse(text)
+      chapter = Chapter.find(f[/\d+/])
+
+      verses  = Verse.unscoped.where(chapter_id: chapter.id).order("verse_index ASC")
+
+      if docs.search("li").length != verses.count
+        binding.pry
+      end
+
+      docs.search("li").each_with_index do |verse_node, v_index|
+        text        = verse_node.text.strip
+        verse       = verses[v_index]
+        translation = verse.translations.where(resource_content: resource_content, language: language).first_or_initialize
+        translation.save validate: false
+        translation.foot_notes.delete_all
+
+        puts "TRANSLATIONS  #{translation.id}"
+
+        verse_node.search("a").each_with_index do |footnote_node, f_i|
+          footnote_id = footnote_node.attributes['href'].value
+          number      = footnote_id.scan(/\d/).join('')
+
+          footnote_text = process_foot_note_text_for_chechen(docs.search(footnote_id).first.parent.parent, chapter)
+          footnote      = translation.foot_notes.create(text: footnote_text, language: language, language_name: language.name.downcase, resource_content: footnote_resource_content)
+
+          text = text.gsub("[#{number}]", "<sup foot_note=#{footnote.id}>#{f_i + 1}</sup>")
+        end
+
+        translation.text          = text.strip
+        translation.language      = language
+        translation.language_name = language.name.downcase
+        translation.resource_name = resource_content.name
+        translation.save
+      end
+    end
+  end
+
+  def format_ayah_number(number)
+    # numbers = '۰,۱,۲,۳,۴,۵,۶,۷,۸,۹'.split(',')
+    numbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"]
+    ayah_marker = "﴿%{number}﴾"
+
+    r = /[١|٢|٤|٥|٣]/
+
+    text="بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ ١ ٱلۡحَمۡدُ لِلَّهِ رَبِّ ٱلۡعَٰلَمِينَ ٢ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ ٣ مَٰلِكِ يَوۡمِ ٱلدِّينِ ٤ إِيَّاكَ نَعۡبُدُ وَإِيَّاكَ نَسۡتَعِينُ ٥ ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ ٦ صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ ٧"
+
+    converted = number.to_s.chars.map do |c|
+      numbers[c.to_i]
+    end.join('')
+
+    format ayah_marker, number: converted
+  end
+
+  task export_indopak: :environment do
+    db = "#{Rails.root}/data/ar_naskh.db"
+
+    connection = {
+        adapter: 'sqlite3',
+        database: db
+    }
+
+    class ExportRecord < ActiveRecord::Base
+    end
+
+    ExportRecord.establish_connection connection
+    ExportRecord.table_name = 'arabic_text'
+
+    File.open "indopak_.txt", "wb" do |file|
+    Verse.order("verse_index ASC").each do |v|
+      #  ExportRecord.where(sura: v.chapter_id, ayah: v.verse_number).update_all text: "#{v.text_indopak}#{format_ayah_number v.verse_number}"
+      file.puts "#{v.text_indopak}#{format_ayah_number v.verse_number}"
+    end
+    end
+
+  end
+
+
   def encode_and_clean_text(text)
     if text.valid_encoding?
       text
@@ -35,7 +265,8 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
-      
+      translation.save
+
       footnote_ids = text.scan(/[\*]+\(\d+\)/)
       footnotes    = footnote.split(/[\*]+\d+./).select(&:present?)
       
@@ -70,19 +301,24 @@ namespace :one_time do
                                                         language_id:      resource.language.id,
                                                         language_name:    resource.language.name.downcase,
                                                       }).first_or_create
-    
+
+    resource.save
     rows.each do |row|
       verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
       
       text     = encode_and_clean_text(row[3].to_s)
       footnote = encode_and_clean_text(row[4].to_s)
-      
-      translation               = verse.translations.where(resource_content: resource).first_or_create
+
+
+      translation               = verse.translations.where(resource_content_id: resource.id).first_or_create
       translation.language      = resource.language
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
-      
+      translation.text = text
+
+      translation.save(validate: false) rescue translation.save
+
       if footnote.present?
         _footnote = translation.foot_notes.create(text: footnote, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
         
@@ -121,6 +357,7 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
+      translation.save
     
       if footnote.present?
         _footnote = translation.foot_notes.create(text: footnote.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
@@ -160,6 +397,7 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
+      translation.save
     
       if footnote.present?
         _footnote = translation.foot_notes.create(text: footnote.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
@@ -199,7 +437,8 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
-    
+      translation.save
+
       if footnote.present?
         _footnote = translation.foot_notes.create(text: footnote.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
       
@@ -238,7 +477,8 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
-      
+      translation.save
+
       footnote_ids = text.scan(/[\*]+/)
       footnotes    = footnote.split(/[\*]+/).select(&:present?)
       
@@ -287,6 +527,7 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
+      translation.save
       
       footnote_ids = text.scan(/\[\d+\]/)
       footnotes    = footnote.split(/\d+./).select(&:present?)
@@ -335,6 +576,7 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
+      translation.save
       
       footnote_ids = text.scan(/[\*]+/)
       footnotes    = footnote.split(/[\*]+/).select(&:present?)
@@ -383,6 +625,7 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
+      translation.save
       
       
       if footnote.present?
@@ -422,7 +665,8 @@ namespace :one_time do
       translation.language_name = resource.language.name.downcase
       translation.resource_name = resource.name
       translation.foot_notes.delete_all
-      
+      translation.save
+
       footnote_ids = text.scan(/\[\d+\]/)
       footnotes    = footnote.split(/\[\d+\]/).select(&:present?)
       
@@ -472,7 +716,8 @@ namespace :one_time do
         translation.language_name = resource.language.name.downcase
         translation.resource_name = resource.name
         translation.foot_notes.delete_all
-        
+        translation.save
+
         footnote_ids = text.scan(/\[\d+\]/)
         footnotes    = footnote.split(/\[\d+\]/).select(&:present?)
         
@@ -537,12 +782,12 @@ namespace :one_time do
       english_hilali_khan: { language: 38, author_name: 'Muhammad Taqi-ud-Din al-Hilali and Muhammad Muhsin Khan' },
       english_saheeh:      { language: 38, author_name: 'Saheeh International' }, #20,
       french_hameedullah: { language: 49, author_name: 'Muhammad Hamidullah' }, #31,
-      hausa_gummi:      { language: 188, author_name: 'Abubakar Mahmood Jummi' },
+      hausa_gummi:      { language: 58, author_name: 'Abubakar Mahmood Jummi' },
       hindi_omari:      { language: 60, author_name: 'Maulana Azizul Haque al-Umari' },
       indonesian_sabiq: { language: 33, author_name: 'Sabiq' },
       japanese_meta:    { language: 76, author_name: 'Ryoichi Mita' }, #35,
-      kazakh_altai:    { language: 189, author_name: 'Khalifah Altai' },
-      khmer_cambodia:  { language: 190, author_name: 'Cambodian Muslim Community Development' },
+      kazakh_altai:    { language: 82, author_name: 'Khalifah Altai' },
+      khmer_cambodia:  { language: 84, author_name: 'Cambodian Muslim Community Development' },
       nepali_central:  { language: 116, author_name: 'Ahl Al-Hadith Central Society of Nepal' },
       oromo_ababor:    { language: 126, author_name: 'Ghali Apapur Apaghuna' },
       pashto_zakaria:  { language: 132, author_name: 'Zakaria' },
@@ -558,14 +803,20 @@ namespace :one_time do
     footnotes = ['albanian_nahi', 'english_hilali_khan', 'english_saheeh', 'hausa_gummi', 'hindi_omari', 'indonesian_sabiq', 'portuguese_nasr',
                  'urdu_junagarhi', 'uzbek_mansour', 'uzbek_sadiq', 'yoruba_mikail'
     ]
+
+    tafsirs = ['arabic_mokhtasar']
     
-    Dir['csv/*'].each do |file|
+    Dir['csv/csv/*'].each do |file|
       translation_name = file.split('/').last.split('.').first
-      
-      resource = if resource_content_mapping[translation_name.to_sym].is_a?(Hash)
-                   language = Language.find(resource_content_mapping[translation_name.to_sym][:language])
-                   author   = Author.find_or_create_by(name: resource_content_mapping[translation_name.to_sym][:author_name])
-                   ResourceContent.find_or_create_by(
+
+      if resource_content_mapping[translation_name.to_sym].blank?
+        next
+      end
+
+      language = Language.find(resource_content_mapping[translation_name.to_sym][:language])
+      author   = Author.find_or_create_by(name: resource_content_mapping[translation_name.to_sym][:author_name])
+
+      resource =  ResourceContent.find_or_create_by(
                      language:         language,
                      data_source:      data_source,
                      author_name:      author.name,
@@ -575,11 +826,9 @@ namespace :one_time do
                      sub_type:         ResourceContent::SubType::Translation,
                      resource_type:    ResourceContent::ResourceType::Content,
                      )
-                 else
-                   ResourceContent.find(resource_content_mapping[translation_name.to_sym])
-                 end
-      
+
       resource.update_attribute :name, author.name
+
       rows = CSV.open(file).read
       if footnotes.include?(translation_name)
         send "parse_#{translation_name}", rows[1..rows.length], resource
@@ -638,7 +887,7 @@ namespace :one_time do
       if verse = Verse.find_by_verse_index(v_index + 1)
         translation = verse.translations.where(resource_content: resource_content).first_or_create
         translation.foot_notes.delete_all
-        
+
         verse_node.search("a").each_with_index do |footnote_node, f_i|
           footnote_id = footnote_node.attributes['href'].value
           number      = footnote_id.scan(/\d/).join('')
@@ -887,6 +1136,4 @@ namespace :one_time do
       end
     end
   end
-  
-=end
 end
