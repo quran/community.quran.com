@@ -17,7 +17,7 @@ class Verse < QuranApiRecord
   has_many :roots, through: :words
   has_many :arabic_transliterations
 
-  has_one :ur_transliteration, -> { where resource_content_id: 132}, class_name: 'Translation', as: :resource
+  has_one :ur_transliteration, -> { where resource_content_id: 130}, class_name: 'Translation', as: :resource
 
   accepts_nested_attributes_for :arabic_transliterations
 
