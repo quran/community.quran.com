@@ -1,3 +1,9 @@
 // Place all the styles related to the arabic_transliterations controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.ui-keyboard-57370, .ui-keyboard-57372, .ui-keyboard-57371{
+  span{
+    font-family: pdms;
+  }
+}

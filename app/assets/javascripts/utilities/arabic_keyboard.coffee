@@ -47,8 +47,9 @@ class Utility.ArabicKeyboard
         'alt': [
           "ْ ِ ٌ َ ً ُ   ٓ",
           "ٰ ء ي ئ ؤ ة إ أ آ ۛ",
+          "ۢ   ۖ  ۚ  ۛ  ٌ  ّ  ٓ  ۚ  ؕ   ۙ  " ,
           "{alt} {space} "
         ]
-        
+
       }
     ).addTyping(showTyping:true).previewKeyset()
