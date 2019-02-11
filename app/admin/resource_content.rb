@@ -90,6 +90,7 @@ ActiveAdmin.register ResourceContent do
     [
         :name,
         :author_name,
+        :language_name,
         :approved,
         :language_id,
         :cardinality_type,
@@ -98,6 +99,7 @@ ActiveAdmin.register ResourceContent do
         :author_id,
         :data_source_id,
         :slug,
+        :priority,
         :mobile_translation_id
     ]
   end

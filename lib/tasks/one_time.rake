@@ -930,17 +930,14 @@ namespace :one_time do
     
     author   = Author.where(name: 'Dr. Mustafa Khattab').first_or_create
     language = Language.find_by_name 'English'
+    data_source = DataSource.where(name: 'Quran.com').first_or_create
     
     url = "https://raw.githubusercontent.com/naveed-ahmad/Quran-text/master/cleanquran.html"
     
-    text = if Rails.env.development?
-             File.open("lib/data/cleanquran.html").read
-           else
-             open(url).read
-           end
-    
+    text = open(url).read
     docs = Nokogiri.parse(text)
-    
+    a=2
+
     resource_content = ResourceContent.where({
                                                author_id:        author.id,
                                                author_name:      author.name,
@@ -951,6 +948,7 @@ namespace :one_time do
                                                cardinality_type: "1_ayah",
                                                language_id:      language.id,
                                                language_name:    "english",
+                                               data_source: data_source,
                                                slug:             'clearquran-with-tafsir' }).first_or_create
     
     footnote_resource_content = ResourceContent.where({
@@ -958,11 +956,12 @@ namespace :one_time do
                                                         author_name:      author.name,
                                                         resource_type:    "content",
                                                         sub_type:         "footnote",
-                                                        name:             'Dr. Mustafa Khattab, The Clear Quran(With Tafsir)',
-                                                        description:      'Dr. Mustafa Khattab, The Clear Quran(With Tafsir)',
+                                                        name:             'Dr. Mustafa Khattab, The Clear Quran footnotes(With Tafsir)',
+                                                        description:      'Dr. Mustafa Khattab, The Clear Quran footnotes(With Tafsir)',
                                                         cardinality_type: "1_ayah",
                                                         language_id:      language.id,
                                                         language_name:    "english",
+                                                        data_source:       data_source,
                                                         slug:             'clearquran-with-tafsir-footnote' }).first_or_create
     
     
@@ -970,8 +969,13 @@ namespace :one_time do
       text        = verse_node.text.strip
       verse       = Verse.find_by_verse_index(v_index + 1)
       translation = verse.translations.where(resource_content: resource_content).first_or_create
+      translation.language = language
+      translation.language_name = language.name.downcase
+      translation.resource_name = resource_content.name
+
+      translation.save
       translation.foot_notes.delete_all
-      
+
       verse_node.search("a").each_with_index do |footnote_node, f_i|
         footnote_id = footnote_node.attributes['href'].value
         number      = footnote_id.scan(/\d/).join('')
@@ -983,9 +987,6 @@ namespace :one_time do
       end
       
       translation.text          = text.strip
-      translation.language      = language
-      translation.language_name = 'english'
-      translation.resource_name = resource_content.name
       translation.save
       puts "update translation #{translation.id}"
     end
