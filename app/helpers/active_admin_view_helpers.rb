@@ -92,5 +92,35 @@ module ActiveAdminViewHelpers
         end
       end
     end
+
+    def render_slugs(context)
+      context.sidebar "SLugs", only: :show do
+        div do
+          semantic_form_for [:admin, Slug.new] do |form|
+            form.input(:chapter_id, as: :hidden, input_html: { value: resource.id }) +
+                form.inputs(:slug, :locale) +
+                form.actions(:submit)
+          end
+        end
+
+        table do
+          thead do
+            td :id
+            td :slug
+            td :locale
+          end
+
+          tbody do
+            resource.slugs.each do |slug|
+              tr do
+                td slug.id
+                td slug.slug
+                td slug.locale
+              end
+            end
+          end
+        end
+      end
+    end
   end
 end

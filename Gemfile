@@ -50,7 +50,8 @@ gem 'video_info'
 
 # github.com/JeremyGeros/differ
 gem 'diffy'
-
+# For Slug generation
+gem 'babosa', require: false
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data'
 
