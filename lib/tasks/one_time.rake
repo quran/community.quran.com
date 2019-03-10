@@ -1,4 +1,23 @@
 namespace :one_time do
+  task add_slugs: :environment do
+    Chapter.includes(translated_names: :language).find_each do |c|
+      c.translated_names.each do |t|
+        c.add_slug(t.name, t.language.iso_code)
+
+        c.add_slug(c.name_simple, t.language.iso_code)
+        c.add_slug(c.name_complex, t.language.iso_code)
+
+        c.add_slug("surah #{c.name_simple}", t.language.iso_code)
+        c.add_slug("surah #{c.name_complex}", t.language.iso_code)
+
+        c.add_slug(c.name_arabic, 'ar')
+        c.add_slug("#{c.name_arabic} سورہ", 'ar')
+
+        c.add_slug("quran #{c.chapter_number.ordinalize} surah", 'en')
+      end
+    end
+  end
+
   task move_urdu_transliteration: :environment do
     PaperTrail.enabled = false
 

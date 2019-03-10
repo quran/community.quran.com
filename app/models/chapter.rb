@@ -13,6 +13,6 @@ class Chapter < QuranApiRecord
   def add_slug(slug, locale=nil)
     require 'babosa'
 
-    slugs.where(locale: locale.to_slug.normalize.to_s, slug: slug).first_or_create
+    slugs.where(locale: locale, slug: slug.to_slug.normalize.transliterate.to_s).first_or_create
   end
 end
