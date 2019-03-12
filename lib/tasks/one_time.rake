@@ -1,5 +1,13 @@
 namespace :one_time do
   task add_slugs: :environment do
+    PaperTrail.enabled = false
+    Translation.where(resource_content_id: [140, 133, 110, 35]).find_each do |trans|
+      trans.update_column :text, trans.text.gsub(/\d+[.]/, '').strip
+    end && true
+    Translation.where(resource_content_id: 95).find_each do |trans|
+      trans.update_column :text, trans.text.sub(/\(\d+:\d+\)\s/, '').strip
+    end
+    
     Chapter.includes(translated_names: :language).find_each do |c|
       c.translated_names.each do |t|
         c.add_slug(t.name, t.language.iso_code)
