@@ -589,13 +589,20 @@ namespace :quranenc_importer do
   end
 
   def create_translation(verse, text, resource)
-    translation = verse.translations.where(resource_content: resource).first_or_create
+    translation = verse.translations.where(resource_content_id: resource.id).first_or_create
     translation.language = resource.language
     translation.language_name = resource.language.name.downcase
     translation.resource_name = resource.name
 
     translation.text = encode_and_clean_text(text)
-    translation.save
+
+    begin
+      translation.save
+    rescue Exception => e
+      Translation.connection.reset_pk_sequence!('translations')
+      translation.save
+    end
+
     puts translation.id
 
     translation
@@ -605,7 +612,7 @@ namespace :quranenc_importer do
     rows.each do |row|
       verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
 
-      text = row[3].sub(/\d+-\d+/,'')
+      text = row[3].sub(/\d+-\d+/, '')
       create_translation(verse, text, resource)
     end
   end
@@ -732,7 +739,7 @@ namespace :quranenc_importer do
     rows.each do |row|
       verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
 
-      text = row[3].sub /\[\d+\]/, ''
+      text = row[3].sub(/\[\d+\]/, '')
       create_translation(verse, text, resource)
     end
   end
@@ -802,7 +809,9 @@ namespace :quranenc_importer do
         'hausa_gummi', 'hindi_omari', 'indonesian_sabiq', 'portuguese_nasr',
         'urdu_junagarhi', 'uzbek_mansour', 'uzbek_sadiq', 'yoruba_mikail',
         'french_montada', 'indonesian_affairs', 'indonesian_complex',
-        'spanish_garcia', 'spanish_montada_eu', 'tajik_khawaja'
+        'spanish_garcia', 'spanish_montada_eu', 'tajik_khawaja',
+        # Custom
+        'uyghur_saleh'
     ]
 
     tafsirs = ['arabic_mokhtasar']
@@ -817,7 +826,7 @@ namespace :quranenc_importer do
       resource = if mapping[:id]
                    ResourceContent.find(mapping[:id])
                  else
-                   ResourceContent.find_or_create_by(
+                   ResourceContent.where(
                        language: language,
                        data_source: data_source,
                        author_name: author.name,
@@ -826,18 +835,21 @@ namespace :quranenc_importer do
                        cardinality_type: ResourceContent::CardinalityType::OneVerse,
                        sub_type: ResourceContent::SubType::Translation,
                        resource_type: ResourceContent::ResourceType::Content,
-                   )
+                   ).first_or_create
                  end
 
       resource.update_attributes(name: author.name, data_source: data_source, author_name: author.name)
 
       rows = CSV.open(file).read
 
-      if translation_with_footnotes.include?(translation_name) || respond_to?("parse_#{translation_name}")
-        send "parse_#{translation_name}", rows[2..rows.length], resource
-      else
+      puts "Importing ================ #{mapping[:author_name]}==========="
+      has_custom_parser = send("parse_#{translation_name}", rows[2..rows.length], resource) rescue "nope"
+
+      if has_custom_parser == 'nope'
         rows[2..rows.length].each do |row|
           verse = Verse.find_by_verse_key("#{row[1]}:#{row[2]}")
+
+          puts "Importing ================ #{mapping[:author_name]}=========== #{row[1]}:#{row[2]}"
 
           create_translation(verse, row[3].to_s, resource)
         end

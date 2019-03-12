@@ -16,8 +16,9 @@ $(document).on 'ready page:load turbolinks:load', ->
       e.preventDefault()
       e.stopImmediatePropagation()
       footnoteId = $(this).attr('foot_note')
-      $.get("/admin/foot_notes/#{footnoteId}.json").success (data, status) =>
+      $.get "/admin/foot_notes/#{footnoteId}.json", {}, (data, status) =>
         $("<div>").html(data.text).addClass("#{data.language_name} footnote-dialog").appendTo("body").dialog()
+
 
   if $("#arabic_transliteration_text").length
     new Utility.ArabicKeyboard()
