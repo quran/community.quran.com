@@ -158,10 +158,12 @@ h1[id] {
     background-size: cover;
     background-position: center;
     width: 100%;
+    height: 300px;
   }
 
   .rgba-black-strong {
     background-color: rgba(0, 0, 0, .7);
+    height: 100%;
   }
 
   .card.card-image [class*=rgba-] {

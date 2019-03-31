@@ -52,8 +52,9 @@
   .btn, .help-block{font-family: Roboto;}
 }
 
-table .indopak{
-  direction: ltr;
+.indopak, .madani{
+  direction: rtl;
+  float: right;
 }
 
 .ui-keyboard-preview {

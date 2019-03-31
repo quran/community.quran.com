@@ -6,9 +6,9 @@ module SystemUtils
     STORAGE_PATH = "#{Rails.root}/database_dumps"
     attr_reader :config, :backup_name
     
-    def self.run
+    def self.run(tag)
       databases.each do |key, config|
-        SystemUtils::DbBackup.new(key, config).run
+        SystemUtils::DbBackup.new(key, config).run(tag)
       end
 
       FileUtils.rm_rf(STORAGE_PATH)
@@ -19,7 +19,7 @@ module SystemUtils
       @config = db_config
     end
     
-    def run
+    def run(tag)
       require 'fileutils'
       FileUtils.mkdir_p STORAGE_PATH
       
@@ -27,15 +27,17 @@ module SystemUtils
       system pg_dump_command
       
       compress
-      upload
+      upload(tag)
       clean_up
     end
     
-    def upload
+    def upload(tag=nil)
       # Upload file to google cloud storage
       backup      = DatabaseBackup.new(database_name: backup_name)
       backup.size = number_to_human_size(File.size(dump_file_name))
       backup.file = Rails.root.join(dump_file_name).open
+      backup.tag = tag
+
       backup.save
     end
     

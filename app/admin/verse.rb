@@ -58,21 +58,36 @@ ActiveAdmin.register Verse do
         link_to_if object.verse_root, object.verse_root&.value, [:admin, object.verse_root]
       end
       
-      row :text_madani do |object|
-        span class: 'quran-text' do
+      row "Text madani(Imlaei script)" do |object|
+        span class: 'quran-text me_quran' do
+          object.text_imlaei
+        end
+      end
+
+      row "Text madani(Uthmani script)" do |object|
+        span class: 'quran-text me_quran' do
           object.text_madani
         end
       end
-      row :text_simple do |object|
+
+      row "Text Simple(Imlaei)" do |object|
         span class: 'quran-text' do
           object.text_simple
         end
       end
-      row :text_indopak do |object|
+
+      row "Text Simple(Uthmani)" do |object|
         span class: 'quran-text' do
+          object.text_uthmani_simple
+        end
+      end
+
+      row :text_indopak do |object|
+        span class: 'quran-text indopak' do
           object.text_indopak.to_s.html_safe
         end
       end
+
       row :v2_fonts do |object|
         span do
           object.words.order("position ASC").each do |w|
@@ -107,8 +122,10 @@ ActiveAdmin.register Verse do
           td "Font v2"
           td "Font v3"
           td "Font (text v3)"
-          td "Text(Madani)"
-          td "Text(Simple)"
+          td "Text(Imlaei)"
+          td "Text(Uthmani)"
+          td "Text(Imlaei Simple)"
+          td "Text(Uthmani Simple)"
           td "Text(Indopak)"
           td "Char type"
         end
@@ -138,18 +155,22 @@ ActiveAdmin.register Verse do
               
               td class: 'quran-text' do
                 span class: "tp#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-                  w.text_madani
+                  w.text_imlaei
                 end
               end
               
-              td class: 'quran-text row-text_madani' do
+              td class: 'quran-text me_quran' do
                 w.text_madani
               end
               
-              td class: 'quran-text row-text_madani' do
+              td class: 'quran-text' do
                 w.text_simple
               end
-              
+
+              td class: 'quran-text' do
+                w.text_uthmani_simple
+              end
+
               td class: 'quran-text row-text_indopak' do
                 w.text_indopak
               end

@@ -69,4 +69,12 @@ class Verse < QuranApiRecord
     
     (100 - (missing_count / total_words.to_f)*100).to_i.abs
   end
+
+  def urdu_wbw_translation_progress
+    total_words = words.words.count
+    words_with_ur_translations = WbwTranslation.where(verse_id: id).count
+    missing_count = total_words - words_with_ur_translations
+
+    (100 - (missing_count / total_words.to_f)*100).to_i.abs
+  end
 end

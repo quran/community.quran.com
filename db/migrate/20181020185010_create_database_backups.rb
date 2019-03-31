@@ -4,6 +4,7 @@ class CreateDatabaseBackups < ActiveRecord::Migration[5.1]
       t.string :database_name
       t.string :file
       t.string :size
+      t.string :tag
 
       t.timestamps
     end

@@ -18,6 +18,9 @@ class Word < QuranApiRecord
   has_one :pause_mark
   has_one  :audio_file, as: :resource
 
+  # For now we're only proof reading Urdu data
+  has_one :wbw_translation
+
   has_one :ur_transliteration, -> { where language_name: 'urdu'}, class_name: 'Transliteration', as: :resource
 
   # Used for export translation
@@ -27,6 +30,8 @@ class Word < QuranApiRecord
 
   has_one :word_corpus
   has_one :arabic_transliteration
+
+  scope :words, -> { where char_type_id: 1}
 
   def code
     "&#x#{code_hex};"

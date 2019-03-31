@@ -17,4 +17,6 @@ Rails.application.routes.draw do
 
   resources :arabic_transliterations
   resources :proof_read_comments
+  resources :wbw_translations
+
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181020185010) do
+ActiveRecord::Schema.define(version: 2019_03_30_211620) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,6 +121,25 @@ ActiveRecord::Schema.define(version: 20181020185010) do
     t.string "whodunnit"
     t.text "object"
     t.datetime "created_at"
+  end
+
+  create_table "wbw_translations", force: :cascade do |t|
+    t.integer "language_id"
+    t.string "text"
+    t.integer "user_id"
+    t.boolean "approved"
+    t.integer "word_id"
+    t.string "text_madani"
+    t.string "text_indopak"
+    t.integer "chapter_id"
+    t.integer "verse_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved"], name: "index_wbw_translations_on_approved"
+    t.index ["chapter_id"], name: "index_wbw_translations_on_chapter_id"
+    t.index ["user_id"], name: "index_wbw_translations_on_user_id"
+    t.index ["verse_id"], name: "index_wbw_translations_on_verse_id"
+    t.index ["word_id"], name: "index_wbw_translations_on_word_id"
   end
 
 end

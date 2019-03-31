@@ -1,4 +1,18 @@
 namespace :one_time do
+  task prepare_uthmani_simple: :environment do
+    Verse.find_each do |v|
+      simple = v.text_madani.gsub(/\u06E6|\ufe80|\u06E5|\u064B|\u0670|\u0FBCx|\u0FB5x|\u0FBB6|\u0FE7x|\u0FC62|\u0FC61|\u0FC60|\u0FDF0|\u0FDF1|\u0066D|\u0061F|\u060F|\u060E|\u060D|\060C|\u060B|\u064C|\u064D|\u064E|\u064F|\u0650|\u0651|\u0652|\u0653|\u0654|\u0655|\u0656|\0657|\u0658/, '')
+
+      # "ٱ|إ|أ" => ا
+      simple = simple.gsub(/\u0671|\u0625|\u0623/, "\u0627".encode('utf-8'))
+
+      # الله => الله
+      simple = simple.gsub(/\u0627\u0644\u0644\u0647/, "\u0627\u0644\u0644\u0647".encode('utf-8'))
+
+      v.update_column :text_uthmani_simple, simple.gsub(/\u0671|\u0625|\u0623/, "\u0627".encode('utf-8'))
+    end
+  end
+
   task add_slugs: :environment do
     PaperTrail.enabled = false
     Translation.where(resource_content_id: [140, 133, 110, 35]).find_each do |trans|
@@ -7,7 +21,7 @@ namespace :one_time do
     Translation.where(resource_content_id: 95).find_each do |trans|
       trans.update_column :text, trans.text.sub(/\(\d+:\d+\)\s/, '').strip
     end
-    
+
     Chapter.includes(translated_names: :language).find_each do |c|
       c.translated_names.each do |t|
         c.add_slug(t.name, t.language.iso_code)
