@@ -2,7 +2,7 @@ window.Utility ||= {}
 
 class Utility.ArabicKeyboard
   constructor:  ->
-    $('textarea.transliteration, #arabic_transliteration_text').keyboard(
+    $('textarea.transliteration, #arabic_transliteration_text, .soft-keyboard').keyboard(
       autoAccept: false
       stayOpen: true
       layout: 'custom'
