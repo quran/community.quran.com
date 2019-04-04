@@ -11,8 +11,9 @@ class BackupJob < ApplicationJob
       # Delete old dumps
       db_dumps = DatabaseBackup.where(tag: nil).where("created_at < ?", 1.month.ago).order("created_at asc")
 
-      if db_dumps.count > 10
-        db_dumps.first(10).delete_all
+      if db_dumps.count > 30
+        # Lets keep first 30 backups. There are 3 dbs, so we're keeping 10 backups for each db
+        db_dumps.first(db_dumps.count-30).delete_all
       end
     end
   end

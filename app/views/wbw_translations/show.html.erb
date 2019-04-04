@@ -29,6 +29,14 @@
 
       <p class="indopak"> <%= @verse.text_indopak %></p>
     </div>
+
+    <% @verse.translations.each do |trans| %>
+    <div class="row">
+      <b><%= trans.resource_name %>:</b> <br/>
+
+      <p class="urdu"> <%= trans.text.html_safe  %></p>
+    </div>
+      <% end %>
   </div>
 </div>
 
@@ -47,7 +55,8 @@
     <th>Word id</th>
     <th>IndoPak text</th>
     <th>Uthmani text</th>
-    <th>Translation</th>
+    <th>En translation</th>
+    <th>Ur Translation</th>
     <th>Proofreading</th>
   </tr>
   </thead>
@@ -57,16 +66,26 @@
     <tr>
       <th scope="row"><%= word.position %></th>
 
-      <td class="indopak">
-        <%= word.wbw_translation&.indopak_text %>
+      <td>
+        <span class="indopak">
+        <%= word.wbw_translation&.text_indopak %>
+        </span>
       </td>
 
-      <td class="madani">
+      <td>
+         <span class="madani">
         <%= word.wbw_translation&.text_madani %>
+        </span>
       </td>
 
-      <td class="urdu">
-        <%= word.wbw_translation&.text %>
+      <td>
+        <%= word.en_translation&.text %>
+      </td>
+
+      <td>
+        <span class="urdu">
+          <%= word.wbw_translation&.text %>
+        </span>
       </td>
 
       <td>

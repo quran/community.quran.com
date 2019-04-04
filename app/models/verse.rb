@@ -16,10 +16,12 @@ class Verse < QuranApiRecord
   has_many :recitations, through: :audio_files
   has_many :roots, through: :words
   has_many :arabic_transliterations
+  has_many :wbw_translations
 
   has_one :ur_transliteration, -> { where resource_content_id: 130}, class_name: 'Translation', as: :resource
 
   accepts_nested_attributes_for :arabic_transliterations
+  accepts_nested_attributes_for :wbw_translations
 
   def self.verses_with_no_arabic_translitration
     Verse
