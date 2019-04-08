@@ -1,0 +1,46 @@
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th>Word id</th>
+    <th>IndoPak text</th>
+    <th>Uthmani text</th>
+    <th>En translation</th>
+    <th>Ur Translation</th>
+    <th>Proofreading</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @verse.words.order('position asc').each do |word| %>
+    <tr>
+      <th scope="row"><%= word.position %></th>
+
+      <td>
+        <span class="indopak">
+        <%= word.ur_wbw_translation&.text_indopak %>
+        </span>
+      </td>
+
+      <td>
+         <span class="madani">
+        <%= word.ur_wbw_translation&.text_madani %>
+        </span>
+      </td>
+
+      <td>
+        <%= word.en_translation&.text %>
+      </td>
+
+      <td>
+        <span class="urdu">
+          <%= word.ur_wbw_translation&.text %>
+        </span>
+      </td>
+
+      <td>
+
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

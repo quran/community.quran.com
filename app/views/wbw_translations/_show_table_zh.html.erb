@@ -1,0 +1,38 @@
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th>Word id</th>
+    <th>Uthmani text</th>
+    <th>En translation</th>
+    <th>Chinese Translation</th>
+    <th>Proofreading comments</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @verse.words.order('position asc').each do |word| %>
+    <tr>
+      <th scope="row"><%= word.position %></th>
+
+      <td>
+         <span class="madani">
+        <%= word.text_madani %>
+        </span>
+      </td>
+
+      <td>
+        <%= word.en_translation&.text %>
+      </td>
+
+      <td>
+        <span class="urdu">
+          <%= word.zh_wbw_translation&.text %>
+        </span>
+      </td>
+      <td>
+
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

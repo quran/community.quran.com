@@ -9,10 +9,17 @@
     </h4>
   </div>
 
-  <div class="col-md-12">
-    <b>Text Indopak</b>
-    <p class="indopak" id="ayah_text"><%= @verse.text_indopak %> </p>
-  </div>
+  <% if params[:language_id] == 174 %>
+    <div class="col-md-12">
+      <b>Text Indopak</b>
+      <p class="indopak" id="ayah_text"><%= @verse.text_indopak %> </p>
+    </div>
+
+    <div class="col-md-12">
+      <b>Text Imlaei</b>
+      <p class="madani" id="ayah_text"><%= @verse.text_imlaei %> </p>
+    </div>
+  <% end %>
 
   <div class="col-md-12">
     <b>Text madani</b>
@@ -20,53 +27,61 @@
   </div>
 
   <div class="col-md-12">
-    <b>Text Imlaei</b>
-    <p class="madani" id="ayah_text"><%= @verse.text_imlaei %> </p>
-  </div>
-
-  <div class="col-md-12">
     <% @verse.translations.each do |trans| %>
       <b><%= trans.resource_name %></b>
-      <p class="urdu" id="ayah_text"><%= trans.text.html_safe %> </p>
+      <p class="<%= trans.language_name %>" id="ayah_text"><%= trans.text.html_safe %> </p>
     <% end %>
   </div>
 
   <div class="col-md-12">
-    <%= form_for @verse, url: wbw_translations_path(verse_id: @verse.id), method: :post, html: {class: 'form', autocomplete: 'off'} do |form| %>
+    <%= form_for @verse, url: wbw_translations_path(verse_id: @verse.id, language_id: params[:language_id]), method: :post, html: {class: 'form', autocomplete: 'off'} do |form| %>
       <div id="words">
         <%= form.fields_for :wbw_translations, @wbw_translations do |trans_form| %>
           <%= trans_form.hidden_field :word_id %>
-          <%= trans_form.hidden_field :language_id, value: 174 %>
+          <%= trans_form.hidden_field :language_id, value: params[:language_id] %>
           <%# I know, i know. Its private app. So no problem exposing user id %>
           <%= trans_form.hidden_field :user_id, value: current_user.id %>
 
           <div class="well">
             <p>
-              Word# <%= trans_form.object.location %> (word type: <b><%= trans_form.object.char_type_name %> </b>: <span class="madani"><%= trans_form.object.text_imlaei %></span>)
+              Word# <%= trans_form.object.location %> (word type: <b><%= trans_form.object.char_type_name %> </b>:
+              <span class="madani"><%= trans_form.object.text_imlaei %></span>)
             </p>
-            <div class="row">
-              <div class="col-md-3">
-                <div class="form-group">
-                  <%= trans_form.text_field :text_madani, class: 'form-control madani' %>
-                  <p class="help-block">
-                    Text Madani.
-                  </p>
-                </div>
-              </div>
 
-              <div class="col-md-3">
-                <div class="form-group">
-                  <%= trans_form.text_field :text_indopak, class: 'form-control indopak' %>
-                  <p class="help-block">
-                    Text Indopak
-                  </p>
+            <div class="row">
+              <% if params[:language_id] == 174 %>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <%= trans_form.text_field :text_madani, class: 'form-control madani' %>
+                    <p class="help-block">
+                      Text Madani.
+                    </p>
+                  </div>
                 </div>
-              </div>
+
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <%= trans_form.text_field :text_indopak, class: 'form-control indopak' %>
+                    <p class="help-block">
+                      Text Indopak
+                    </p>
+                  </div>
+                </div>
+              <% end %>
 
               <div class="col-md-6">
                 <div class="form-group">
-                  <% ur = trans_form.object.text.presence || trans_form.object&.word&.ur_translation&.text %>
-                  <%= trans_form.text_field :text, value: ur, class: 'form-control urdu soft-keyboard' %>
+                  <%
+                    # LOTs of hard coding :( this is one time contribution form.
+                    # We can came back to refactor this if we started more wbw contribution projects
+                    # For Urdu, we're trying to suggest translation from existing data
+                    current_trans = if params[:language_id] == 174
+                                      trans_form.object.text.presence || trans_form.object&.word&.ur_translation&.text
+                                    else
+                                      trans_form.object.text.presence
+                                    end
+                  %>
+                  <%= trans_form.text_field :text, value: current_trans, class: "form-control #{'urdu' if params[:language_id] == 174}", placeholder: 'Enter wbw translation here' %>
                   <p class="help-block">
                     <%= trans_form.object.en_translation&.text %>
                   </p>

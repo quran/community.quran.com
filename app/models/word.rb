@@ -18,8 +18,8 @@ class Word < QuranApiRecord
   has_one :pause_mark
   has_one  :audio_file, as: :resource
 
-  # For now we're only proof reading Urdu data
-  has_one :wbw_translation
+  has_one :ur_wbw_translation, -> { where language_id: 174}, class_name: 'WbwTranslation'
+  has_one :zh_wbw_translation, -> { where language_id: 185}, class_name: 'WbwTranslation'
 
   has_one :ur_transliteration, -> { where language_name: 'urdu'}, class_name: 'Transliteration', as: :resource
 

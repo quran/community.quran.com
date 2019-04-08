@@ -1,14 +1,14 @@
 <div class="bs-docs-section">
   <h1 class="page-header">
-    Word by Word data of ayah: <%= @verse.verse_key %>
+    <%= @language.name %> - Word by Word data of ayah: <%= @verse.verse_key %>
 
     <span class=" pull-right">
-      <%= link_to 'Contribute', new_wbw_translation_path(ayah: @verse.id), class: 'btn btn-success' %>
+      <%= link_to 'Contribute', new_wbw_translation_path(ayah: @verse.id, language_id: params[:language_id]), class: 'btn btn-success' %>
 
-      <%= link_to 'Previous ayah', wbw_translation_path(@verse.id - 1), class: 'btn btn-success' %>
+      <%= link_to 'Previous ayah', wbw_translation_path(@verse.id - 1, language_id: params[:language_id]), class: 'btn btn-success' %>
       <%= link_to 'Next ayah', wbw_translation_path(@verse.id + 1), class: 'btn btn-success' %>
 
-      <%= link_to 'Back to filter', wbw_translations_path, class: 'btn btn-success' %>
+      <%= link_to 'Back to filter', wbw_translations_path(language_id: params[:language_id]), class: 'btn btn-success' %>
     </span>
   </h1>
 
@@ -31,70 +31,33 @@
     </div>
 
     <% @verse.translations.each do |trans| %>
-    <div class="row">
-      <b><%= trans.resource_name %>:</b> <br/>
+      <div class="row">
+        <b><%= trans.resource_name %>:</b> <br/>
 
-      <p class="urdu"> <%= trans.text.html_safe  %></p>
-    </div>
-      <% end %>
+        <p class="urdu"> <%= trans.text.html_safe %></p>
+      </div>
+    <% end %>
   </div>
 </div>
 
 <p class="lead">
+  <%
+    progress = if params[:language_id] == 174
+                 @verse.urdu_wbw_translation_progress
+               else
+                 @verse.chinese_wbw_translation_progress
+               end
+  %>
+
   Proofreading progress
 <div class="progress">
-  <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="<%= @verse.urdu_wbw_translation_progress %>" aria-valuemin="0" aria-valuemax="100" style="min-width: 1em;width: <%= @verse.urdu_wbw_translation_progress %>%;">
-    <%= @verse.urdu_wbw_translation_progress %>%
+  <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="<%= progress %>" aria-valuemin="0" aria-valuemax="100" style="min-width: 1em;width: <%= progress%>%;">
+    <%= progress %>%
   </div>
 </div>
 </p>
 
-<table class="table table-hover">
-  <thead>
-  <tr>
-    <th>Word id</th>
-    <th>IndoPak text</th>
-    <th>Uthmani text</th>
-    <th>En translation</th>
-    <th>Ur Translation</th>
-    <th>Proofreading</th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <% @verse.words.order('position asc').each do |word| %>
-    <tr>
-      <th scope="row"><%= word.position %></th>
-
-      <td>
-        <span class="indopak">
-        <%= word.wbw_translation&.text_indopak %>
-        </span>
-      </td>
-
-      <td>
-         <span class="madani">
-        <%= word.wbw_translation&.text_madani %>
-        </span>
-      </td>
-
-      <td>
-        <%= word.en_translation&.text %>
-      </td>
-
-      <td>
-        <span class="urdu">
-          <%= word.wbw_translation&.text %>
-        </span>
-      </td>
-
-      <td>
-
-      </td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<%= render "show_table_#{@language.iso_code}" %>
 </div>
 
 

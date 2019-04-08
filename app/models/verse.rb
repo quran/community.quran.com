@@ -74,8 +74,16 @@ class Verse < QuranApiRecord
 
   def urdu_wbw_translation_progress
     total_words = words.words.count
-    words_with_ur_translations = WbwTranslation.where(verse_id: id).count
-    missing_count = total_words - words_with_ur_translations
+    words_with_translations = WbwTranslation.where(verse_id: id, language_id: 174).count
+    missing_count = total_words - words_with_translations
+
+    (100 - (missing_count / total_words.to_f)*100).to_i.abs
+  end
+
+  def chinese_wbw_translation_progress
+    total_words = words.words.count
+    words_with_translations = WbwTranslation.where(verse_id: id, language_id: 185).count
+    missing_count = total_words - words_with_translations
 
     (100 - (missing_count / total_words.to_f)*100).to_i.abs
   end
