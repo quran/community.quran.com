@@ -13,6 +13,88 @@ namespace :one_time do
     end
   end
 
+  task prepare_font_v2_codes_new: :environment do
+    PaperTrail.enabled = false
+
+    codes = File.open("data/v2-font-codes.txt").read
+    word_index = 0
+
+    codes = ""
+
+    1.upto(604).each do |p|
+      page = File.open("#{Rails.root}/data/v2-codes/#{p}.txt").read
+      codes += page
+    end
+
+=begin
+    #NOTE: script for detecting difference in v1 and v2 pages
+    pages = {}
+
+    CSV.open("page_words.csv", 'wb') do |csv|
+      csv << ["page", "v1 words", "v2 words", "difference v1-v2"]
+
+      1.upto(604).each do |p|
+        v2 = File.open("#{Rails.root}/data/v2-codes/#{p}.txt").read.gsub(/s+/,'').length
+        v1 = Word.where(page_number: p).count
+        csv << [p, v1, v2, v1 - v2]
+      end
+    end
+=end
+
+    codes = codes.gsub(/s+/,'')
+
+    Verse.unscoped.order("verse_index asc").each do |v|
+      v.words.order("position asc").each do |word|
+        code = codes[word_index].unpack("U*")[0]
+
+        word.code_hex_v3 = code.to_s(16)
+        word.code_dec_v3 = code
+        word.save validate: false
+        word_index += 1
+      end
+    end
+  end
+
+  task prepare_font_v2_codes: :environment do
+    page_576 = "ﭑﭒﭓﭔﭕﭖﭗﭘﭙﭚﭛﭜﭝﭞﭟﭠﭡﭢﭣﭤﭥﭦﭧﭨﭩﭪﭫﭬﭭﭮﭯﭰﭱﭲﭳﭴﭵﭶﭷﭸﭹﭺﭻﭼﭽﭾﭿﮀﮁﮂﮃﮄﮅﮆﮇﮈﮉﮊﮋﮌﮍﮎﮏﮐﮑﮒﮓﮔﮕﮖﮗﮘﮙﮚﮛﮜﮝﮞﮟﮠﮡﮢﮣﮤﮥﮦﮧﮨﮩﮪﮫﮬﮭﮮﮯﮰﮱﯓﯔﯕﯖﯗﯘﯙﯚﯛﯜﯝﯞﯟﯠﯡﯢﯣﯤﯥﯦﯧﯨﯩﯪﯫﯬﯭﯮﯯﯰﯱﯲﯳﯴﯵﯶﯷﯸﯹﯺﯻﯼﯽﯾﯿﰀﰁﰂﰃﰄﰅﰆﰇﰈﰉﰊﰋﰌﰍﰎﰏﰐﰑﰒﰓﰔﰕﰖﰗﰘﰙﰚﰛﰜﰝﰞﰟﰠﰡﰢﰣﰤﰥﰦﰧﰨﰩﰪﰫﰬﰭﰮﰯﰰﰱﰲﰳ"
+    page_534="ﭑﭒﭓﭔﭕﭖﭗﭘﭙﭚﭛﭜﭝﭞﭟﭠﭡﭢﭣﭤﭥﭦﭧﭨﭩﭪﭫﭬﭭﭮﭯﭰﭱﭲﭳﭴﭵﭶﭷﭸﭹﭺﭻﭼﭽﭾﭿﮀﮁﮂﮃﮄﮅﮆﮇﮈﮉﮊﮋﮌﮍﮎﮏﮐﮑﮒﮓﮔﮕﮖﮗﮘﮙﮚﮛﮜﮝﮞﮟﮠﮡﮢﮣﮤﮥﮦﮧﮨﮩﮪﮫﮬﮭﮮﮯﮰﮱﯓﯔﯕﯖﯗﯘﯙﯚﯛﯜﯝﯞﯟﯠﯡﯢﯣﯤﯥﯦﯧﯨﯩﯪﯫﯬﯭﯮﯯ"
+
+    1.upto(604) do |page|
+      word_index = 0
+
+      Verse.unscoped.where(page_number: page).order("verse_index asc").each do |v|
+        v.words.order("position asc").each do |word|
+
+          if page == 576
+            code = page_576[word_index].unpack("U*")[0]
+
+            word.code_hex_v3 = code.to_s(16)
+            word.code_dec_v3 = code
+          elsif  page == 534
+            code = page_534[word_index].unpack("U*")[0]
+
+            word.code_hex_v3 = code.to_s(16)
+            word.code_dec_v3 = code
+          else
+            word.code_hex_v3 = (64577 + word_index).to_s(16)
+            word.code_dec_v3 = 64577 + word_index
+          end
+          word.save validate: false
+          word_index += 1
+
+          #if word_index > 188
+          #  binding.pry
+          #  break
+          #end
+        end
+      end
+    end
+
+    page_chars = "ﱁﱂﱃﱄﱅﱆﱇﱈﱉﱊﱋﱌﱍﱎﱏﱐﱑﱒﱓﱔﱕﱖﱗﱘﱙﱚﱛﱜﱝﱞﱟﱠﱡﱢﱣﱤﱥﱦﱧﱨﱩﱪﱫﱬﱭﱮﱯﱰﱱﱲﱳﱴﱵﱶﱷﱸﱹﱺﱻﱼﱽﱾﱿﲀﲁﲂﲃﲄﲅﲆﲇﲈﲉﲊﲋﲌﲍﲎﲏﲐﲑﲒﲓﲔﲕﲖﲗﲘﲙﲚﲛﲜﲝﲞﲟﲠﲡﲢﲣﲤﲥﲦﲧﲨﲩﲪﲫﲬﲭﲮﲯﲰﲱﲲﲳﲴﲵﲶﲷﲸﲹﲺﲻﲼﲽﲾﲿﳀﳁﳂﳃﳄﳅﳆﳇﳈﳉﳊﳋﳌﳍﳎﳏﳐﳑﳒﳓﳔﳕﳖﳗﳘﳙﳚﳛﳜﳝﳞﳟﳠﳡﳢﳣﳤﳥﳦﳧﳨﳩﳪﳫﳬﳭﳮﳯﳰﳱﳲﳳﳴﳵﳶﳷﳸﳹﳺﳻﳼ"
+
+
+  end
+
   task add_slugs: :environment do
     PaperTrail.enabled = false
     Translation.where(resource_content_id: [140, 133, 110, 35]).find_each do |trans|

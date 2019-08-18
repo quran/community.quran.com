@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.3.3'
+ruby '2.6.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '>= 5.2.1'
@@ -46,7 +46,7 @@ gem 'devise'
 gem 'newrelic_rpm'
 
 # Generate embed code and get metadata of video etc
-gem 'video_info'
+# gem 'video_info'
 
 # github.com/JeremyGeros/differ
 gem 'diffy'

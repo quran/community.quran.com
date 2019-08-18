@@ -6,6 +6,7 @@ class Word < QuranApiRecord
   belongs_to :topic, optional: true
   belongs_to :token, optional: true
 
+  has_many :word_translations
   has_many :translations, as: :resource
   has_many :transliterations, as: :resource
   
