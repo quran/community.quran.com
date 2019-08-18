@@ -75,13 +75,14 @@
                     # LOTs of hard coding :( this is one time contribution form.
                     # We can came back to refactor this if we started more wbw contribution projects
                     # For Urdu, we're trying to suggest translation from existing data
-                    # current_trans = if params[:language_id] == 174
-                    #                  trans_form.object.text.presence || trans_form.object&.word&.ur_translation&.text
-                    #                else
-                    #                  trans_form.object.text.presence
-                    #                end
+                     current_trans = if params[:language_id] == 174
+                                      trans_form.object.text.presence || trans_form.object&.word&.ur_translation&.text
+                                    else
+                                      trans_form.object.text.presence
+                                    end
                   %>
                   <%= trans_form.text_field :text, class: "form-control #{'urdu' if params[:language_id] == 174}", placeholder: 'Enter wbw translation here' %>
+                  <p class="help-block"><%= current_trans %></p>
                   <p class="help-block">
                     <%= trans_form.object.en_translation&.text %>
                   </p>
