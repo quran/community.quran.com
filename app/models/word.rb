@@ -26,7 +26,7 @@ class Word < QuranApiRecord
 
   # Used for export translation
   ['en', 'id', 'bn', 'ur'].each do |lang|
-    has_one "#{lang}_translation".to_sym, -> { where(language: Language.find_by_iso_code(lang)) }, class_name: 'Translation', as: :resource
+    has_one "#{lang}_translation".to_sym, -> { where(language: Language.find_by_iso_code(lang)) }, class_name: 'WordTranslation'
   end
 
   has_one :word_corpus

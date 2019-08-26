@@ -1,4 +1,6 @@
 class Verse < QuranApiRecord
+  Word
+
   has_paper_trail on: [:update, :destroy], ignore: [:created_at, :updated_at]
 
   belongs_to :chapter, inverse_of: :verses, counter_cache: true
