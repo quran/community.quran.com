@@ -433,21 +433,28 @@ namespace :one_time do
       end
     end
   end
-  
+
+  SEE_MORE_REF_REGEXP = Regexp.new('(?<ref>\d+:\d+)')
+  SEE_MORE_TEXT_REGEXP = Regexp.new("(see|footnote)")
+
   def process_foot_note_text(foot_note_node)
     foot_note_node.search("span").each do |node|
-      if node.attr('class').to_s.strip == 'c15'
+      if node.attr('class').to_s.strip == 'c14'
         node.name = "sup"
         node.remove_attribute("class")
       end
     end
-    
+
     # remove links
     foot_note_node.search("a").remove
     
     white_list_sanitizer = Rails::Html::WhiteListSanitizer.new
     
-    white_list_sanitizer.sanitize(foot_note_node.to_s.strip, tags: %w(div sup p ol ul li), attributes: []).gsub(/[\r\n]+/, "<br/>")
+    sanitized = white_list_sanitizer.sanitize(foot_note_node.to_s.strip, tags: %w(div sup p ol ul li), attributes: []).gsub(/[\r\n]+/, "<br/>")
+
+    sanitized.gsub(SEE_MORE_REF_REGEXP) do
+      "<a href='/#{Regexp.last_match(1)}' class='see-more footnote'>#{Regexp.last_match(1)}</a>"
+    end
   end
   
   task import_musfata_khitab_with_footnote: :environment do
@@ -457,7 +464,7 @@ namespace :one_time do
     language = Language.find_by_name 'English'
     data_source = DataSource.where(name: 'Quran.com').first_or_create
     
-    url = "https://raw.githubusercontent.com/naveed-ahmad/Quran-text/master/cleanquran.html"
+    url = "https://raw.githubusercontent.com/naveed-ahmad/Quran-text/master/clearquran-2019.html"
     
     text = open(url).read
     docs = Nokogiri.parse(text)
@@ -490,7 +497,7 @@ namespace :one_time do
                                                         slug:             'clearquran-with-tafsir-footnote' }).first_or_create
     
     
-    docs.search('ol .c0').each_with_index do |verse_node, v_index|
+    docs.search('ol .c1').each_with_index do |verse_node, v_index|
       text        = verse_node.text.strip
       verse       = Verse.find_by_verse_index(v_index + 1)
       translation = verse.translations.where(resource_content: resource_content).first_or_create
