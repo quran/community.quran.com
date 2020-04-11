@@ -9,7 +9,9 @@ class Word < QuranApiRecord
   has_many :word_translations
   has_many :translations, as: :resource
   has_many :transliterations, as: :resource
-  
+  has_many :word_synonyms
+  has_many :synonyms, through: :word_synonyms
+
   has_one :word_lemma
   has_one :lemma, through: :word_lemma
   has_one :word_stem

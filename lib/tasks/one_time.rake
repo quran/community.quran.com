@@ -81,11 +81,6 @@ namespace :one_time do
           end
           word.save validate: false
           word_index += 1
-
-          #if word_index > 188
-          #  binding.pry
-          #  break
-          #end
         end
       end
     end
@@ -223,7 +218,6 @@ namespace :one_time do
     foot_note_node.search("a").remove
 
     white_list_sanitizer = Rails::Html::WhiteListSanitizer.new
-
     white_list_sanitizer.sanitize(foot_note_node.to_s.strip, tags: %w(div sup p ol ul li b), attributes: []).gsub(/[\r\n]+/, "<br/>")
   end
 

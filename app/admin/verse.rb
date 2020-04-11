@@ -1,4 +1,7 @@
 ActiveAdmin.register Verse do
+  searchable_select_options(scope: Verse.all,
+                            text_attribute: :verse_key
+  )
   menu parent: "Quran", priority: 2
   ActiveAdminViewHelpers.versionate(self)
 
@@ -201,7 +204,7 @@ ActiveAdmin.register Verse do
               td file.duration
               td do
                 (link_to("play", "#_", class: 'play')+
-                  audio_tag("", data: { url: file.url }, controls: true, class: 'audio')) if file.url
+                  audio_tag("", data: { url: "https://audio.qurancdn.com/#{file.url}" }, controls: true, class: 'audio')) if file.url
               end
             end
           end

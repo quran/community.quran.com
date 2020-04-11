@@ -2,19 +2,19 @@ ActiveAdmin.register Word do
   menu parent: "Quran", priority: 3
   actions :all, except: :destroy
   ActiveAdminViewHelpers.versionate(self)
-  
+
   filter :verse_key
   filter :char_type
   filter :page_number
   filter :text_madani
   filter :code_hex
-  
+
   permit_params do
     [:verse_id, :position, :text_madani, :text_indopak, :text_simple, :verse_key, :page_number, :class_name, :line_number, :code_dec, :code_hex,
      :code_hex_v3, :code_dec_v3, :char_type_id, :audio_url, :location, :char_type_name
     ]
   end
-  
+
   form do |f|
     f.inputs "Word detail" do
       f.input :verse_id
@@ -37,7 +37,7 @@ ActiveAdmin.register Word do
     end
     f.actions
   end
-  
+
   show do
     attributes_table do
       row :id
@@ -51,48 +51,56 @@ ActiveAdmin.register Word do
       row :page_number do |resource|
         link_to resource.page_number, "/admin/page?page#{resource.page_number}"
       end
-      
+
       row :font do |resource|
         (span class: "v2p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
           resource.code.html_safe
         end)
       end
-      
+
       row :font_v3 do |resource|
         (span class: "v3p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
           resource.code_v3.html_safe
         end)
       end
-      
+
       row :text_font do |resource|
         (span class: "pt#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
           resource.code_v3.html_safe
         end)
       end
-      
+
       row :image do |resource|
         # image_tag resource.image_url if resource.image_url
       end
-      
+
       row :image_blob
       row :word_corpus
       row :word_lemma
+      row :synonyms do |resource|
+        resource.synonyms.each do |s|
+          span do
+            link_to s.text, [:admin, s], class: 'ml-2'
+          end
+        end
+        nil
+      end
     end
 
     if params[:version]
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
   end
-  
+
   index do
     column :id do |resource|
       link_to resource.id, admin_word_path(resource)
     end
-    
+
     column :verse do |resource|
       link_to resource.verse_id, admin_verse_path(resource.verse_id)
     end
-    
+
     column :char_type do |resource|
       resource.char_type_name
     end
@@ -118,55 +126,55 @@ ActiveAdmin.register Word do
       end
     end
 =end
-    
+
     column :font do |resource|
       (span class: "v2p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
         resource.code.html_safe
       end)
     end
-    
+
     column :fontv3 do |resource|
       (span class: "v3p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
         resource.code_v3.html_safe
       end)
     end
-    
+
     column :text_font do |resource|
       (span class: "tp#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
         resource.text_madani
       end)
     end
-    
+
     column :code_hex
     column :code_hex_v3
     column :text_madani
     column :text_simple
-    
+
     actions
   end
-  
+
   def scoped_collection
     super.includes :verse, :char_type # prevents N+1 queries to your database
   end
-  
+
   sidebar "Audio", only: :show do
     table do
       thead do
         td :id
         td :play
       end
-      
+
       tbody do
         tr do
           td do
-            (link_to("play", "#_", class: 'play')+
-              audio_tag("", data: { url: word.audio_url }, controls: true, class: 'audio')) if word.audio_url
+            (link_to("play", "#_", class: 'play') +
+                audio_tag("", data: {url: word.audio_url}, controls: true, class: 'audio')) if word.audio_url
           end
         end
       end
     end
   end
-  
+
   sidebar "Transliterations", only: :show do
     table do
       thead do
@@ -174,7 +182,7 @@ ActiveAdmin.register Word do
         td :language
         td :text
       end
-      
+
       tbody do
         word.transliterations.each do |trans|
           tr do
@@ -186,7 +194,7 @@ ActiveAdmin.register Word do
       end
     end
   end
-  
+
   sidebar "Translations", only: :show do
     table do
       thead do
@@ -194,7 +202,7 @@ ActiveAdmin.register Word do
         td :language
         td :text
       end
-      
+
       tbody do
         word.translations.each do |trans|
           tr do
@@ -209,7 +217,7 @@ ActiveAdmin.register Word do
 
   collection_action :export_sqlite, method: 'put' do
     file_path = ExportWordsJob.new.perform(params[:name])
-  
+
     send_file file_path
   end
 end

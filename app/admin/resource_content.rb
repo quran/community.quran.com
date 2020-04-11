@@ -1,4 +1,7 @@
 ActiveAdmin.register ResourceContent do
+  searchable_select_options(scope: ResourceContent.all,
+                            text_attribute: :name
+  )
   menu parent: "Content", priority: 10
   actions :all, except: :destroy
 

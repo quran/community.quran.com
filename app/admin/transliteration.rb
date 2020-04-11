@@ -6,7 +6,7 @@ ActiveAdmin.register Transliteration do
   filter :language
   filter :resource_type, as: :select, collection: ['Verse', 'Word']
   filter :resource_id
-  
+
   show do
     attributes_table do
       row :id
@@ -33,7 +33,7 @@ ActiveAdmin.register Transliteration do
     end
     
     column :resource_type
-    
+
     column :text
     
     actions

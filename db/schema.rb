@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_30_211620) do
+ActiveRecord::Schema.define(version: 2020_04_11_060250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,13 @@ ActiveRecord::Schema.define(version: 2019_03_30_211620) do
     t.index ["user_id"], name: "index_proof_read_comments_on_user_id"
   end
 
+  create_table "synonyms", force: :cascade do |t|
+    t.string "text"
+    t.text "synonyms"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -142,6 +149,14 @@ ActiveRecord::Schema.define(version: 2019_03_30_211620) do
     t.index ["user_id"], name: "index_wbw_translations_on_user_id"
     t.index ["verse_id"], name: "index_wbw_translations_on_verse_id"
     t.index ["word_id"], name: "index_wbw_translations_on_word_id"
+  end
+
+  create_table "word_synonyms", force: :cascade do |t|
+    t.integer "synonym_id"
+    t.integer "word_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["synonym_id", "word_id"], name: "index_word_synonyms_on_synonym_id_and_word_id"
   end
 
 end

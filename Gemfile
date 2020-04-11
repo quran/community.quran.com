@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.3.3'
+ruby '2.6.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '>= 5.2.1'
@@ -34,13 +34,14 @@ gem 'activeadmin', '~> 1.3.1'
 gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'activeadmin-async_panel'
 gem 'paper_trail', '~> 10.0.1'
+gem 'activeadmin-searchable_select'
 
 gem "twitter-bootstrap-rails"
 gem 'bootstrap-kaminari-views'
 gem 'rails_script', '~> 2.0'
 
 gem 'nokogiri', '= 1.8.2'
-
+gem 'pdf-reader'
 # authentication
 gem 'devise'
 gem 'newrelic_rpm'
