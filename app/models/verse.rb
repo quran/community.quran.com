@@ -1,6 +1,4 @@
 class Verse < QuranApiRecord
-  Word
-
   has_paper_trail on: [:update, :destroy], ignore: [:created_at, :updated_at]
 
   belongs_to :chapter, inverse_of: :verses, counter_cache: true
@@ -12,7 +10,7 @@ class Verse < QuranApiRecord
   has_many :words
   has_many :actual_words, -> { where char_type_id: true }, class_name: 'Word'
   has_many :media_contents, as: :resource
-  has_many :translations, as: :resource
+  has_many :translations
   has_many :transliterations, as: :resource
   has_many :audio_files, as: :resource
   has_many :recitations, through: :audio_files

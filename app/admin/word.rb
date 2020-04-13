@@ -7,6 +7,7 @@ ActiveAdmin.register Word do
   filter :char_type
   filter :page_number
   filter :text_madani
+  filter :text_simple
   filter :code_hex
 
   permit_params do
@@ -204,7 +205,7 @@ ActiveAdmin.register Word do
       end
 
       tbody do
-        word.translations.each do |trans|
+        word.word_translations.each do |trans|
           tr do
             td link_to(trans.id, [:admin, trans])
             td link_to(trans.language_name, admin_language_path(trans.language_id)) if trans.language_id
