@@ -1,4 +1,4 @@
-FROM phusion/passenger-customizable:0.9.24
+FROM phusion/passenger-customizable:1.0.9
 
 # set correct environment variables
 ENV HOME /root
@@ -7,15 +7,13 @@ ENV HOME /root
 CMD ["/sbin/my_init"]
 
 # customizing passenger-customizable image
-RUN /pd_build/ruby-2.3.*.sh
+RUN /pd_build/ruby-2.6.*.sh
 RUN /pd_build/redis.sh
-
 
 ENV RAILS_ENV production
 
-# native passenger
-RUN ruby2.3 -S passenger-config build-native-support
-RUN setuser app ruby2.3 -S passenger-config build-native-support
+# redis
+RUN rm -f /etc/service/redis/down
 
 # nginx
 RUN rm /etc/service/nginx/down
@@ -48,7 +46,11 @@ RUN chown app Gemfile.lock
 RUN mkdir -p /var/log/nginx/community.quran.com
 
 # precompile assets
-RUN bundle exec rake assets:precompile RAILS_ENV=production
+RUN bundle exec rake assets:precompile
+
+# pg_dump
+RUN apt-get update
+RUN apt-get install -y postgresql-client
 
 # cleanup apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
