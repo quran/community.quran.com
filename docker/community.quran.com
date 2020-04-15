@@ -4,7 +4,7 @@ server {
   root   /home/app/community/public;
   passenger_enabled on;
   passenger_user app;
-  passenger_ruby /usr/bin/ruby2.3;
+  passenger_ruby /usr/bin/ruby2.6;
   passenger_app_env production;
 
   access_log  /var/log/nginx/community.quran.com/access.log;
