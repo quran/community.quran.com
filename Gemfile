@@ -40,7 +40,7 @@ gem "twitter-bootstrap-rails"
 gem 'bootstrap-kaminari-views'
 gem 'rails_script', '~> 2.0'
 
-gem 'nokogiri', '= 1.8.2'
+gem 'nokogiri', '1.10.9'
 gem 'pdf-reader'
 # authentication
 gem 'devise'
