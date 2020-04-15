@@ -7,7 +7,7 @@ gem 'rails', '>= 5.2.1'
 gem 'pg'
 gem 'sqlite3'
 # Use Puma as the app server
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -40,7 +40,7 @@ gem "twitter-bootstrap-rails"
 gem 'bootstrap-kaminari-views'
 gem 'rails_script', '~> 2.0'
 
-gem 'nokogiri', '= 1.8.2'
+gem 'nokogiri', '1.10.9'
 gem 'pdf-reader'
 # authentication
 gem 'devise'
