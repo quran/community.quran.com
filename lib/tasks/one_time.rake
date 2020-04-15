@@ -4,7 +4,7 @@ namespace :one_time do
     # Clear Quran
     ResourceContent.find(131).update(priority: 1)
     # Bridge
-    ResourceContent.find(147).update(priority: 2)
+    ResourceContent.find(149).update(priority: 2)
 
 
     ResourceContent.where(language_name: 'urdu').update(priority: 3)
