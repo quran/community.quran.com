@@ -2,6 +2,7 @@ ActiveAdmin.register Synonym do
   permit_params :text, :synonyms
 
   filter :text
+  filter :synonyms_contains
 
   show do
     attributes_table do

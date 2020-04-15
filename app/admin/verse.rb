@@ -123,7 +123,6 @@ ActiveAdmin.register Verse do
           td "Position"
           td "Code"
           td "Font v2"
-          td "Font v3"
           td "Font (text v3)"
           td "Text(Imlaei)"
           td "Text(Uthmani)"
@@ -137,7 +136,6 @@ ActiveAdmin.register Verse do
           verse.words.order("position ASC").each do |w|
             tr do
               td link_to(w.id, admin_word_path(w))
-              
               td w.position
               
               td do

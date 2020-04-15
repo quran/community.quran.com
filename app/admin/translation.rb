@@ -5,8 +5,7 @@ ActiveAdmin.register Translation do
   ActiveAdminViewHelpers.versionate(self)
   
   filter :language
-  filter :resource_type, as: :select, collection: ['Verse', 'Word']
-  filter :resource_id
+  filter :verse_id
   filter :resource_content, as: :select, collection: -> do
     ResourceContent.where(sub_type: ResourceContent::SubType::Translation)
   end
@@ -18,18 +17,20 @@ ActiveAdmin.register Translation do
     column :language do |resource|
       resource.language_name
     end
-    column :resource_type
-    column :resource_id do |resource|
-      resource.resource_id
+    column :verse_id do |resource|
+      link_to resource.verse_id, admin_verse_path(resource.verse_id)
     end
+
     actions
   end
   
   show do
     attributes_table do
       row :id
-      row :resource
+      row :verse
       row :language
+      row :priority
+
       row :text do |resource|
         div class: resource.language_name.to_s.downcase do
           resource.text

@@ -43,6 +43,7 @@ ActiveAdmin.register ResourceContent do
       link_to resource.language_name, admin_language_path(resource.language_id) if resource.language_id
     end
 
+    column :priority
     column :name
     column :approved
     column :cardinality_type
@@ -56,6 +57,7 @@ ActiveAdmin.register ResourceContent do
       row :name
       row :approved
       row :language
+      row :priority
       row :cardinality_type
       row :sub_type
       row :resource_type

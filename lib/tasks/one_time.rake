@@ -1,5 +1,18 @@
 namespace :one_time do
   task prepare_uthmani_simple: :environment do
+    ResourceContent.update_all(priority: 5)
+    # Clear Quran
+    ResourceContent.find(131).update(priority: 1)
+    # Bridge
+    ResourceContent.find(147).update(priority: 2)
+
+
+    ResourceContent.where(language_name: 'urdu').update(priority: 3)
+
+    ResourceContent.find_each do |r|
+      Translation.where(resource_content: r.id).update_all priority: r.priority
+    end
+
     Verse.find_each do |v|
       simple = v.text_madani.gsub(/\u06E6|\ufe80|\u06E5|\u064B|\u0670|\u0FBCx|\u0FB5x|\u0FBB6|\u0FE7x|\u0FC62|\u0FC61|\u0FC60|\u0FDF0|\u0FDF1|\u0066D|\u0061F|\u060F|\u060E|\u060D|\060C|\u060B|\u064C|\u064D|\u064E|\u064F|\u0650|\u0651|\u0652|\u0653|\u0654|\u0655|\u0656|\0657|\u0658/, '')
 
