@@ -60,7 +60,7 @@ ActiveAdmin.register Translation do
       f.input :resource_content_id
       f.input :verse_id
     end
-    
+
     f.actions
   end
   

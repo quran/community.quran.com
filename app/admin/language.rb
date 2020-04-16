@@ -10,6 +10,6 @@ ActiveAdmin.register Language do
   filter :native_name
 
   permit_params do
-    [:name, :iso_code, :native_name, :direction, :es_analyzer_default]
+    [:name, :iso_code, :native_name, :direction, :es_analyzer_default, :es_indexes]
   end
 end

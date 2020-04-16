@@ -29,6 +29,9 @@ gem 'turbolinks', '~> 5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# Detect language from text
+gem "cld"
+
 #Admin panel
 gem 'activeadmin', '~> 1.3.1'
 gem 'inherited_resources', github: 'activeadmin/inherited_resources'
