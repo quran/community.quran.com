@@ -6,11 +6,15 @@ end
 
 namespace :es_synonyms do
   task export: :environment do
+    file_name = 'public/assets/quran_word_synonym.txt'
+
     File.open 'quran_word_synonym.txt', 'wb' do |file|
       Synonym.find_each do |s|
-        file << "#{s.synonyms.join(', ')} => #{s.text}\n"
+        file << "#{s.synonyms.join(', ')}\n"
       end
     end
+
+    puts "done #{file_name}"
   end
 
   task generate: :environment do
@@ -42,7 +46,6 @@ namespace :es_synonyms do
 
     uniq_words = {}
     Verse.unscoped.order('verse_index asc').each do |verse|
-      verse_transliterations = verse.translations.where(resource_content_id: 57).first.text.split(/\s+/)
       pos = 1
 
       verse.words.words.order('position asc').each do |word|
@@ -52,12 +55,11 @@ namespace :es_synonyms do
         lema = word_info&.lemma
 
         lemmas = [lema]
-        stems = [] #word.stems.pluck(:text_madani, :text_clean)
         root = [word_info&.root_ar]
         scripts = [word.text_imlaei,  word.text_indopak, word.text_simple]
         transliteration = word.transliterations.where(language_name: 'english').pluck(:text)
 
-        synonyms = lemmas + stems + root + scripts
+        synonyms = lemmas  + root + scripts
 
         simple = synonyms.flatten.compact.map do |text|
           remove_dialectic(text.to_s)
@@ -78,54 +80,26 @@ namespace :es_synonyms do
       end
     end
 
-    File.open 'quran_word_synonym2.txt', 'wb' do |file|
+    file_name = 'public/assets/quran_word_synonym_1.txt'
+
+    File.open file_name, 'wb' do |file|
       uniq_words.keys.each do |key|
-        value = uniq_words[key][0].flatten.uniq.select { |t| t.to_s.length > 1 }
-        value = value - [key]
+        scripts = uniq_words[key][0] + [key]
 
-        transliterations = uniq_words[key][1].flatten.uniq.select { |t| t.to_s.length > 1 }
-        tr_normalized = transliterations.map do |t|
-          normalize(t)
-        end
-
-        transliterations = tr_normalized.flatten.compact.uniq #(transliterations + tr_normalized).flatten.compact.uniq
-
-        all_synonyms = (transliterations + value).flatten
-        all_synonyms.each do |s|
-          puts s
-
-          synonym = Synonym.where(text: key).first_or_create
-          synonym.update(synonyms: all_synonyms)
-
-          uniq_words[key][2].each do |w|
-            WordSynonym.where(word_id: w, synonym_id: synonym.id).first_or_create
-          end
-        end
-
-        file << "#{transliterations.join(', ')}"
-        if value.present?
-          file << ",#{value.join(', ')}"
-        end
-        file << " => #{key}\n"
-      end
-    end
-
-    File.open 'quran_word_synonym3.txt', 'wb' do |file|
-      uniq_words.keys.each do |key|
-        value = uniq_words[key][0].flatten.map do |t|
+        value = scripts.flatten.map do |t|
           remove_dialectic(t)
         end.uniq.select { |t| t.to_s.length > 1 }
-        value = value - [key]
+
         transliterations = uniq_words[key][1].flatten.uniq.select { |t| t.to_s.length > 1 }
 
         tr_normalized = transliterations.map do |t|
           normalize(t)
         end
 
-        transliterations = (transliterations + tr_normalized).flatten.compact.uniq
+        # transliterations = (transliterations + tr_normalized).flatten.compact.uniq
+        # all_synonyms = (transliterations + value).flatten
 
-        all_synonyms = (transliterations + value).flatten
-
+        all_synonyms = (tr_normalized + value).flatten
         synonym = Synonym.where(text: key).first_or_create
         synonym.update(synonyms: all_synonyms)
 
@@ -133,15 +107,11 @@ namespace :es_synonyms do
           WordSynonym.where(word_id: w, synonym_id: synonym.id).first_or_create
         end
 
-        file << "#{transliterations.join(', ')}"
-        if value.present?
-          file << ",#{value.join(', ')}"
-        end
-        file << " => #{key}\n"
+        file << "#{all_synonyms.join(', ')}\n"
       end
     end
 
-    puts "done"
+    puts "done #{file_name}"
   end
 end
 
