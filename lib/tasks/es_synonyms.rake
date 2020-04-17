@@ -88,7 +88,7 @@ namespace :es_synonyms do
           normalize(t)
         end
 
-        transliterations = (transliterations + tr_normalized).flatten.compact.uniq
+        transliterations = tr_normalized.flatten.compact.uniq #(transliterations + tr_normalized).flatten.compact.uniq
 
         all_synonyms = (transliterations + value).flatten
         all_synonyms.each do |s|
