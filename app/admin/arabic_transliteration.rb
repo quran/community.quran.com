@@ -1,5 +1,5 @@
 ActiveAdmin.register ArabicTransliteration do
-  menu parent: "Research Data", priority: 1
+  menu parent: "Data", priority: 1
   actions :all, except: :destroy
 
   ActiveAdminViewHelpers.versionate(self)

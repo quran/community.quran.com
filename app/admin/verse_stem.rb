@@ -1,4 +1,4 @@
 ActiveAdmin.register VerseStem do
-  menu parent: "Research Data"
+  menu parent: "Data"
   actions :all, except: :destroy
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_11_060250) do
+ActiveRecord::Schema.define(version: 2020_04_16_220621) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,13 @@ ActiveRecord::Schema.define(version: 2020_04_11_060250) do
     t.datetime "updated_at", null: false
     t.index ["resource_type", "resource_id"], name: "index_proof_read_comments_on_resource_type_and_resource_id"
     t.index ["user_id"], name: "index_proof_read_comments_on_user_id"
+  end
+
+  create_table "quran_table_details", force: :cascade do |t|
+    t.string "name"
+    t.integer "enteries"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "synonyms", force: :cascade do |t|
