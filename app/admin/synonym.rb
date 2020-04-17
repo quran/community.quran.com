@@ -2,7 +2,7 @@ ActiveAdmin.register Synonym do
   permit_params :text, :synonyms
 
   filter :text
-  filter :synonyms_contains
+  filter :where_synonyms_contains, label: :synonyms, as: :string
 
   show do
     attributes_table do
@@ -14,8 +14,6 @@ ActiveAdmin.register Synonym do
         resource.words.group(:text_simple).size.each do |k, v|
           span do
             link_to "(#{v}) - #{k}", "/admin/words?utf8=%E2%9C%93&q%5Btext_simple_equals%5D=#{k}"
-            #
-            #
           end
         end
 

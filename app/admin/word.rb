@@ -46,9 +46,14 @@ ActiveAdmin.register Word do
       row :verse_key
       row :verse_index
       row :position
+
       row :text_madani
       row :text_indopak
+      row :text_imlaei
       row :text_simple
+      row :text_madani_simple
+      row :text_uthmani_simple
+
       row :page_number do |resource|
         link_to resource.page_number, "/admin/page?page#{resource.page_number}"
       end
@@ -146,10 +151,9 @@ ActiveAdmin.register Word do
       end)
     end
 
-    column :code_hex
-    column :code_hex_v3
     column :text_madani
     column :text_simple
+    column :text_imlaei
 
     actions
   end

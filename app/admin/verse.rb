@@ -67,15 +67,15 @@ ActiveAdmin.register Verse do
         end
       end
 
-      row "Text madani(Uthmani script)" do |object|
-        span class: 'quran-text me_quran' do
-          object.text_madani
-        end
-      end
-
       row "Text Simple(Imlaei)" do |object|
         span class: 'quran-text' do
           object.text_simple
+        end
+      end
+
+      row "Text madani(Uthmani script)" do |object|
+        span class: 'quran-text me_quran' do
+          object.text_madani
         end
       end
 
