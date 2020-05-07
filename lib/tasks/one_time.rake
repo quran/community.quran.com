@@ -8,14 +8,38 @@ namespace :one_time do
       codes[language.id] << CLD.detect_language(text)[:code].to_s.split('-').first
     end
 
+    AudioFile.where("url ilike ?", "//%").count
+
+    AudioFile.where("url ilike ?", "verses/%").count
+    AudioFile.where("url ilike ?", "verses/%").update_all("url = REPLACE(url, 'verses/', '')")
+
+    files = AudioFile.where("url ilike ?", "%//quranicaudio/%").size
+
+    AudioFile.update_all("url = REPLACE(url, '//mirrors.quranicaudio.com/everyayah/Abdul_Basit_Murattal_64kbps/', 'AbdulBaset/Murattal/mp3')")
+
+
+    files = AudioFile.where("url ilike ?", "AbdulBaset/Murattal%")
+
+    files.update_all("url = REPLACE(url, 'AbdulBaset/Murattal/', 'AbdulBaset/Murattal/mp3/')")
+
+
+    update_all("url = REPLACE(url, 'verses/', '')")
+
+    Word.where("audio_url ilike ?", "verses/%").update_all("audio_url = REPLACE(audio_url, 'verses/', '')")
+
+
+    p = UpdatedPost.where("content ilike ?", "%strength.runnersconnect.net/dev/wp-content/uploads/2014/06/%")
+    p.update_all("content = REPLACE(content, 'strength.runnersconnect.net/dev/wp-content/uploads/2014/06/', 'cdn-strength-training.runnersconnect.net/Images/')")
+
+
     codes.each do |id, indexes|
       indexes = indexes.compact.uniq
 
       language = Language.find(id)
       indexes.each do |code|
         if code != language.iso_code
-           lang = Language.find_by_iso_code(code)
-           lang.es_indexes << language.iso_code
+          lang = Language.find_by_iso_code(code)
+          lang.es_indexes << language.iso_code
           lang.save
         end
       end
@@ -26,7 +50,6 @@ namespace :one_time do
     ResourceContent.find(131).update(priority: 1)
     # Bridge
     ResourceContent.find(149).update(priority: 2)
-
 
     ResourceContent.where(language_name: 'urdu').update(priority: 3)
 

@@ -11,9 +11,11 @@ namespace :es_synonyms do
 
     file_name = 'public/assets/quran_word_synonym.txt'
 
-    File.open 'quran_word_synonym.txt', 'wb' do |file|
+    File.open file_name, 'wb' do |file|
       Synonym.find_each do |s|
-        file << "#{s.synonyms.join(', ')}\n"
+        synonyms = s.synonyms.map do |sy| sy.remove_dialectic end.uniq
+        s.update synonyms: synonyms
+        file << "#{synonyms.join(', ')}\n"
       end
     end
 
@@ -87,7 +89,7 @@ namespace :es_synonyms do
         scripts = uniq_words[key][0] + [key]
 
         value = scripts.flatten.map do |t|
-          remove_dialectic(t)
+          t.remove_dialectic
         end.uniq.select { |t| t.to_s.length > 1 }
 
         transliterations = uniq_words[key][1].flatten.uniq.select { |t| t.to_s.length > 1 }

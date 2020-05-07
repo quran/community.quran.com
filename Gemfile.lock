@@ -8,6 +8,13 @@ GIT
       railties (>= 4.2, < 5.3)
       responders
 
+GIT
+  remote: git://github.com/taf2/cld2.git
+  revision: 999cc161f5fb892abec326275a81a86c996a69d3
+  specs:
+    cld2 (2.0.0)
+      ffi (~> 1.9.18)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -91,8 +98,6 @@ GEM
       activemodel (>= 4.0.0)
       activesupport (>= 4.0.0)
       mime-types (>= 1.16)
-    cld (0.8.0)
-      ffi
     coderay (1.1.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -370,7 +375,7 @@ DEPENDENCIES
   bootstrap-kaminari-views
   byebug
   carrierwave (~> 1.2.3)
-  cld
+  cld2!
   coffee-rails (~> 4.2)
   devise
   diffy
