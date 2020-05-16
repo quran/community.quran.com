@@ -1,17 +1,17 @@
 <div class="bs-docs-section">
   <h1 class="page-header">
     Arabic/Urdu Transliterations of <%= @verse.verse_key %>
-    
+
     <span class=" pull-right">
       <%= link_to 'Contribute', new_arabic_transliteration_path(ayah: @verse.id), class: 'btn btn-success' %>
-  
+
       <%= link_to 'Previous ayah', arabic_transliteration_path(@verse.id + 1), class: 'btn btn-success' %>
       <%= link_to 'Next ayah', arabic_transliteration_path(@verse.id + 1), class: 'btn btn-success' %>
-      
+
       <%= link_to 'Back to filter', arabic_transliterations_path, class: 'btn btn-success' %>
     </span>
   </h1>
-  
+
   <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
     </button>
@@ -23,34 +23,53 @@
       <li>
         <b>Text Madani:</b> <span class="indopak"> <%= @verse.text_madani %></span>
       </li>
-      
+
       <li>
         <b>Text Indopak:</b> <span class="indopak"> <%= @verse.text_indopak %></span>
       </li>
-      
+
       <li>
         <b>Transliteration:</b>
         <span class="text-transliteration indopak">
+          <%
+            continuous = false
+            tag_started = false
+          %>
+
           <% @verse.words.order('position asc').each do |w| %>
-            <span>
-             <%= w.arabic_transliteration&.text %>
-            </span>
-           <% end %>
+             <% if w.arabic_transliteration&.continuous? %>
+                <% if !continuous %>
+                  <% tag_started = true %>
+                  <span>
+                <% end %>
+                <%= w.arabic_transliteration&.text %>
+             <% else %>
+                 <% if tag_started %>
+                    <% tag_started = false %>
+                   <%= w.arabic_transliteration&.text %>
+                   </span>
+                <% else %>
+                   <span><%= w.arabic_transliteration&.text %></span>
+                <% end %>
+             <% end %>
+
+            <% continuous = w.arabic_transliteration&.continuous? %>
+            <% end %>
         </span>
       </li>
     </ul>
     </p>
   </div>
-  
+
   <div id="editor-wrap">
     <div class="form-group">
-      <%= select_tag :change_page, options_for_select(1..980, @predicted_page), class: 'form-control', data: { placeholder: 'Jump to page' } %>
+      <%= select_tag :change_page, options_for_select(1..980, @predicted_page), class: 'form-control', data: {placeholder: 'Jump to page'} %>
       <p class="help-block">Jump to page number</p>
     </div>
-    
+
     <canvas></canvas>
   </div>
-  
+
   <p class="lead">
     Transliteration progress
   <div class="progress">
@@ -59,37 +78,43 @@
     </div>
   </div>
   </p>
-  
+
   <table class="table table-hover">
     <thead>
     <tr>
-      <th>Word id</th>
-      <th>IndoPak text</th>
-      <th>Simple text</th>
-      <th>Uthmani text</th>
-      <th>Translitetation</th>
-      <th>Proofreading</th>
+      <td>Word id</td>
+      <td>IndoPak text</td>
+      <td>Simple text</td>
+      <td>Uthmani text</td>
+      <td>Translitetation</td>
+      <td>Continous?</td>
+      <td>Proofreading</td>
     </tr>
     </thead>
-    
+
     <tbody>
     <% @verse.words.order('position asc').each do |word| %>
       <tr>
         <th scope="row"><%= word.position %></th>
-        
-        <td class="indopak"><%= word.arabic_transliteration&.indopak_text %></td>
-        
-        <td class="indopak">
+
+        <td class=""><%= word.arabic_transliteration&.indopak_text %></td>
+
+        <td class="arabic">
           <%= word.text_simple %>
         </td>
-        
-        <td class="indopak">
+
+        <td class="arabic">
           <%= word.text_madani %>
         </td>
-        
-        <td class="indopak">
+
+        <td class="arabic">
           <%= word.arabic_transliteration&.text %>
         </td>
+
+        <td class="arabic">
+          <%= word.arabic_transliteration&.continuous? %>
+        </td>
+
         <td>
           <% if word.arabic_transliteration %>
             <%= link_to '#_', remote: true, data: {url: proof_read_comments_path(resource_id: word.arabic_transliteration.id, resource: word.arabic_transliteration.class.to_s), toggle: "ajax-modal"} do %>

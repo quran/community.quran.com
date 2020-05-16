@@ -98,7 +98,8 @@ class ArabicTransliterationsController < CommunityController
                                                                         :page_number,
                                                                         :position_x,
                                                                         :position_y,
-                                                                        :zoom
+                                                                        :zoom,
+                                                                        :continuous
                                                                       ]
   end
 

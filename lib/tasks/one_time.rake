@@ -1,4 +1,18 @@
 namespace :one_time do
+
+  task import_75: :environment do
+    file = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2IDGm8MOTsJVZ5tQAXrx289xVvvCpj6T7DHbZ9ZEyWfGHcvlCWhUe4WzfaZZXEevxAkHI50GdBIlj/pub?output=csv"
+    resource_content = ResourceContent.find(75)
+
+    content = open(file).read
+
+    CSV.parse(content).each do |row|
+      verse = Verse.find_by_verse_key("#{row[0]}:#{row[1]}")
+
+      verse.translations.find_by(resource_content_id: resource_content.id).update(text: row[2])
+    end
+  end
+
   task prepare_uthmani_simple: :environment do
     codes = {}
     ResourceContent.translations.one_verse.each do |r|

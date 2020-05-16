@@ -80,7 +80,16 @@
                 </div>
               </div>
 
-              <div class="col-lg-6">
+              <div class="col-lg-3">
+                <div class="form-group ">
+                  <%= trans_form.check_box :continuous %>
+                  <p class="help-block">
+                    ?Continuous
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-lg-3">
                 <div class="form-group">
                   <%= trans_form.text_area :text, placeholder: trans_form.object.text_simple, autocomplete: false, class: 'form-control indopak transliteration' %>
                   <p class="help-block">
