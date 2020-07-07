@@ -41,6 +41,7 @@ default: &default
   pool: 5
 
 development:
+  database: quran_dev
   <<: *default
 
 test:

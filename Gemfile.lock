@@ -70,6 +70,8 @@ GEM
       activemodel (= 5.2.1)
       activesupport (= 5.2.1)
       arel (>= 9.0)
+    activerecord-import (1.0.5)
+      activerecord (>= 3.2)
     activestorage (5.2.1)
       actionpack (= 5.2.1)
       activerecord (= 5.2.1)
@@ -156,6 +158,7 @@ GEM
       actionpack (>= 4.1)
       activesupport (>= 4.1)
     hashery (2.1.2)
+    http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (1.1.1)
@@ -214,9 +217,11 @@ GEM
     multi_json (1.13.1)
     multipart-post (2.0.0)
     mustermann (1.0.3)
+    mysql2 (0.5.3)
     net-http-digest_auth (1.4.1)
     net-http-persistent (3.0.0)
       connection_pool (~> 2.2)
+    netrc (0.11.0)
     newrelic_rpm (5.4.0.347)
     nio4r (2.3.1)
     nokogiri (1.10.9)
@@ -290,6 +295,11 @@ GEM
     responders (2.4.0)
       actionpack (>= 4.2.0, < 5.3)
       railties (>= 4.2.0, < 5.3)
+    rest-client (2.1.0)
+      http-accept (>= 1.7.0, < 2.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     ruby-rc4 (0.1.5)
     rufus-scheduler (3.5.2)
       fugit (~> 1.1, >= 1.1.5)
@@ -370,6 +380,7 @@ DEPENDENCIES
   activeadmin (~> 1.3.1)
   activeadmin-async_panel
   activeadmin-searchable_select
+  activerecord-import
   annotate
   babosa
   bootstrap-kaminari-views
@@ -384,6 +395,7 @@ DEPENDENCIES
   jquery-rails
   listen (~> 3.0.5)
   mechanize
+  mysql2
   newrelic_rpm
   nokogiri (= 1.10.9)
   paper_trail (~> 10.0.1)
@@ -394,6 +406,7 @@ DEPENDENCIES
   puma (~> 4.3)
   rails (>= 5.2.1)
   rails_script (~> 2.0)
+  rest-client
   sass-rails (~> 5.0)
   sentry-raven
   sidekiq (~> 5.2.2)

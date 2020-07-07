@@ -73,7 +73,6 @@ namespace :import_tafisr_usmani do
       docs = Nokogiri::HTML(text)
 
       translation_text = docs.search('#trans')[0].content.to_s.strip
-      # translation_text.tr "۰۱۲۳۴۵۶۷۸۹][", "0123456789]["
 
       foot_note_index = 1
 

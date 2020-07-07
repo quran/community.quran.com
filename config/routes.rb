@@ -16,8 +16,8 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-  resources :arabic_transliterations
+  resources :arabic_transliterations, except: :delete
   resources :proof_read_comments
-  resources :wbw_translations
-
+  resources :wbw_translations, except: :delete
+  resources :wbw_texts, except: :delete
 end

@@ -30,6 +30,7 @@ namespace :parse_brdidge_translation do
         @texts.join ''
       end
     end
+
     class Translation < QuranApiRecord
       attr_writer :texts, :html
 
@@ -105,7 +106,7 @@ namespace :parse_brdidge_translation do
 
         if dom.attr('class').to_s.include?($italic)
           if text.present?
-            text = "<i class=s>#{text.gsub("&nbsp;", ' ').strip}</i>"
+            text = "<i class=s>#{text.gsub("&nbsp;", '').strip}</i> "
           end
         end
 

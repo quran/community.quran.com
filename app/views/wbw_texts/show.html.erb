@@ -1,0 +1,121 @@
+<div class="bs-docs-section">
+  <h1 class="page-header">
+    Word by word text of ayah <%= @verse.verse_key %>
+
+    <span class=" pull-right">
+      <%= link_to 'Contribute', new_arabic_transliteration_path(ayah: @verse.id), class: 'btn btn-success' %>
+
+      <%= link_to 'Previous ayah', arabic_transliteration_path(@verse.id + 1), class: 'btn btn-success' %>
+      <%= link_to 'Next ayah', arabic_transliteration_path(@verse.id + 1), class: 'btn btn-success' %>
+
+      <%= link_to 'Back to filter', wbw_texts_path, class: 'btn btn-success' %>
+    </span>
+  </h1>
+
+  <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
+    <div class="row">
+      <div class="col-md-12 section" id="ayah_text">
+        <b>Text Indopak</b>
+        <div class="indopak" id="ayah_text" style="font-size: 30px; margin-top: 10px"><%= @verse.text_indopak %> </div>
+
+        <b>Proofreading</b>
+        <p class="indopak">
+          <% @verse.wbw_texts.order("word_id ASC").each do |w| %>
+          <span>
+            <%= w.text_indopak %>
+           </span>
+          <% end %>
+        </p>
+
+        <b>Difference</b>
+
+        <div class="indopak diffy" id="ayah_text" style="font-size: 30px;">
+          <%= diff_text(@verse.text_indopak.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_indopak).map { |t| t.to_s.strip }.join(' ').strip).html_safe %>
+        </div>
+      </div>
+
+      <div class="col-md-12 section">
+        <b>Text Imlaei</b>
+        <div class="madani" id="ayah_text" style="font-size: 30px; margin-top: 10px"><%= @verse.text_imlaei %> </div>
+
+        <b>Proofreading</b>
+        <p class="madani">
+          <% @verse.wbw_texts.order("word_id ASC").each do |w| %>
+          <span>
+            <%= w.text_imlaei %>
+           </span>
+          <% end %>
+        </p>
+
+        <b>Difference</b>
+
+        <div class="madani diffy" id="ayah_text" style="font-size: 30px;">
+          <%= diff_text(@verse.text_imlaei.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_imlaei).map { |t| t.to_s.strip }.join(' ').strip).html_safe %>
+        </div>
+      </div>
+
+      <div class="col-md-12 section">
+        <b>Text Uthmani</b>
+        <div class="madani" id="ayah_text" style="font-size: 30px; margin-top: 10px"><%= @verse.text_madani %> </div>
+
+        <b>Proofreading</b>
+        <p class="madani">
+          <% @verse.wbw_texts.order("word_id ASC").each do |w| %>
+          <span>
+            <%= w.text_uthmani %>
+           </span>
+          <% end %>
+        </p>
+
+        <b>Difference</b>
+
+        <div class="madani diffy" id="ayah_text" style="font-size: 30px;">
+          <%= diff_text(@verse.text_madani.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_uthmani).map { |t| t.to_s.strip }.join(' ').strip).html_safe %>
+        </div>
+
+        <div>
+          <b>Text Uthmani with codes</b>
+          <% @verse.words.order("position ASC").each do |w| %>
+          <span class="v2p<%= w.page_number %> char-<%= w.char_type_name.to_s.downcase %>" style="font-size: 45px">
+            <%= w.code.html_safe %>
+           </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <td style="direction: rtl">IndoPak text</td>
+    <td style="direction: rtl">Uthmani text</td>
+    <td style="direction: rtl">Imlaei text</td>
+    <td style="direction: rtl">Proofreading</td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @verse.wbw_texts.order('word_id asc').each do |word| %>
+    <tr>
+      <td class="indopak"><%= word.text_indopak %></td>
+
+      <td class="madani">
+        <%= word.text_uthmani %>
+      </td>
+
+      <td class="madani">
+        <%= word.text_imlaei %>
+      </td>
+
+      <td>
+
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+</div>
+
+

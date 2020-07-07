@@ -40,8 +40,9 @@ class ExportTranslationJob < ApplicationJob
         "(#{verse_key[0]}, #{verse_key[1]}, #{text})"
       end.join(',')
     else
-      Verse.eager_load(:translations).
-          where('translations.resource_content_id': resource.id)
+      Verse.eager_load(:translations)
+          .order('verses.verse_index ASC')
+          .where('translations.resource_content_id': resource.id)
           .map do |v|
         translation = format_translation_text(v.translations.first)
         "(#{v.chapter_id}, #{v.verse_number}, #{translation})"

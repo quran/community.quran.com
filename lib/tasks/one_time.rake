@@ -1,6 +1,64 @@
 namespace :one_time do
+  task prepare_wbw_text: :environment do
+    Word.unscoped.order('verse_id asc').each do |w|
+      WbwText.where(word_id: w.id).first_or_create({
+                                                 verse_id: w.verse_id,
+                                                 text_indopak: w.text_indopak,
+                                                 text_uthmani: w.text_madani,
+                                                 text_imlaei: w.text_imlaei
+                                             })
+    end
+  end
+
+  task import_madani_text: :environment do
+    module Kernel
+      def with_rescue_retry(exceptions, on_exception: nil, retries: 5, raise_exception_on_limit: true)
+        try = 0
+
+        begin
+          yield try
+        rescue *exceptions => exc
+          on_exception.call(exc) if on_exception
+          sleep 2
+          try += 1
+          try <= retries ? retry : raise_exception_on_limit && raise
+        end
+      end
+    end
+
+
+    url = "http://tanzil.net/tanzil/php/get-aya.php"
+    require 'rest-client'
+
+    start = 0
+    verse_index = 1
+    while (start < 6236) do
+      response = with_rescue_retry([RestClient::Exceptions::ReadTimeout], retries: 3, raise_exception_on_limit: true) do
+        RestClient.post(url, {type: 'uthmani', transType: 'en.itani', pageNum: 1, startAya: start, endAya: start + 10, version: 1.5}, {accept: 'application/json', Referer: 'http://tanzil.net/', Origin: 'http://tanzil.net'})
+      end
+
+      verses = JSON.parse(response.body)['quran']
+      verses = verses.is_a?(Array) ? verses : verses.values
+
+      verses.each do |line|
+        text = line.strip
+        puts text
+        Verse.find_by_verse_index(verse_index).update_column(:text_madani, text)
+        verse_index += 1
+      end
+      start = start + 10
+    end
+  end
 
   task import_75: :environment do
+    Translation.where("text like ?", "%<sup foot_note%").pluck(:resource_content_id).uniq.map do |resource_id|
+      resource = ResourceContent.find(resource_id)
+      if resource.approved?
+        file_name = "#{resource.language_name}-#{resource.name}".underscore.gsub(/\s/, '_')
+        ExportTranslationWithFootNoteJob.new.perform(resource_id, file_name)
+      end
+    end
+
     file = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2IDGm8MOTsJVZ5tQAXrx289xVvvCpj6T7DHbZ9ZEyWfGHcvlCWhUe4WzfaZZXEevxAkHI50GdBIlj/pub?output=csv"
     resource_content = ResourceContent.find(75)
 
@@ -296,6 +354,110 @@ namespace :one_time do
   task import_chechen_with_footnote: :environment do
     PaperTrail.enabled = false
 
+    mapping = {
+        1 => 'li.c0',
+        2 => 'li.c10',
+        3 => 'li.c1.c5',
+        4 => 'li.c8.c15',
+        5 => 'li.c4',
+        6 => 'li.c1',
+        7 => '',
+        8 => 'li.c2',
+        9 => 'li.c9.c20',
+        10 => 'li.c9',
+        11 => 'li.c5',
+        12 => 'li.c4',
+        13 => '',
+        14 => '',
+        15 => '',
+        16 => '',
+        17 => '',
+        18 => '',
+        19 => '',
+        20 => '',
+        21 => '',
+        22 => '',
+        23 => '',
+        24 => '',
+        25 => '',
+        26 => '',
+        27 => '',
+        28 => '',
+        29 => '',
+        30 => '',
+        31 => '',
+        32 => '',
+        33 => '',
+        34 => '',
+        35 => '',
+        36 => '',
+        37 => 'li.c10',
+        38 => '',
+        39 => '',
+        40 => '',
+        41 => '',
+        42 => '',
+        43 => '',
+        44 => '',
+        45 => '',
+        46 => '',
+        47 => '',
+        48 => '',
+        49 => '',
+        50 => '',
+        51 => '',
+        52 => '',
+        53 => '',
+        54 => '',
+        55 => '',
+        56 => '',
+        57 => '',
+        58 => '',
+        59 => '',
+        60 => '',
+        61 => '',
+        62 => '',
+        63 => '',
+        64 => '',
+        65 => '',
+        66 => '',
+        67 => '',
+        68 => '',
+        69 => '',
+        70 => '',
+        71 => '',
+        72 => '',
+        73 => '',
+        74 => '',
+        75 => '',
+        76 => '',
+        77 => '',
+        78 => '',
+        79 => '',
+        80 => '',
+        81 => '',
+        82 => '',
+        83 => '',
+        84 => '',
+        85 => '',
+        86 => '',
+        87 => '',
+        88 => '',
+        89 => '',
+        90 => '',
+        91 => '',
+        92 => '',
+        93 => '',
+        94 => '',
+        95 => '',
+        96 => '',
+        97 => '',
+        98 => '',
+        99 => '',
+        100 => '',
+    }
+
+    bismillah = '#bismillah'
     # issues
     # 23 last ayah
     # 35 last ayah
@@ -322,6 +484,8 @@ namespace :one_time do
                                                  data_source: data_source
                                              }).first_or_create
 
+    resource_content.priority = 4
+    resource_content.save
     footnote_resource_content = ResourceContent.where({
                                                           author_id: author.id,
                                                           author_name: author.name,
@@ -336,7 +500,17 @@ namespace :one_time do
                                                           data_source: data_source
                                                       }).first_or_create
 
+    Translation.where(resource_content: resource_content).delete_all
+    FootNote.where(resource_content: footnote_resource_content).delete_all
+
     translation = nil
+
+    bismillah = ".c21 .c15"
+    ayah_mapping = {
+        1 => ".c17 .c16",
+        56 => ".c5 .c1",
+    }
+
     Dir['chechen/*'].each do |f|
       text = File.open(f).read
       docs = Nokogiri.parse(text)
@@ -344,7 +518,7 @@ namespace :one_time do
 
       verses = Verse.unscoped.where(chapter_id: chapter.id).order("verse_index ASC")
 
-      if docs.search("li").length != verses.count
+      if docs.search(".c13").length != verses.count
         binding.pry
       end
 
@@ -371,6 +545,8 @@ namespace :one_time do
         translation.language = language
         translation.language_name = language.name.downcase
         translation.resource_name = resource_content.name
+        translation.priority = resource_content.priority
+
         translation.save
       end
     end
@@ -397,6 +573,57 @@ namespace :one_time do
     }
 
     class ExportRecord < ActiveRecord::Base
+    end
+    class ExportRecord < ActiveRecord::Base
+    end
+
+    class ExportSurahRecord < ExportRecord
+    end
+
+    class ExportVerseRecord < ExportRecord
+    end
+
+    class ExportWordRecord < ExportRecord
+    end
+
+    class ExportTranslationRecord < ExportRecord
+    end
+
+    class ExportTransliterationRecord < ExportRecord
+    end
+
+    class ExportWordTranslationRecord < ExportRecord
+    end
+
+    class ExportFootnoteRecord < ExportRecord
+    end
+
+    class ExportJuzRecord < ExportRecord
+    end
+
+    class ExportRecitationRecord < ExportRecord
+    end
+
+    class ExportAudioFileRecord < ExportRecord
+    end
+
+    class ExportResourceRecord < ExportRecord
+    end
+
+    class ExportCharTypeRecord < ExportRecord
+    end
+
+    class ExportLanguageRecord < ExportRecord
+    end
+
+    class ExportAuthorRecord < ExportRecord
+    end
+
+    class ExportUrduTransliterationRecord < ExportRecord
+    end
+
+    class ExportWordTransliterationRecord < ExportRecord
+
     end
 
     ExportRecord.establish_connection connection

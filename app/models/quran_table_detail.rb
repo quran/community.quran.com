@@ -9,7 +9,7 @@ class QuranTableDetail < ApplicationRecord
   end
 
   def readonly?
-    true
+    false
   end
 
   def load_table(page, limit)

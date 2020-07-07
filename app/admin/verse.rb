@@ -129,12 +129,11 @@ ActiveAdmin.register Verse do
           td "Position"
           td "Code"
           td "Font v2"
-          td "Font (text v3)"
-          td "Text(Imlaei)"
-          td "Text(Uthmani)"
-          td "Text(Imlaei Simple)"
-          td "Text(Uthmani Simple)"
-          td "Text(Indopak)"
+          td "Uthmani"
+          td "Uthmani Simple"
+          td "Imlaei"
+          td "Imlaei Simple"
+          td "Indopak"
           td "Char type"
         end
 
@@ -154,10 +153,12 @@ ActiveAdmin.register Verse do
                 end
               end
 
-              td class: 'quran-text' do
-                span class: "tp#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-                  w.text_imlaei
-                end
+              td class: 'quran-text me_quran' do
+                w.text_madani
+              end
+
+              td class: 'quran-text me_quran' do
+                w.text_uthmani_simple
               end
 
               td class: 'quran-text me_quran' do
@@ -165,15 +166,7 @@ ActiveAdmin.register Verse do
               end
 
               td class: 'quran-text me_quran' do
-                w.text_madani
-              end
-
-              td class: 'quran-text me_quran' do
                 w.text_simple
-              end
-
-              td class: 'quran-text me_quran' do
-                w.text_uthmani_simple
               end
 
               td class: 'quran-text row-text_indopak' do

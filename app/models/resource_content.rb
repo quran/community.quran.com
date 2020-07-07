@@ -35,6 +35,7 @@ class ResourceContent < QuranApiRecord
     Image = 'image'
     Info = 'info'
     Video = 'video'
+    Audio = 'audio'
   end
 
   def toggle_approve!
@@ -62,7 +63,7 @@ class ResourceContent < QuranApiRecord
   end
 
   def recitation?
-    sub_type == ResourceType::Audio
+    sub_type == ResourceType::Audio || resource_type == ResourceType::Audio
   end
 
   class << self

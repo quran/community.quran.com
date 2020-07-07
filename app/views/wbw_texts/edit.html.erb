@@ -1,0 +1,89 @@
+<div class="row" id="editor-wrap">
+  <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+    </button>
+    <h2>﷽ </h2>
+    <h4>
+      Ayah: <%= @verse.verse_key %>
+      <span class="indopak"> سورہٴ <%= @verse.chapter.name_arabic %></span>.
+    </h4>
+  </div>
+
+  <div class="col-md-12">
+    <b>Text Indopak</b>
+    <p class="indopak" id="ayah_text"><%= @verse.text_indopak %> </p>
+  </div>
+
+  <div class="col-md-12">
+    <b>Text Imlaei</b>
+    <p class="madani" id="ayah_text"><%= @verse.text_imlaei %> </p>
+  </div>
+
+  <div class="col-md-12">
+    <b>Text Uthmani</b>
+    <p class="madani" id="ayah_text"><%= @verse.text_madani %> </p>
+
+    <p>
+      <b>Text Uthmani with codes</b>
+
+      <% @verse.words.order("position ASC").each do |w| %>
+      <span class="v2p<%= w.page_number %> char-<%= w.char_type_name.to_s.downcase %>" style="font-size: 45px">
+        <%= w.code.html_safe %>
+      </span>
+      <% end %>
+    </p>
+  </div>
+
+  <div class="col-md-12">
+    <%= form_with model: @verse, url: wbw_texts_path(verse_id: @verse.id), method: :post, html: {class: 'form', autocomplete: 'off'} do |form| %>
+      <div id="words">
+        <%= form.fields_for :wbw_texts, @wbw_texts do |w_form| %>
+          <%= w_form.hidden_field :word_id %>
+          <% word = w_form.object.word %>
+          <div class="well">
+            <p>
+              Word# <%= word.location %> (word type: <b><%= word.char_type_name %> </b>)
+              <% if word.char_type_name != 'word' %>
+                <span style="font-size: 50px"><%= word.text_madani %></span>
+              <% end %>
+            </p>
+
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <%= w_form.text_field :text_uthmani, class: 'form-control madani soft-keyboard' %>
+                  <p class="help-block">
+                    Text Uthmani. <span class="font-weight-bold madani"><%= word.text_madani %></span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <%= w_form.text_field :text_imlaei, class: 'form-control madani soft-keyboard' %>
+                  <p class="help-block">
+                    Text Imlaei. <span class="font-weight-bold madani"><%= word.text_imlaei %></span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <%= w_form.text_field :text_indopak, class: 'form-control indopak soft-keyboard' %>
+                  <p class="help-block">
+                    Text Indopak. <span class="font-weight-bold indopak"><%= word.text_indopak %></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="form-group">
+        <%= form.submit "Save ayah", class: 'btn btn-success', data: {disable_with: 'Please wait...'} %>
+      </div>
+    <% end %>
+  </div>
+</div>
+

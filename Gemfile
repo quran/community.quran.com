@@ -6,6 +6,7 @@ gem 'rails', '>= 5.2.1'
 # Use postgresql as the database for Active Record
 gem 'pg'
 gem 'sqlite3'
+gem 'mysql2', require: false
 # Use Puma as the app server
 gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
@@ -16,6 +17,9 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
+
+gem 'activerecord-import', require: false
+
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -95,3 +99,4 @@ gem 'sidekiq-scheduler', '~> 3.0.0'
 gem 'sinatra', require: false
 gem 'carrierwave', '~> 1.2.3'
 gem "fog-aws"
+gem "rest-client"
