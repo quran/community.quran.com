@@ -9,9 +9,14 @@ module HomeHelper
   end
 
   def diff_text(text1, text2)
-    _ = `git diff $(echo #{text1} | git hash-object -w --stdin) $(echo #{text2} | git hash-object -w --stdin)  --word-diff`
-    result = _.split('@@').last.strip
+    diff = `git diff $(echo #{text1} | git hash-object -w --stdin) $(echo #{text2} | git hash-object -w --stdin)  --word-diff`
 
-    [result, result.gsub(/\[-/, ' <del> ').gsub(/-\]/, ' </del> ').gsub(/\{\+/, ' <ins> ').gsub(/\+\}/, ' </ins> ')].join("</br></br/>")
+    if diff.present?
+      result = diff.split('@@').last.strip
+
+      [result, result.gsub(/\[-/, ' <del> ').gsub(/-\]/, ' </del> ').gsub(/\{\+/, ' <ins> ').gsub(/\+\}/, ' </ins> ')].join("</br></br/>")
+    else
+      'No difference found'
+    end
   end
 end

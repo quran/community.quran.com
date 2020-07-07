@@ -45,9 +45,11 @@
 
     .form-control{
       font-size: 30px;
-      height: 57px;
-      overflow: hidden;
+      height: 62px;
       resize: none;
+      vertical-align: middle;
+      text-align: center;
+      padding-bottom: 20px;
     }
   }
 
