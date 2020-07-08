@@ -1,6 +1,6 @@
 namespace :one_time do
   task prepare_wbw_text: :environment do
-    Word.unscoped.order('verse_id asc').first(10).each do |w|
+    Word.unscoped.order('verse_id asc').each do |w|
       WbwText.where(word_id: w.id).first_or_create({
                                                  verse_id: w.verse_id,
                                                  text_indopak: w.text_indopak,
