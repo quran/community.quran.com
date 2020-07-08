@@ -44,7 +44,7 @@ class WbwTextsController < CommunityController
   def wbw_translations_params
     params.require(:verse).permit wbw_texts_attributes: [
         :word_id,
-        :text_madani,
+        :text_imlaei,
         :text_indopak,
         :text_uthmani,
         :user_id,
