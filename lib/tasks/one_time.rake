@@ -1,12 +1,81 @@
 namespace :one_time do
+  task import_tafheem: :environment do
+    PaperTrail.enabled = false
+    ActiveRecord::Base.logger = nil
+
+    split_reg = /\d+[^()]+/
+
+    # tafheemulquran urdu
+    resource_content = ResourceContent.find(97)
+    foot_note_resource_content = ResourceContent.find(98)
+    language = resource_content.language
+
+    Translation.where(resource_content: resource_content).delete_all
+    FootNote.where(resource_content: foot_note_resource_content).delete_all
+
+    Verse.unscoped.order('verse_index asc').each do |verse|
+      url = "http://www.equranlibrary.com/tafseer/tafheemulquran/#{verse.verse_key.gsub(':', '/')}"
+
+      translation = verse.translations.where(resource_content: resource_content, language: language).first_or_initialize
+
+      response = with_rescue_retry([RestClient::Exceptions::ReadTimeout], retries: 3, raise_exception_on_limit: true) do
+        RestClient.get(url)
+      end
+
+      if response && 200 == response.code
+        docs = Nokogiri.parse(response.body)
+
+        puts verse.verse_key
+        translation.save validate: false
+
+        translation_text = docs.search(".columns .translation")[1].text
+        footnotes = docs.search(".columns .translation")[2]&.text
+
+        if footnotes.present?
+          first = footnotes.scan(/\d+/).first
+          footnotes_numbers = translation_text.scan(/\d+/)
+
+          _skip, foot_notes_text = footnotes.split(Regexp.new("#{first}[^()]"))
+          foot_notes_texts = foot_notes_text.to_s.split(/\d+[^()]/)
+
+          foot_notes_texts = foot_notes_texts.map do |s|
+            parts = s.to_s.split("\n")
+            parts.pop
+            parts.join('\n')
+          end
+
+          foot_note_index = 0
+
+          footnotes_numbers.each_with_index do |num, i|
+            footnote_text = foot_notes_texts[i]
+
+            if footnote_text.present?
+              footnote = translation.foot_notes.create(text: footnote_text.to_s.strip, language: language, language_name: language.name.downcase, resource_content: foot_note_resource_content)
+
+              translation_text = translation_text.gsub("#{num}", "<sup foot_note=#{footnote.id}>#{foot_note_index += 1}</sup>")
+            end
+          end
+        end
+
+        translation.text = translation_text.strip
+        translation.language = language
+        translation.language_name = language.name.downcase
+        translation.resource_name = resource_content.name
+        translation.priority = resource_content.priority
+
+        translation.save
+      end
+    end
+  end
+
   task prepare_wbw_text: :environment do
     Word.unscoped.order('verse_id asc').each do |w|
       WbwText.where(word_id: w.id).first_or_create({
-                                                 verse_id: w.verse_id,
-                                                 text_indopak: w.text_indopak,
-                                                 text_uthmani: w.text_madani,
-                                                 text_imlaei: w.text_imlaei
-                                             })
+                                                       verse_id: w.verse_id,
+                                                       text_indopak: w.text_indopak,
+                                                       text_uthmani: w.text_madani,
+                                                       text_imlaei: w.text_imlaei
+                                                   })
     end
   end
 
@@ -330,26 +399,6 @@ namespace :one_time do
     end
   end
 
-  def process_foot_note_text_for_chechen(foot_note_node, chapter)
-    bold_dom = {
-        2 => 'c26',
-        4 => "c21",
-        5 => "c3 c13 c40",
-        10 => "c12 c30"
-    }
-    foot_note_node.search("span").each do |node|
-      if bold_dom[chapter.id] && node.attr('class').to_s.strip == bold_dom[chapter.id]
-        node.name = "b"
-        node.remove_attribute("class")
-      end
-    end
-
-    # remove links
-    foot_note_node.search("a").remove
-
-    white_list_sanitizer = Rails::Html::WhiteListSanitizer.new
-    white_list_sanitizer.sanitize(foot_note_node.to_s.strip, tags: %w(div sup p ol ul li b), attributes: []).gsub(/[\r\n]+/, "<br/>")
-  end
 
   task import_chechen_with_footnote: :environment do
     PaperTrail.enabled = false
@@ -361,100 +410,117 @@ namespace :one_time do
         4 => 'li.c8.c15',
         5 => 'li.c4',
         6 => 'li.c1',
-        7 => '',
+
+        # 7 is showing 11
+        # 7 => 'li.c1.c9',
+
         8 => 'li.c2',
         9 => 'li.c9.c20',
         10 => 'li.c9',
         11 => 'li.c5',
         12 => 'li.c4',
-        13 => '',
-        14 => '',
-        15 => '',
-        16 => '',
-        17 => '',
-        18 => '',
-        19 => '',
-        20 => '',
-        21 => '',
-        22 => '',
-        23 => '',
-        24 => '',
-        25 => '',
-        26 => '',
-        27 => '',
-        28 => '',
-        29 => '',
-        30 => '',
-        31 => '',
-        32 => '',
-        33 => '',
-        34 => '',
-        35 => '',
-        36 => '',
-        37 => 'li.c10',
-        38 => '',
-        39 => '',
-        40 => '',
-        41 => '',
-        42 => '',
-        43 => '',
-        44 => '',
-        45 => '',
-        46 => '',
-        47 => '',
-        48 => '',
-        49 => '',
-        50 => '',
-        51 => '',
-        52 => '',
-        53 => '',
-        54 => '',
-        55 => '',
-        56 => '',
-        57 => '',
-        58 => '',
-        59 => '',
-        60 => '',
-        61 => '',
-        62 => '',
-        63 => '',
-        64 => '',
-        65 => '',
-        66 => '',
-        67 => '',
-        68 => '',
-        69 => '',
-        70 => '',
-        71 => '',
-        72 => '',
-        73 => '',
-        74 => '',
-        75 => '',
-        76 => '',
-        77 => '',
-        78 => '',
-        79 => '',
-        80 => '',
-        81 => '',
-        82 => '',
-        83 => '',
-        84 => '',
-        85 => '',
-        86 => '',
-        87 => '',
-        88 => '',
-        89 => '',
-        90 => '',
-        91 => '',
-        92 => '',
-        93 => '',
-        94 => '',
-        95 => '',
-        96 => '',
-        97 => '',
-        98 => '',
-        99 => '',
-        100 => '',
+        13 => 'li.c5.c12',
+        14 => 'li.c9',
+        15 => 'li.c1',
+        16 => 'li.c0.c11',
+        17 => 'li.c12.c14',
+        18 => 'li.c0.c1',
+        19 => 'li.c4.c11',
+        20 => 'li.c6',
+        21 => 'li.c0.c11',
+        22 => 'li.c7.c13',
+        23 => 'li.c3',
+        24 => 'li.c0',
+        25 => 'li.c2',
+        26 => 'p.c5.c7',
+        27 => 'li.c1',
+        28 => 'li.c6',
+        29 => 'li.c1.c6',
+        30 => 'li.c5',
+        31 => 'li.c4',
+        32 => 'li.c7',
+        33 => 'li.c11',
+        34 => 'li.c1.c6',
+        35 => 'li.c11.c12',
+        36 => 'li.c2',
+        37 => 'li.c10.c12',
+        38 => 'li.c7',
+        39 => 'li.c5',
+        40 => 'li.c10',
+        41 => 'li.c8',
+        42 => 'li.c15',
+        43 => 'li.c3',
+        44 => 'li.c11.c14',
+        45 => 'li.c7',
+        46 => 'li.c7',
+        47 => 'li.c2',
+        48 => 'li.c11.c13',
+        49 => 'li.c5',
+        50 => 'li.c9',
+        51 => 'li.c2',
+        52 => 'li.c7.c10',
+        53 => 'li.c5',
+        54 => 'li.c3',
+        55 => 'li.c6',
+        56 => 'li.c2',
+        57 => 'li.c9',
+        58 => 'li.c10.c15',
+        59 => 'li.c5.c6',
+        60 => 'li.c1.c15',
+        61 => 'li.c5',
+        62 => 'li.c6',
+        63 => 'li.c14',
+        64 => 'li.c3',
+        65 => 'li.c1',
+        66 => 'li.c7.c14',
+        67 => 'li.c10',
+        68 => 'li.c8.c10',
+        69 => 'li.c1',
+        70 => 'li.c7',
+        71 => 'li.c2',
+        72 => 'li.c0',
+        73 => 'li.c17',
+        74 => 'li.c10.c14',
+        75 => 'li.c7.c14',
+        76 => 'li.c0.c1',
+        77 => 'li.c11',
+        78 => 'li.c5',
+        79 => 'li.c13',
+        80 => 'li.c8.c12',
+        81 => 'li.c6.c9',
+        82 => 'li.c9',
+        83 => 'li.c0.c8',
+        84 => 'li.c2',
+        85 => 'li.c2.c5',
+        86 => 'li.c9',
+        87 => 'li.c9',
+        88 => 'li.c11',
+        89 => 'li.c5',
+        90 => 'li.c8',
+        91 => 'li.c10',
+        92 => 'li.c10',
+        93 => 'li.c16.c18',
+        94 => 'li.c7',
+        95 => 'li.c3',
+        96 => 'li.c8',
+        97 => 'li.c4',
+        98 => 'li.c0',
+        99 => 'li.c18',
+        100 => 'li.c8',
+        101 => 'li.c9',
+        102 => 'li.c5.c8',
+        103 => 'li.c9',
+        104 => 'li.c4.c10',
+        105 => 'li.c8',
+        106 => 'li.c11',
+        107 => 'li.c5',
+        108 => 'li.c4',
+        109 => 'li.c5',
+        110 => 'li.c7',
+        111 => 'li.c9',
+        112 => 'li.c1',
+        113 => 'li.c20',
+        114 => 'li.c17'
     }
 
     bismillah = '#bismillah'
@@ -465,7 +531,6 @@ namespace :one_time do
     # 62
     # 9 last three ayah
 
-    # TODO: Fix author name
     author = Author.where(name: 'Magomed Magomedov').first_or_create
     language = Language.find_by_name 'Chechen'
     data_source = DataSource.where(name: "Movsar Bekaev - bekaev.movsar@gmail.com").first_or_create
@@ -506,10 +571,7 @@ namespace :one_time do
     translation = nil
 
     bismillah = ".c21 .c15"
-    ayah_mapping = {
-        1 => ".c17 .c16",
-        56 => ".c5 .c1",
-    }
+
 
     Dir['chechen/*'].each do |f|
       text = File.open(f).read

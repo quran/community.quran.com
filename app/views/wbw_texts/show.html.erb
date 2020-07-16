@@ -30,7 +30,7 @@
         <b>Difference</b>
 
         <div class="indopak diffy" id="ayah_text" style="font-size: 30px;">
-          <%= diff_text(@verse.text_indopak.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_indopak).map { |t| t.to_s.strip }.join(' ').strip) %>
+          <%= diff_text(@verse.text_indopak.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_indopak).select(&:present?).map { |t| t.to_s.strip }.join(' ').strip) %>
         </div>
       </div>
 
@@ -50,7 +50,7 @@
         <b>Difference</b>
 
         <div class="madani diffy" id="ayah_text" style="font-size: 30px;">
-          <%= diff_text(@verse.text_imlaei.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_imlaei).map { |t| t.to_s.strip }.join(' ').strip) %>
+          <%= diff_text(@verse.text_imlaei.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_imlaei).select(&:present?).map { |t| t.to_s.strip }.join(' ').strip) %>
         </div>
       </div>
 
@@ -70,7 +70,7 @@
         <b>Difference</b>
 
         <div class="madani diffy" id="ayah_text" style="font-size: 30px;">
-          <%= diff_text(@verse.text_madani.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_uthmani).map { |t| t.to_s.strip }.join(' ').strip) %>
+          <%= diff_text(@verse.text_madani.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_uthmani).select(&:present?).map { |t| t.to_s.strip  }.join(' ').strip) %>
         </div>
 
         <div>
