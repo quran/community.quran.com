@@ -93,8 +93,6 @@ GEM
       activemodel (>= 4.0.0)
       activesupport (>= 4.0.0)
       mime-types (>= 1.16)
-    cld3 (3.3.0)
-      ffi (>= 1.1.0, < 1.12.0)
     coderay (1.1.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -381,7 +379,6 @@ DEPENDENCIES
   bootstrap-kaminari-views
   byebug
   carrierwave (~> 1.2.3)
-  cld3
   coffee-rails (~> 4.2)
   devise
   diffy
