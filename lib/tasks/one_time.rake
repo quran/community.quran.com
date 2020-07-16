@@ -77,6 +77,22 @@ namespace :one_time do
                                                        text_imlaei: w.text_imlaei
                                                    })
     end
+
+    Verse.find_each do |v|
+      uthmani_words = v.text_madani.split(/\s+/)
+      pause_index = 0
+
+      v.words.order('position asc').each_with_index do |w, i|
+        if w.char_type_name == 'pause'
+          text = ''
+          pause_index = 0
+        else
+          text = uthmani_words[i + pause_index]
+        end
+
+        WbwText.where(word_id: w.id).update(text_uthmani: text)
+      end
+    end
   end
 
   task import_madani_text: :environment do

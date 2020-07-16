@@ -1,3 +1,10 @@
+<%
+  indopak_words = @verse.text_indopak.split(/\s+/)
+  uthmani_words = @verse.text_madani.split(/\s+/)
+  imlaei_words = @verse.text_imlaei.split(/\s+/)
+
+  word_index = 0
+%>
 <div class="row" id="editor-wrap">
   <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
@@ -54,7 +61,10 @@
                   <%= w_form.text_field :text_uthmani, class: 'form-control madani soft-keyboard' %>
 
                   <p class="help-block">
-                    Text Uthmani. <span class="font-weight-bold madani"><%= word.text_madani %></span>
+                    Text Uthmani
+                    <br/>
+                    Expected:
+                    <span class="madani"><%= uthmani_words[word_index] if word.char_type_name == 'word' %></span>
                   </p>
                 </div>
               </div>
@@ -63,7 +73,10 @@
                 <div class="form-group">
                   <%= w_form.text_field :text_imlaei, class: 'form-control madani soft-keyboard' %>
                   <p class="help-block">
-                    Text Imlaei. <span class="font-weight-bold madani"><%= word.text_imlaei %></span>
+                    Text Imlaei
+                    <br/>
+                    Expected:
+                    <span class="madani"><%= imlaei_words[word_index] if word.char_type_name == 'word' %></span>
                   </p>
                 </div>
               </div>
@@ -72,12 +85,16 @@
                 <div class="form-group">
                   <%= w_form.text_field :text_indopak, class: 'form-control indopak soft-keyboard' %>
                   <p class="help-block">
-                    Text Indopak. <span class="font-weight-bold indopak"><%= word.text_indopak %></span>
+                    Text Indopak.
+                    <br/>
+                    Expected: <span class="indopak"><%= indopak_words[word_index] if word.char_type_name == 'word' %></span>
                   </p>
                 </div>
               </div>
             </div>
           </div>
+
+          <% word_index += 1 %>
         <% end %>
       </div>
 
