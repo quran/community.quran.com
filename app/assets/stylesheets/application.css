@@ -67,6 +67,7 @@
 .diff ins strong {
     font-weight: normal;
     background: #9f9;
+    padding: 5px;
 }
 
 .diff li.diff-comment {
