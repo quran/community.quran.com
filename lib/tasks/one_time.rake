@@ -230,14 +230,18 @@ namespace :one_time do
   task prepare_font_v2_codes_new: :environment do
     PaperTrail.enabled = false
 
-    codes = File.open("data/v2-font-codes.txt").read
+    #codes = File.open("data/v2-font-codes.txt").read
     word_index = 0
+    issues = []
 
     codes = ""
 
     1.upto(604).each do |p|
       page = File.open("#{Rails.root}/data/v2-codes/#{p}.txt").read
-      codes += page
+      #codes += page
+      if Word.where(page_number: p).length != page.length
+        issues << p
+      end
     end
 
 =begin

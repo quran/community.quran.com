@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get 'arabic_transliterations/:id/render_surah', to: "arabic_transliterations#render_surah"
   root to: 'community#splash'
   post '/contact', to: 'contact_us#message'
-  
+
   devise_for :users
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   authenticated :admin_user do
     require 'sidekiq/web'
     require 'sidekiq-scheduler/web'
-  
+
     mount Sidekiq::Web => '/sidekiq'
   end
 

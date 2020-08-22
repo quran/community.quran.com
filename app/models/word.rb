@@ -34,6 +34,7 @@ class Word < QuranApiRecord
   has_one :arabic_transliteration
 
   scope :words, -> { where char_type_id: 1}
+  default_scope { order 'position asc' }
 
   def code
     "&#x#{code_hex};"

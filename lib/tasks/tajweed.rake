@@ -9,7 +9,7 @@ namespace :tajweed do
       url = "http://api.alquran.cloud/ayah/#{v.verse_key}/quran-tajweed"
       text = JSON.parse(URI.open(url).read)['data']['text']
 
-      parser =TajweedText.new text
+      parser = Utils::TajweedText.new text
 
       tajweed = parser.parse_buckwalter_tajweed(text)
 
