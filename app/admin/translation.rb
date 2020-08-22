@@ -33,7 +33,7 @@ ActiveAdmin.register Translation do
 
       row :text do |resource|
         div class: resource.language_name.to_s.downcase do
-          resource.text
+          resource.text.html_safe
         end
       end
       row :resource_content
@@ -42,6 +42,8 @@ ActiveAdmin.register Translation do
     if params[:version].to_i > 0
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
+
+    active_admin_comments
   end
   
   def scoped_collection

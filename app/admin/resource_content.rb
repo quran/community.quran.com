@@ -67,6 +67,7 @@ ActiveAdmin.register ResourceContent do
       row :mobile_translation_id
       row :sqlite_file_url
     end
+    active_admin_comments
   end
 
   form do |f|

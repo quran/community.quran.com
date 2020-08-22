@@ -3,29 +3,33 @@ module ActiveAdminViewHelpers
     def diff_panel(context, resource)
       context.panel "Changes diff for this version" do
         previous = resource.paper_trail.previous_version
-        previous = previous
-        current  = resource
-        
+        current = resource.paper_trail.next_version
+
         context.attributes_table_for previous do
           current.attributes.each do |key, val|
             context.row key do
-              diff = Diffy::Diff.new(previous.try(key).to_s, val.to_s, allow_empty_diff: false).to_s(:html).html_safe
-              diff.present? ? diff : val
+              diff = Diffy::SplitDiff.new(previous.send(key).to_s, val.to_s, format: :html, allow_empty_diff: false)
+
+              if diff
+                "Old <br/> #{diff.left} <br/> New #{diff.right}".html_safe
+              else
+                val
+              end
             end
           end
         end
       end
     end
-    
+
     def versionate(context)
       context.controller do
         def original_resource
           scoped_collection.find(params[:id])
         end
-        
+
         def find_resource
           item = scoped_collection.includes(:versions).find(params[:id])
-          
+
           if params[:version].to_i > 0
             item.versions[params[:version].to_i].reify
           else
@@ -33,11 +37,11 @@ module ActiveAdminViewHelpers
           end
         end
       end
-      
+
       context.sidebar "Versions", only: :show do
         div do
           h2 "Current version #{link_to resource.versions.size}".html_safe
-          
+
           table do
             thead do
               td :version
@@ -45,7 +49,7 @@ module ActiveAdminViewHelpers
               td :created_at
               td :user
             end
-            
+
             tbody do
               (resource.versions.size - 1).downto(0) do |index|
                 version = resource.versions[index]
@@ -61,25 +65,25 @@ module ActiveAdminViewHelpers
         end
       end
     end
-    
+
     def render_translated_name_sidebar(context)
       context.sidebar "Translated names", only: :show do
         div do
           semantic_form_for [:admin, TranslatedName.new] do |form|
-            form.input(:resource_id, as: :hidden, input_html: { value: resource.id }) +
-              form.input(:resource_type, value: 'Author', as: :hidden, input_html: { value: resource.class.to_s }) +
-              form.inputs(:name, :language) +
-              form.actions(:submit)
+            form.input(:resource_id, as: :hidden, input_html: {value: resource.id}) +
+                form.input(:resource_type, value: 'Author', as: :hidden, input_html: {value: resource.class.to_s}) +
+                form.inputs(:name, :language) +
+                form.actions(:submit)
           end
         end
-        
+
         table do
           thead do
             td :id
             td :language
             td :name
           end
-          
+
           tbody do
             resource.translated_names.each do |translated_name|
               tr do
@@ -94,10 +98,10 @@ module ActiveAdminViewHelpers
     end
 
     def render_slugs(context)
-      context.sidebar "SLugs", only: :show do
+      context.sidebar 'Slugs', only: :show do
         div do
           semantic_form_for [:admin, Slug.new] do |form|
-            form.input(:chapter_id, as: :hidden, input_html: { value: resource.id }) +
+            form.input(:chapter_id, as: :hidden, input_html: {value: resource.id}) +
                 form.inputs(:slug, :locale) +
                 form.actions(:submit)
           end

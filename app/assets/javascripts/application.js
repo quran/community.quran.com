@@ -15,6 +15,4 @@
 //= require turbolinks
 //= require bootstrap-modalmanager
 //= require jquery-ui-position.min
-//= require rails_script
-//= require_tree ./controllers
-//= require_tree ./utilities
+//= require utilities/arabic_keyboard

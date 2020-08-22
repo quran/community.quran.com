@@ -2,29 +2,29 @@ source 'https://rubygems.org'
 ruby '2.6.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 5.2.1'
+gem 'rails', '>= 6.0.3.2'
 # Use postgresql as the database for Active Record
 gem 'pg'
 gem 'sqlite3'
 gem 'mysql2', require: false
 # Use Puma as the app server
-gem 'puma', '~> 4.3'
+gem 'puma', '~> 4.3.5'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.2'
+
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
-gem 'activerecord-import', require: false
-
+# gem 'activerecord-import', require: false
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
+
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
-gem 'turbolinks', '~> 5'
+gem 'turbolinks'
+
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
@@ -36,19 +36,20 @@ gem 'turbolinks', '~> 5'
 # Detect language from text
 # gem "cld3"
 
-#Admin panel
-gem 'activeadmin', '~> 1.3.1'
+# Admin panel
+gem 'activeadmin', '~> 2.7.0'
 gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'activeadmin-async_panel'
-gem 'paper_trail', '~> 10.0.1'
 gem 'activeadmin-searchable_select'
+gem 'paper_trail', '~> 10.3.1'
 
-gem "twitter-bootstrap-rails"
 gem 'bootstrap-kaminari-views'
-gem 'rails_script', '~> 2.0'
+# Bootstrap view helpers
+gem 'twitter-bootstrap-rails'
 
-gem 'nokogiri', '1.10.9'
+gem 'nokogiri', '1.10.10'
 gem 'pdf-reader'
+
 # authentication
 gem 'devise'
 gem 'newrelic_rpm'
@@ -95,7 +96,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'sidekiq', '~> 5.2.2'
-gem 'sidekiq-scheduler', '~> 3.0.0'
+gem 'sidekiq-scheduler', '~> 3.0.1'
 gem 'sinatra', require: false
 gem 'carrierwave', '~> 1.2.3'
 gem "fog-aws"

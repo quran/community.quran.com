@@ -81,8 +81,8 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
         attributes_table_for previous do
           current.attributes.each do |key, val|
             row key do
-              diff = Diffy::Diff.new(previous.send(key).to_s, val.to_s, allow_empty_diff: false).to_s(:html).html_safe
-              diff.present? ? diff : val
+              diff = Diffy::SplitDiff.new(previous.send(key).to_s, val.to_s, format: :html, allow_empty_diff: true)
+              "Old <br/> #{diff.left} <br/> New #{diff.right}".html_safe
             end
           end
         end
