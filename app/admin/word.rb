@@ -46,13 +46,21 @@ ActiveAdmin.register Word do
       row :verse_key
       row :verse_index
       row :position
-
-      row :text_madani
-      row :text_indopak
-      row :text_imlaei
-      row :text_simple
-      row :text_madani_simple
-      row :text_uthmani_simple
+      row :text_uthmani do
+        span resource.text_uthmani, class: 'me_quran'
+      end
+      row :text_uthmani_simple do
+        span resource.text_uthmani_simple, class: 'me_quran'
+      end
+      row :text_imlaei do
+        span resource.text_imlaei, class: 'me_quran'
+      end
+      row :text_imlaei_simple do
+        span resource.text_imlaei_simple, class: 'me_quran'
+      end
+      row :text_indopak do
+        span resource.text_indopak, class: 'indopak'
+      end
 
       row :page_number do |resource|
         link_to resource.page_number, "/admin/page?page#{resource.page_number}"
@@ -175,7 +183,7 @@ ActiveAdmin.register Word do
         tr do
           td do
             (link_to("play", "#_", class: 'play') +
-                audio_tag("", data: {url: word.audio_url}, controls: true, class: 'audio')) if word.audio_url
+                audio_tag("", data: {url: "//audio.qurancdn.com/#{word.audio_url}"}, controls: true, class: 'audio')) if word.audio_url
           end
         end
       end

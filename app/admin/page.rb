@@ -31,7 +31,7 @@ ActiveAdmin.register_page "Page" do
           verses.each do |verse|
             tr do
               td class: 'quran-text me_quran' do
-                link_to verse.text_madani, admin_verse_path(verse)
+                link_to verse.text_uthmani, admin_verse_path(verse)
               end
 
               td do
@@ -58,7 +58,7 @@ ActiveAdmin.register_page "Page" do
                 span do
                   verse.words.order("position ASC").each do |w|
                     span class: "tp#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-                      w.text_madani
+                      w.text_uthmani
                     end
                   end
                 end

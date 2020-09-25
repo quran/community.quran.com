@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  word_id: 1
+  text_indopak: MyString
+  text_uthmani: MyString
+  text_imlaei: MyString
+
+two:
+  word_id: 1
+  text_indopak: MyString
+  text_uthmani: MyString
+  text_imlaei: MyString

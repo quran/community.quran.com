@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/activeadmin/inherited_resources.git
-  revision: 3528fa8e0e561866edd77f3cca193fca8311349d
+  remote: https://github.com/activeadmin/inherited_resources.git
+  revision: 6a4e55bc8a137a59fe2584e0079d703798949b2e
   specs:
     inherited_resources (1.11.0)
       actionpack (>= 5.2, < 6.1)
@@ -436,7 +436,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 2.6.5p114
+   ruby 2.7.1p83
 
 BUNDLED WITH
-   1.17.3
+   2.1.4

@@ -20,7 +20,7 @@ ActiveAdmin.register Synonym do
         false && resource.words.each do |word|
 
           span do
-            link_to word.text_madani, [:admin, word], class: 'ml-2'
+            link_to word.text_uthmani, [:admin, word], class: 'ml-2'
 
 
             # http://localhost:3000/admin/words?text_madani_equals=word.text_madani

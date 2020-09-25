@@ -1,4 +1,4 @@
-<div class="bs-docs-section">
+<div class="bs-docs-section transliteration">
   <h1 class="page-header">
     Arabic/Urdu Transliterations of <%= @verse.verse_key %>
 
@@ -21,7 +21,7 @@
     <p>
     <ul>
       <li>
-        <b>Text Madani:</b> <span class="indopak"> <%= @verse.text_madani %></span>
+        <b>Text Madani:</b> <span class="indopak"> <%= @verse.text_uthmani %></span>
       </li>
 
       <li>
@@ -101,11 +101,11 @@
         <td class=""><%= word.arabic_transliteration&.indopak_text %></td>
 
         <td class="arabic">
-          <%= word.text_simple %>
+          <%= word.text_imlaei_simple %>
         </td>
 
         <td class="arabic">
-          <%= word.text_madani %>
+          <%= word.text_uthmani %>
         </td>
 
         <td class="arabic">

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  language_id: 1
+  text: MyString
+  user_id: 1
+  approved: false
+  word_id: 1
+
+two:
+  language_id: 1
+  text: MyString
+  user_id: 1
+  approved: false
+  word_id: 1

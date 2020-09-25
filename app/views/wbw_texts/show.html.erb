@@ -56,7 +56,7 @@
 
       <div class="col-md-12 section">
         <b>Text Uthmani</b>
-        <div class="madani" id="ayah_text" style="font-size: 30px; margin-top: 10px"><%= @verse.text_madani %> </div>
+        <div class="madani" id="ayah_text" style="font-size: 30px; margin-top: 10px"><%= @verse.text_uthmani %> </div>
 
         <b>Proofreading</b>
         <p class="madani">
@@ -70,7 +70,7 @@
         <b>Difference</b>
 
         <div class="madani diffy" id="ayah_text" style="font-size: 30px;">
-          <%= diff_text(@verse.text_madani.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_uthmani).select(&:present?).map { |t| t.to_s.strip  }.join(' ').strip) %>
+          <%= diff_text(@verse.text_uthmani.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_uthmani).select(&:present?).map { |t| t.to_s.strip  }.join(' ').strip) %>
         </div>
 
         <div>
