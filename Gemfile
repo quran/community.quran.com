@@ -38,7 +38,6 @@ gem 'turbolinks'
 
 # Admin panel
 gem 'activeadmin', '~> 2.7.0'
-gem 'inherited_resources', github: 'activeadmin/inherited_resources'
 gem 'activeadmin-async_panel'
 gem 'activeadmin-searchable_select'
 gem 'paper_trail', '~> 10.3.1'
@@ -90,12 +89,10 @@ group :development do
   gem 'mechanize', require: false
 end
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-
 gem 'sidekiq', '~> 5.2.2'
 gem 'sidekiq-scheduler', '~> 3.0.1'
 gem 'sinatra', require: false
 gem 'carrierwave', '~> 1.2.3'
 gem "fog-aws"
 gem "rest-client"
+gem 'tzinfo-data'
