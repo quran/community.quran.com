@@ -1,6 +1,6 @@
 <%
   indopak_words = @verse.text_indopak.split(/\s+/)
-  uthmani_words = @verse.text_madani.split(/\s+/)
+  uthmani_words = @verse.text_uthmani.split(/\s+/)
   imlaei_words = @verse.text_imlaei.split(/\s+/)
 
   word_index = 0
@@ -28,7 +28,7 @@
 
   <div class="col-md-12">
     <b>Text Uthmani</b>
-    <p class="madani" id="ayah_text"><%= @verse.text_madani %> </p>
+    <p class="madani" id="ayah_text"><%= @verse.text_uthmani %> </p>
 
     <p>
       <b>Text Uthmani with codes</b>

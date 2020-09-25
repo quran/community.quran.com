@@ -2,8 +2,11 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.ui-keyboard-57370, .ui-keyboard-57372, .ui-keyboard-57371{
-  span{
-    font-family: pdms;
-  }
+.ui-keyboard-text {
+  font-family: al_qalam !important;
+}
+
+
+.transliteration .indopak{
+  font-family: al_qalam;
 }

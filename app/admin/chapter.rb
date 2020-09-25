@@ -2,6 +2,10 @@ ActiveAdmin.register Chapter do
   menu parent: "Quran", priority: 1
   actions :all, except: [:destroy, :new]
 
+  permit_params do
+    [:name_simple, :name_arabic, :name_complex, :bismillah_pre, :revelation_order]
+  end
+
   ActiveAdminViewHelpers.render_translated_name_sidebar(self)
   ActiveAdminViewHelpers.render_slugs(self)
 

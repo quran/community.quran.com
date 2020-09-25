@@ -19,6 +19,14 @@ body{
 }
 
 @font-face {
+  font-family: 'AlQalam';
+  src: font-url('me_quran_volt_newmet.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@font-face {
   font-family: 'pdms';
   src: font-url('PDMS_Saleem_QuranFont.ttf') format('truetype');
   font-weight: normal;
@@ -32,13 +40,13 @@ body{
   font-style: normal;
 }
 
-.urdu {
-  font-family: nafees;
+.qalam{
+  font-family: al_qalam;
   direction: rtl;
 }
 
-.row-text_madani{
- font-family: me_quran;
+.urdu {
+  font-family: nafees;
   direction: rtl;
 }
 
@@ -48,7 +56,7 @@ body{
   font-size: 30px;
 }
 
-.row-text_indopak{
+.row-text_indopak td{
   font-family: pdms;
   direction: rtl;
 }

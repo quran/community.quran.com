@@ -31,14 +31,17 @@ ActiveAdmin.register Tafsir do
   end
   
   show do
-  
-    attributes_table do
+      attributes_table do
       row :id
       row :verse
       row :language
+      row :language_name
       row :verse_key
       row :resource_content
-      row :text
+      row :resource_name
+      row :text do
+        resource.text.to_s.html_safe
+      end
     end
     
     if params[:version]

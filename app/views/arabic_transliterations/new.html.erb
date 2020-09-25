@@ -1,4 +1,4 @@
-<div class="row" id="editor-wrap">
+<div class="row transliteration" id="editor-wrap">
   <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
     </button>
@@ -74,7 +74,7 @@
                   <%= trans_form.text_field :indopak_text, class: 'form-control indopak' %>
                   <p class="help-block">
                     <span class="indopak">
-                       <%= trans_form.object.text_simple %>
+                       <%= trans_form.object.text_imlaei_simple %>
                     </span>
                   </p>
                 </div>
@@ -91,7 +91,7 @@
 
               <div class="col-lg-3">
                 <div class="form-group">
-                  <%= trans_form.text_area :text, placeholder: trans_form.object.text_simple, autocomplete: false, class: 'form-control indopak transliteration' %>
+                  <%= trans_form.text_area :text, placeholder: trans_form.object.text_imlaei_simple, autocomplete: false, class: 'form-control indopak transliteration' %>
                   <p class="help-block">
                     Word transliteration
                   </p>
@@ -109,3 +109,8 @@
   </div>
 </div>
 
+<script>
+    $(function () {
+        initSoftKeyboard()
+    })
+</script>

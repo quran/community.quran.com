@@ -15,7 +15,7 @@ ActiveAdmin.register Verse do
   filter :hizb_number
   filter :rub_number
   filter :sajdah
-  filter :text_madani
+  filter :text_uthmani
   filter :page_number
   filter :sajdah_number, as: :select, collection: proc { 1..14 }
 
@@ -24,7 +24,7 @@ ActiveAdmin.register Verse do
       link_to verse.id, admin_verse_path(verse)
     end
     column :chapter do |verse|
-      link_to verse.chapter.id, admin_chapter_path(verse.chapter)
+      link_to verse.chapter_id, admin_chapter_path(verse.chapter_id)
     end
     column :verse_number
     column :verse_key
@@ -32,14 +32,14 @@ ActiveAdmin.register Verse do
     column :hizb_number
     column :sajdah_number
     column :page_number
-    column :text_madani
+    column :text_uthmani
   end
 
   show do
     attributes_table do
       row :id
       row :chapter do |object|
-        link_to object.chapter_id, admin_chapter_path(object.chapter)
+        link_to object.chapter_id, admin_chapter_path(object.chapter_id)
       end
       row :verse_number
       row :verse_index
@@ -49,10 +49,12 @@ ActiveAdmin.register Verse do
       row :rub_number
       row :page_number
       row :sajdah_number
-      row :sajdah
+      row :sajdah_type
+
       row :verse_lemma do |object|
         link_to_if object.verse_lemma, object.verse_lemma&.text_madani, [:admin, object.verse_lemma]
       end
+
       row :verse_stem do |object|
         link_to_if object.verse_stem, object.verse_stem&.text_madani, [:admin, object.verse_stem]
       end
@@ -69,13 +71,13 @@ ActiveAdmin.register Verse do
 
       row "Imlaei Simple" do |object|
         span class: 'quran-text me_quran' do
-          object.text_simple
+          object.text_imlaei_simple
         end
       end
 
       row "Text Uthmani" do |object|
         span class: 'quran-text me_quran' do
-          object.text_madani
+          object.text_uthmani
         end
       end
 
@@ -154,7 +156,7 @@ ActiveAdmin.register Verse do
               end
 
               td class: 'quran-text me_quran' do
-                w.text_madani
+                w.text_uthmani
               end
 
               td class: 'quran-text me_quran' do
@@ -166,7 +168,7 @@ ActiveAdmin.register Verse do
               end
 
               td class: 'quran-text me_quran' do
-                w.text_simple
+                w.text_imlaei_simple
               end
 
               td class: 'quran-text row-text_indopak' do

@@ -4,7 +4,9 @@ ActiveAdmin.register AudioFile do
 
   index do
     id_column
-    column :resource_type
+    column :verse do |obj|
+      link_to obj.verse_id, admin_verse_path(obj.verse_id)
+    end
     column :duration
     column :url
     column :format
@@ -13,8 +15,8 @@ ActiveAdmin.register AudioFile do
 
   permit_params do
     [
-      :resource_type,
-      :resource_id, :url,
+      :verse_id,
+      :url,
       :duration,
       :segments,
       :recitation_id
