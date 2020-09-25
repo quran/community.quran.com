@@ -1,4 +1,17 @@
 namespace :one_time do
+  task export_qcf_codes: :environment do
+    CSV.open("codes.csv", "wb") do |csv|
+      csv << ["Ayah Key", "Codes"]
+      Verse.unscoped.order("verse_index asc").each do |v|
+        codes = v.words.order("position asc").map do |word|
+          word.code_hex.hex.chr
+        end
+
+        csv << [v.verse_key, codes.join(' ')]
+      end
+    end
+  end
+
   task fix_word_end_translation: :environment do
     arabic = Language.find_by_iso_code('ar')
     Chapter.find_each do |c|
@@ -324,12 +337,12 @@ namespace :one_time do
         tafsir_text = docs.search(".columns .translation")[2]&.text
 
         if tafsir_text.present?
-        tafsir = Tafsir.where(verse_id: verse.id, resource_content_id: tafsir_resource_content.id).first_or_initialize
-        tafsir.language = urdu
-        tafsir.language_name = urdu.name.downcase
-        tafsir.resource_name = tafsir_name
-        tafsir.text = simple_format(tafsir_text.strip)
-        tafsir.save
+          tafsir = Tafsir.where(verse_id: verse.id, resource_content_id: tafsir_resource_content.id).first_or_initialize
+          tafsir.language = urdu
+          tafsir.language_name = urdu.name.downcase
+          tafsir.resource_name = tafsir_name
+          tafsir.text = simple_format(tafsir_text.strip)
+          tafsir.save
         end
 
         translation = verse.translations.where(resource_content: translation_resource_content).first_or_initialize

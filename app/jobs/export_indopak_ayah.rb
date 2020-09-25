@@ -1,4 +1,4 @@
-class ExportWordsJob < ApplicationJob
+class ExportIndopakAyah < ApplicationJob
   queue_as :default
   STORAGE_PATH = "public/exported_indopak"
   
