@@ -157,12 +157,12 @@ ActiveAdmin.register Word do
 
     column :text_font do |resource|
       (span class: "tp#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
-        resource.text_madani
+        resource.text_uthmani
       end)
     end
 
-    column :text_madani
-    column :text_simple
+    column :text_uthmani
+    column :text_uthmani_simple
     column :text_imlaei
 
     actions

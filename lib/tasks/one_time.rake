@@ -1,4 +1,14 @@
 namespace :one_time do
+  task export_csv_templates: :environment do
+    CSV.open("translation-names.csv", "wb") do |csv|
+      csv << ["ID", "Name", "Source language"] + Language.where('translations_count > 0').pluck(:name).uniq
+
+      ResourceContent.translations.approved.each do |r|
+        csv << [r.id, r.name, r.language.name]
+      end
+    end
+  end
+
   task update_lang_translation_count: :environment do
     langs = Translation.pluck(:language_id).uniq
 
