@@ -36,7 +36,7 @@
 
   <div class="col-lg-12">
     <div class="form-group">
-      <%= select_tag :change_page, options_for_select(1..980, @predicted_page), class: 'form-control', data: { placeholder: 'Jump to page' } %>
+      <%= select_tag :change_page, options_for_select(1..980, @predicted_page), class: 'form-control', data: {placeholder: 'Jump to page'} %>
       <p class="help-block">Jump to page number</p>
     </div>
 
@@ -45,7 +45,7 @@
 
   <div class="col-lg-12">
     <p class="indopak" id="ayah_text"><%= @verse.verse_key %>  <%= @verse.text_indopak %> </p>
-    <%= form_for @verse, url: arabic_transliterations_path(verse_id: @verse.id), method: :post, html: { class: 'form', dir: 'rtl', autocomplete: 'off' } do |form| %>
+    <%= form_for @verse, url: arabic_transliterations_path(verse_id: @verse.id), method: :post, html: {class: 'form', dir: 'rtl', autocomplete: 'off'} do |form| %>
       <div id="words row">
         <%= form.fields_for :arabic_transliterations, @arabic_transliterations do |trans_form| %>
           <%= trans_form.hidden_field :word_id %>
@@ -59,7 +59,7 @@
             <div class="row">
               <div class="col-lg-3">
                 <div class="form-group">
-                  <% ur = trans_form.object.ur_translation.presence ||  trans_form.object&.word&.ur_translation&.text %>
+                  <% ur = trans_form.object.ur_translation.presence || trans_form.object&.word&.ur_translation&.text %>
                   <%= trans_form.text_field :ur_translation, value: ur, class: 'form-control' %>
                   <p class="help-block">
                     <span>
@@ -103,7 +103,7 @@
       </div>
 
       <div class="form-group">
-        <%= form.submit "Save ayah", class: 'btn btn-success', data: { disable_with: 'Please wait...' } %>
+        <%= form.submit "Save ayah", class: 'btn btn-success', data: {disable_with: 'Please wait...'} %>
       </div>
     <% end %>
   </div>
@@ -111,6 +111,17 @@
 
 <script>
     $(function () {
+        $('select.form-control').chosen()
         initSoftKeyboard()
+
+        window.pageZoomer = new Utility.ImageZoomer("http://static.quran.com/urdu_transliteration/<%=@predicted_page%>.jpg")
+
+        $("#change_page").on("change", jumpToPage)
+
+        function jumpToPage(e) {
+            var val = $(e.target).val()
+            $(".word-page").val(val)
+            pageZoomer.changeImage("http://static.quran.com/urdu_transliteration/" + val + ".jpg")
+        }
     })
 </script>

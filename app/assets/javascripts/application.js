@@ -16,3 +16,5 @@
 //= require bootstrap-modalmanager
 //= require jquery-ui-position.min
 //= require utilities/arabic_keyboard
+//= require utilities/image_zoomer
+

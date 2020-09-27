@@ -1,4 +1,15 @@
 namespace :one_time do
+  task update_lang_translation_count: :environment do
+    langs = Translation.pluck(:language_id).uniq
+
+    langs.each do |lang|
+      language = Language.find(lang)
+      language.update translations_count: ResourceContent.translations.one_verse.where(language_id: lang).size
+    end
+
+    TranslatedName.where(language_priority: nil).update_all language_priority: 2
+  end
+
   task export_qcf_codes: :environment do
     CSV.open("codes.csv", "wb") do |csv|
       csv << ["Ayah Key", "Codes"]

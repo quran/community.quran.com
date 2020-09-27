@@ -70,7 +70,7 @@
         <b>Difference</b>
 
         <div class="madani diffy" id="ayah_text" style="font-size: 30px;">
-          <%= diff_text(@verse.text_uthmani.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_uthmani).select(&:present?).map { |t| t.to_s.strip  }.join(' ').strip) %>
+          <%= diff_text(@verse.text_uthmani.strip, @verse.wbw_texts.order("word_id ASC").pluck(:text_uthmani).select(&:present?).map { |t| t.to_s.strip }.join(' ').strip) %>
         </div>
 
         <div>
@@ -108,7 +108,7 @@
       </td>
 
       <td class="madani">
-        <%=  word.text_imlaei  %>
+        <%= word.text_imlaei %>
       </td>
 
       <td>

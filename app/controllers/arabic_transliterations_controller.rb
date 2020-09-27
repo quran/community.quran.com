@@ -6,13 +6,6 @@ class ArabicTransliterationsController < CommunityController
 
     saved_page      = @verse.arabic_transliterations.detect(&:page_number)
     @predicted_page = saved_page&.page_number || (@verse.page_number * 1.6666).to_i
-
-=begin
-    to_javascript page_number: @predicted_page,
-                  page_zoom:   saved_page&.zoom,
-                  page_pos_x:  saved_page&.position_x,
-                  page_pos_y:  saved_page&.position_y
-=end
   end
 
   def render_surah
