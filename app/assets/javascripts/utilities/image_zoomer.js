@@ -3,6 +3,7 @@ var bind = function (fn, me) {
         return fn.apply(me, arguments);
     };
 };
+window.Utility ||= {}
 
 Utility.ImageZoomer = (function () {
     function ImageZoomer(imgUrl) {
