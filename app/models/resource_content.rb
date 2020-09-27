@@ -10,7 +10,9 @@ class ResourceContent < QuranApiRecord
   belongs_to :author
   belongs_to :language
   belongs_to :data_source
-  
+
+  has_many :translated_names, as: :resource
+
   after_update :update_related_content
 
   module CardinalityType

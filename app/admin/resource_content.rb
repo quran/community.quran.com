@@ -2,6 +2,8 @@ ActiveAdmin.register ResourceContent do
   searchable_select_options(scope: ResourceContent.all,
                             text_attribute: :name
   )
+  ActiveAdminViewHelpers.render_translated_name_sidebar(self)
+
   menu parent: "Content", priority: 10
   actions :all, except: :destroy
 

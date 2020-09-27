@@ -1,0 +1,16 @@
+<%= semantic_form_for [:admin, TranslatedName.new] do |form| %>
+  <% form.input(:resource_id, as: :hidden, input_html: {value: resource.id}) %>
+  <% form.input(:resource_type, as: :hidden, input_html: {value: resource.class.to_s}) %>
+  <% form.input(:name) %>
+  <% form.input(:language) %>
+  <%= form.actions(:submit) %>
+<% end %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.3/chosen.jquery.min.js" data-turbolinks-track="reload"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.3/chosen.min.css" integrity="sha256-4LdsL3Q2cUVVke0CPP9V7cKKromYbo1vBVtmGosZCEQ=" crossorigin="anonymous" data-turbolinks-track="reload"/>
+
+<script>
+    $(function () {
+        $('#translated_name_language_id').chosen({allow_single_deselect: true})
+    })
+</script>
