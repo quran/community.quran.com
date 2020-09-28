@@ -23,7 +23,7 @@ ActiveAdmin.register Synonym do
             link_to word.text_uthmani, [:admin, word], class: 'ml-2'
 
 
-            # http://localhost:3000/admin/words?text_madani_equals=word.text_madani
+            # http://localhost:3000/admin/words?text_madani_equals=word.text_uthmani
           end
         end
 

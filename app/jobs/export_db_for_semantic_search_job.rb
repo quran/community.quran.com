@@ -57,7 +57,7 @@ class ExportDbForSemanticSearchJob < ApplicationJob
 
   def prepare_ayah_import_sql(verses)
     verses.map do |v|
-      "(#{v.id}, #{v.verse_number}, #{v.chapter_id}, #{format_text v.verse_key}, #{format_text v.text_madani}, #{format_text v.text_indopak}, #{format_text v.text_imlaei}, #{format_text v.text_uthmani_simple}, #{format_text v.text_simple})"
+      "(#{v.id}, #{v.verse_number}, #{v.chapter_id}, #{format_text v.verse_key}, #{format_text v.text_uthmani}, #{format_text v.text_indopak}, #{format_text v.text_imlaei}, #{format_text v.text_uthmani_simple}, #{format_text v.text_simple})"
     end.join(',')
   end
 
@@ -69,7 +69,7 @@ class ExportDbForSemanticSearchJob < ApplicationJob
 
   def prepare_words_import_sql(words)
     words.map do |w|
-      "(#{w.id}, #{w.verse_id}, #{w.chapter_id}, #{w.position}, #{format_text w.text_madani}, #{format_text w.text_indopak}, #{format_text w.text_imlaei}, #{format_text w.text_uthmani_simple}, #{format_text w.text_simple}, #{format_text w.verse_key}, #{format_text w.char_type_name})"
+      "(#{w.id}, #{w.verse_id}, #{w.chapter_id}, #{w.position}, #{format_text w.text_uthmani}, #{format_text w.text_indopak}, #{format_text w.text_imlaei}, #{format_text w.text_uthmani_simple}, #{format_text w.text_simple}, #{format_text w.verse_key}, #{format_text w.char_type_name})"
     end.join(',')
   end
 

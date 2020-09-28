@@ -4,8 +4,7 @@ class ArabicTransliteration < QuranApiRecord
   has_many :proof_read_comments, as: :resource
   has_paper_trail on: :update, ignore: [:created_at, :updated_at]
 
-
-  delegate :text_simple, :location, to: :word
+  delegate :location, to: :word
   
   def name
     text
@@ -13,5 +12,9 @@ class ArabicTransliteration < QuranApiRecord
   
   def get_word
     
+  end
+
+  def text_simple
+    word&.text_uthmani_simple
   end
 end

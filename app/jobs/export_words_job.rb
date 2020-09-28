@@ -39,7 +39,7 @@ class ExportWordsJob < ApplicationJob
       code           = ExportRecord.connection.quote(word.code_v3)
       chapter, verse = word.verse_key.split(':')
       translitration = ExportRecord.connection.quote(word.transliterations.first&.text)
-      text           = ExportRecord.connection.quote(word.text_madani)
+      text           = ExportRecord.connection.quote(word.text_uthmani)
       audio          = ExportRecord.connection.quote(word.audio_url)
       values          = "(#{chapter}, #{verse}, #{word.position}, #{en_translation}, #{ur_translation}, #{bn_translation},
                          #{id_translation}, #{translitration}, #{text}, #{code}, #{w_type}, #{audio})"

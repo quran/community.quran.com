@@ -4,15 +4,12 @@ ActiveAdmin.register FootNote do
   ActiveAdminViewHelpers.versionate(self)
 
   filter :language
-  filter :language
-  filter :resource_type, as: :select, collection: ['Translation']
-  filter :resource_id
+  filter :translation_id
 
   show do
-  
-    attributes_table do
+      attributes_table do
       row :id
-      row :resource
+      row :translation
       row :language
       row :resource_content
       row :text
@@ -21,6 +18,17 @@ ActiveAdmin.register FootNote do
     if params[:version]
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
+  end
+
+  form do |f|
+    f.inputs "Footnote Details" do
+      f.input :text
+      f.input :language
+      f.input :language_name
+      f.input :translation_id
+      f.input :resource_content
+    end
+    f.actions
   end
   
 # See permitted parameters documentation:
@@ -31,6 +39,6 @@ ActiveAdmin.register FootNote do
 # or
 #
  permit_params do
-  [:language_id, :resource_content_id, :text, :resource_type, :language_name]
+  [:language_id, :resource_content_id, :text, :translation_id, :language_name]
  end
 end

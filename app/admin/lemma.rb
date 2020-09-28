@@ -21,9 +21,9 @@ ActiveAdmin.register Lemma do
               link_to(verse.verse_key, admin_verse_path(verse)) +
                   verse.words.map do |word|
                     if words_ids.include?(word.id)
-                      "<success>#{word.text_madani}</success>"
+                      "<success>#{word.text_uthmani}</success>"
                     else
-                      "<span>#{word.text_madani}</span>"
+                      "<span>#{word.text_uthmani}</span>"
                     end
                   end.join(' ').html_safe
             end

@@ -51,7 +51,7 @@ class WbwTranslationsController < CommunityController
                  .find(params[:ayah])
 
 
-    madani_text = @verse.text_madani.strip.split(/\s+/)
+    madani_text = @verse.text_uthmani.strip.split(/\s+/)
     pause_mark_count = 0
     @wbw_translations = []
 
@@ -67,7 +67,7 @@ class WbwTranslationsController < CommunityController
       if word.char_type_name == 'word'
         wbw_translation.text_madani ||= madani_text[i - pause_mark_count]
       else
-        wbw_translation.text_madani ||= word.text_imlaei
+        wbw_translation.text_madani ||= word.text_uthmani
         pause_mark_count += 1
       end
 

@@ -33,7 +33,7 @@ class ExportIndopakWbwJob < ApplicationJob
     Word.includes(:arabic_transliteration).find_each do |word|
       w_type         = ExportRecord.connection.quote(word.char_type_name)
       chapter, verse = word.verse_key.split(':')
-      text_madani           = ExportRecord.connection.quote(word.text_madani)
+      text_madani           = ExportRecord.connection.quote(word.text_uthmani)
       text_indopak           = ExportRecord.connection.quote(word.arabic_transliteration.try(:indopak_text))
 
 

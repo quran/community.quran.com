@@ -65,7 +65,7 @@ class ExportQuranBridges < ApplicationJob
                        ayah_number: verse.verse_number,
                        surah_id: verse.chapter_id,
                        page: verse.page_number,
-                       arabic_uthmani: verse.text_madani,
+                       arabic_uthmani: verse.text_uthmani,
                        arabic_indopak: verse.text_indopak,
                        ayah_key: verse.verse_key,
                        id: verse.verse_index
