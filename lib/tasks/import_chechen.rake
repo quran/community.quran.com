@@ -177,8 +177,6 @@ def run
     Translation.where(resource_content: resource_content).delete_all
     FootNote.where(resource_content: footnote_resource_content).delete_all
 
-
-
   files = Dir['chechen/*']
 
     files = files.sort do |f, f2|

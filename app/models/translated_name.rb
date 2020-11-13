@@ -8,9 +8,9 @@ class TranslatedName < QuranApiRecord
 
   def fix_priority
     if language&.name == 'English'
-      update_columns language_priority: 3, language_name: 'english'
+      update_columns language_priority: 1, language_name: 'english'
     else
-      update_columns language_priority: 1, language_name: language&.name.downcase
+      update_columns language_priority: 3, language_name: language&.name.downcase
     end
   end
 end

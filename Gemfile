@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.5'
+ruby '2.7.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '>= 6.0.3.2'
@@ -34,10 +34,10 @@ gem 'turbolinks'
 # gem 'capistrano-rails', group: :development
 
 # Detect language from text
-# gem "cld3"
+gem "cld3"
 
 # Admin panel
-gem 'activeadmin', '~> 2.7.0'
+#gem 'activeadmin', '~> 2.7.0'
 gem 'activeadmin-async_panel'
 gem 'activeadmin-searchable_select'
 gem 'paper_trail', '~> 10.3.1'

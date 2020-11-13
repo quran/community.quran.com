@@ -60,6 +60,7 @@ namespace :roberto_piccardo do
     #    surah_url
     #  end
     # end.compact
+    #
 
     surah_urls = ["https://ilcorano.net/il-sacro-corano/1-surat-al-fatiha/",
                   "https://ilcorano.net/il-sacro-corano/2-surat-al-baqara/",

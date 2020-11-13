@@ -11,7 +11,7 @@ ActiveAdmin.register Synonym do
       row :synonyms
 
       row :words do |resource|
-        resource.words.group(:text_simple).size.each do |k, v|
+        resource.words.select(:text_uthmani_simple).group(:text_uthmani_simple, :position).size.each do |k, v|
           span do
             link_to "(#{v}) - #{k}", "/admin/words?utf8=%E2%9C%93&q%5Btext_simple_equals%5D=#{k}"
           end

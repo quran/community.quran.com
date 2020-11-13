@@ -1,3 +1,4 @@
+=begin
 namespace :quranenc_importer do
   def parse_indonesian_sabiq(rows, resource)
     footnote_resource_content = ResourceContent.where({
@@ -764,14 +765,14 @@ namespace :quranenc_importer do
     data_source = DataSource.find_or_create_by(name: 'Quranenc', url: 'https://quranenc.com')
 
     resource_content_mapping = {
-        albanian_nahi: {language: 187, author_name: 'Hasan Efendi Nahi', id: 88}, #88,
-        amharic_sadiq: {language: 6, author_name: 'Sadiq and Sani', id: 87}, #87,
+        albanian_nahi: {language: 187, author_name: 'Hasan Efendi Nahi', id: 88},
+        amharic_sadiq: {language: 6, author_name: 'Sadiq and Sani', id: 87},
         assamese_rafeeq: {language: 10, author_name: 'Shaykh Rafeequl Islam Habibur-Rahman', id: 120},
-        bosnian_korkut: {language: 23, author_name: 'Besim Korkut', id: 126}, #126,
+        bosnian_korkut: {language: 23, author_name: 'Besim Korkut', id: 126},
         bosnian_mihanovich: {language: 23, author_name: 'Muhamed Mehanović', id: 25},
         chinese_makin: {language: 185, author_name: 'Muhammad Makin', id: 109},
         english_hilali_khan: {language: 38, author_name: 'Muhammad Taqi-ud-Din al-Hilali & Muhammad Muhsin Khan', id: 105},
-        english_saheeh: {language: 38, author_name: 'Saheeh International', id: 20}, #20,
+        english_saheeh: {language: 38, author_name: 'Saheeh International', id: 20},
         french_montada: {language: 49, author_name: 'Montada Islamic Foundation'},
         german_bubenheim: {language: 33, author_name: 'Frank Bubenheim and Nadeem', id: 27},
         hausa_gummi: {language: 58, author_name: 'Abubakar Mahmood Jummi', id: 115},
@@ -779,7 +780,7 @@ namespace :quranenc_importer do
         indonesian_affairs: {language: 67, author_name: 'Indonesian Islamic affairs ministry', id: 33},
         indonesian_complex: {language: 67, author_name: 'King Fahad Quran Complex'},
         indonesian_sabiq: {language: 33, author_name: 'The Sabiq company'},
-        japanese_meta: {language: 76, author_name: 'Ryoichi Mita', id: 35}, #35,
+        japanese_meta: {language: 76, author_name: 'Ryoichi Mita', id: 35},
         kazakh_altai_assoc: {language: 82, author_name: 'Khalifah Altai', id: 113},
         khmer_cambodia: {language: 84, author_name: 'Cambodian Muslim Community Development', id: 128},
         kurdish_bamoki: {language: 89, author_name: 'Muhammad Saleh Bamoki'},
@@ -794,14 +795,14 @@ namespace :quranenc_importer do
         tamil_baqavi: {language: 158, author_name: 'Abdul Hameed Baqavi'},
         turkish_shaban: {language: 167, author_name: 'Shaban Britch', id: 112},
         turkish_shahin: {language: 167, author_name: 'Muslim Shahin', id: 124},
-        urdu_junagarhi: {language: 174, author_name: 'مولانا محمد جوناگڑھی', id: 54}, #54,
+        urdu_junagarhi: {language: 174, author_name: 'مولانا محمد جوناگڑھی', id: 54},
         uyghur_saleh: {language: 172, author_name: 'Shaykh Muhammad Saleh'},
         uzbek_mansour: {language: 175, author_name: 'Alauddin Mansour', id: 101},
-        uzbek_sadiq: {language: 175, author_name: 'Muhammad Sodik Muhammad Yusuf', id: 55}, #55,
+        uzbek_sadiq: {language: 175, author_name: 'Muhammad Sodik Muhammad Yusuf', id: 55},
         yoruba_mikail: {language: 183, author_name: 'Shaykh Abu Rahimah Mikael Aykyuni', id: 125},
 
-        french_hameedullah: {language: 49, author_name: 'Muhammad Hamidullah', id: 31}, #31,
-        nepali_central: {language: 116, author_name: 'Ahl Al-Hadith Central Society of Nepal'},
+        french_hameedullah: {language: 49, author_name: 'Muhammad Hamidullah', id: 31},
+        nepali_central: {language: 116, author_name: 'Ahl Al-Hadith Central Society of Nepal', id: 108},
     }
 
     translation_with_footnotes = [
@@ -857,3 +858,4 @@ namespace :quranenc_importer do
     end
   end
 end
+=end

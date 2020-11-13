@@ -280,6 +280,10 @@ ActiveAdmin.register Verse do
     end
   end
 
+  permit_params do
+    [:text_uthmani, :text_uthmani_simple, :text_uthmani_simple]
+  end
+
   controller do
     def find_resource
       scoped_collection.includes(:chapter, :media_contents, tafsirs: :resource_content, translations: :resource_content, audio_files: :recitation).find(params[:id]) # prevents N+1 queries to your database
