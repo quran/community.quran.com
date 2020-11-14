@@ -52,7 +52,7 @@ namespace :roberto_piccardo do
     FootNote.where(resource_content_id: footnote_resource_content.id).delete_all
 
     agent = Mechanize.new
-    body = agent.get(url)
+    #body = agent.get(url)
 
     # surah_urls = body.search("ul.children li.page_item a").map do |link|
     #  surah_url = link.attr("href")
@@ -185,10 +185,10 @@ namespace :roberto_piccardo do
       verse = nil
       translation = nil
 
-      chapter_page.search(".entry-content").children.each do |child|
-        break if 'hr' == child.name
+      chapter_page.search(".entry-content").children.each_with_index do |child, child_index|
         next if 'p' != child.name
-        verse_number = child.text.match(VERSE_START_REG)[0].tr!('.', '').strip rescue nil # this force only numbers which ends with dot 
+        break if ((chapter.chapter_number == 1 && child_index == 12) || ('hr' == child.name)) # first chapter doesn't have hr so manually break it after index 12 
+        verse_number = child.text.match(VERSE_START_REG)[0].tr!('.', '').strip rescue nil # this force only numbers which ends with a dot 
         if verse_number
           # if paragragh starts with a number then we will assume its a start of an verse.
           puts "#{chapter.id}:#{verse_number}"
@@ -202,7 +202,7 @@ namespace :roberto_piccardo do
           # this will help us to skip starting paragraphs because at that time translation will be nil
           if translation
             translation.text = "#{translation.text} #{child.content}"
-            translation.save
+            translation.save(validate: false)
           end
         end
       end
