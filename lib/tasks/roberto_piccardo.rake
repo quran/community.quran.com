@@ -52,7 +52,7 @@ namespace :roberto_piccardo do
     FootNote.where(resource_content_id: footnote_resource_content.id).delete_all
 
     agent = Mechanize.new
-    body = agent.get(url)
+    #body = agent.get(url)
 
     # surah_urls = body.search("ul.children li.page_item a").map do |link|
     #  surah_url = link.attr("href")
@@ -60,7 +60,6 @@ namespace :roberto_piccardo do
     #    surah_url
     #  end
     # end.compact
-    #
 
     surah_urls = ["https://ilcorano.net/il-sacro-corano/1-surat-al-fatiha/",
                   "https://ilcorano.net/il-sacro-corano/2-surat-al-baqara/",
@@ -186,26 +185,24 @@ namespace :roberto_piccardo do
       verse = nil
       translation = nil
 
-      chapter_page.search(".entry-content").children.each do |child|
-        if 'hr' == child.name || child.to_s.match(/id="_ftn\d+/)
-          break
-        end
-
-        if (VERSE_START_REG =~ child.text) == 0
-          # Start of new ayah
-          verse_number = child.text.match(VERSE_START_REG)[0].tr('.', '').strip
+      chapter_page.search(".entry-content").children.each_with_index do |child, child_index|
+        next if 'p' != child.name
+        break if ((chapter.chapter_number == 1 && child_index == 12) || ('hr' == child.name)) # first chapter doesn't have hr so manually break it after index 12 
+        verse_number = child.text.match(VERSE_START_REG)[0].tr!('.', '').strip rescue nil # this force only numbers which ends with a dot 
+        if verse_number
+          # if paragragh starts with a number then we will assume its a start of an verse.
           puts "#{chapter.id}:#{verse_number}"
           verse = chapter.verses.find_by_verse_number(verse_number)
-
           next if verse.blank?
-
+          
           translation = verse.translations.where(resource_content_id: resource_content.id).first_or_create
           translation.text = "#{translation.text} #{child.content}"
           translation.save(validate: false)
         else
+          # this will help us to skip starting paragraphs because at that time translation will be nil
           if translation
             translation.text = "#{translation.text} #{child.content}"
-            translation.save
+            translation.save(validate: false)
           end
         end
       end
