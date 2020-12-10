@@ -1,27 +1,18 @@
 ActiveAdmin.register User do
-  permit_params :email, :first_name, :last_name, :password, on: :user
-  
-  action_item :confirm, only: :show do
-    link_to "Confirm account", confirm_admin_user_path(resource), method: :put, data: { confirm: "Are you sure?" } unless resource.confirmed?
-  end
+  permit_params :email, :first_name, :last_name, :password, :approved, on: :user
 
-  member_action :confirm, method: 'put' do
-    resource.confirm
-    
-    redirect_to [:admin, resource], notice: 'account confirmed successfully!'
-  end
-  
   index do
     selectable_column
     id_column
     column :email
     column :first_name
     column :last_name
+    column :approved
 
     column :created_at
     actions
   end
-  
+
   filter :email
   filter :created_at
 
@@ -35,8 +26,4 @@ ActiveAdmin.register User do
     end
     f.actions
   end
-
-  controller do
-
-  end
- end
+end
