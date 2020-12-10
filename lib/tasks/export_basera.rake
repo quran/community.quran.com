@@ -72,8 +72,6 @@ namespace :export_basera do
     ExportCharTypeRecord.table_name = "quran_char_type"
     ExportLanguageRecord.table_name = "quran_language"
     ExportAuthorRecord.table_name = "quran_author"
-
-
   end
 
   def connection_config
@@ -88,9 +86,9 @@ namespace :export_basera do
     require 'activerecord-import'
 
     prepare_db()
-
     approved_translations = ResourceContent.translations.approved.pluck(:id)
 
+=begin
     ExportJuzRecord.delete_all
     Juz.find_each do |j|
       ExportJuzRecord.create(
@@ -141,13 +139,13 @@ namespace :export_basera do
 
     puts 'exporting verses'
     records = Verse.order('verse_index asc').map do |v|
-      ExportVerseRecord.new(id: v.id, uthmani_text: v.text_madani, imlaei_text: v.text_imlaei, uthmani_tajweed_text: v.text_uthmani_tajweed, indopak_text: v.text_indopak, uthmai_simple_text: v.text_uthmani_simple, imlaei_simple_text: v.text_simple, ayah_key: v.verse_key, ayah_number: v.verse_number, page_number: v.page_number, juz_number: v.juz_number, hizb_number: v.hizb_number, rub_number: v.rub_number, surah_id: v.chapter_id, sajdaa_number: v.sajdah_number)
+      ExportVerseRecord.new(id: v.id, uthmani_text: v.text_uthmani, imlaei_text: v.text_imlaei, uthmani_tajweed_text: v.text_uthmani_tajweed, indopak_text: v.text_indopak, uthmai_simple_text: v.text_uthmani_simple, imlaei_simple_text: v.text_imlaei_simple, ayah_key: v.verse_key, ayah_number: v.verse_number, page_number: v.page_number, juz_number: v.juz_number, hizb_number: v.hizb_number, rub_number: v.rub_number, surah_id: v.chapter_id, sajdaa_number: v.sajdah_number)
     end
     ExportVerseRecord.import(records, validate: false)
 
     puts 'exporting audio'
-    records = AudioFile.where(recitation_id: Recitation.approved.pluck(:id), resource_type: 'Verse').map do |a|
-      ExportAudioFileRecord.new(url: a.url, duration: a.duration.to_i, segments: a.segments.to_json, format: a.format.presence || 'mp3', recitation_id: a.recitation_id, ayah_id: a.resource_id)
+    records = AudioFile.where(recitation_id: Recitation.approved.pluck(:id)).map do |a|
+      ExportAudioFileRecord.new(url: a.url, duration: a.duration.to_i, segments: a.segments.to_json, format: a.format.presence || 'mp3', recitation_id: a.recitation_id, ayah_id: a.verse_id)
     end
     ExportAudioFileRecord.import(records, validate: false)
 
@@ -155,11 +153,11 @@ namespace :export_basera do
     Word.order('verse_id asc, position asc').includes(:arabic_transliteration).find_in_batches do |batch|
       records = batch.map do |w|
         ExportWordRecord.new(id: w.id,
-                             uthmani_text: w.text_madani.to_s,
+                             uthmani_text: w.text_uthmani.to_s,
                              imlaei_text: w.text_imlaei.to_s,
                              indopak_text: w.text_indopak.to_s,
                              uthmani_simple_text: w.text_uthmani_simple.to_s,
-                             imlaei_simple_text: w.text_simple.to_s,
+                             imlaei_simple_text: w.text_imlaei_simple.to_s,
                              code_v1: w.code.to_s,
                              code_v2: w.code_v3.to_s,
                              line_number: w.line_number,
@@ -193,10 +191,10 @@ namespace :export_basera do
       ExportTranslationRecord.import(records, validate: false)
     end
 
-    records = FootNote.where(resource_id: Translation.select(:id).where(resource_content_id: approved_translations)).map do |f|
+    records = FootNote.where(translation_id: Translation.select(:id).where(resource_content_id: approved_translations)).map do |f|
       ExportFootNoteRecord.new(
           id: f.id,
-          translation_id: f.resource_id,
+          translation_id: f.translation_id,
           language_id: f.language_id,
           language_name: f.language_name,
           text: f.text
@@ -226,19 +224,22 @@ namespace :export_basera do
           text: t.text
       )
     end
+
     ExportTransliterationRecord.import(records, validate: false)
+
 
     puts 'exporting word translteration'
     records = Transliteration.where(resource_type: 'Word').order('resource_id ASC').map do |t|
       ExportWordTransliterationRecord.new(
           id: t.id,
           word_id: t.resource_id,
-          language: t.language_id,
+          language_id: t.language_id,
           text: t.text,
-          resource: t.resource_content_id
+          resource_id: t.resource_content_id
       )
     end
     ExportWordTransliterationRecord.import(records, validate: false)
+=end
 
     puts 'exporting urdu transliteration'
     #records = ArabicTransliteration.all.map do |t|

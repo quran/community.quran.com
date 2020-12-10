@@ -24,22 +24,22 @@ class ExportIndopakWbwJob < ApplicationJob
   def prepare_db(file_path)
     ExportRecord.establish_connection connection_config(file_path)
     ExportRecord.connection.execute("CREATE TABLE words(sura integer,ayah integer, word_position integer,
-                                     text_madani text, text_indopak text, word_type text,
+                                     text_uthmani text, text_indopak text, text_imlaei text, word_type text,
                                       primary key(sura, ayah, word_position))")
     ExportRecord.table_name = 'words'
   end
   
   def prepare_import_sql()
-    Word.includes(:arabic_transliteration).find_each do |word|
+    Word.find_each do |word|
       w_type         = ExportRecord.connection.quote(word.char_type_name)
       chapter, verse = word.verse_key.split(':')
       text_madani           = ExportRecord.connection.quote(word.text_uthmani)
-      text_indopak           = ExportRecord.connection.quote(word.arabic_transliteration.try(:indopak_text))
+      text_indopak           = ExportRecord.connection.quote(word.text_indopak)
+      text_imlaei = ExportRecord.connection.quote(word.text_imlaei)
 
-
-      values          = "(#{chapter}, #{verse}, #{word.position}, #{text_madani}, #{text_indopak}, #{w_type})"
+      values          = "(#{chapter}, #{verse}, #{word.position}, #{text_madani}, #{text_indopak}, #{text_imlaei}, #{w_type})"
       begin
-        ExportRecord.connection.execute("INSERT INTO words (sura, ayah, word_position, text_madani, text_indopak,
+        ExportRecord.connection.execute("INSERT INTO words (sura, ayah, word_position, text_uthmani, text_indopak, text_imlaei,
                                          word_type) VALUES #{values}")
       rescue Exception => e
         puts e.message

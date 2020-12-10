@@ -949,16 +949,21 @@ namespace :one_time do
   end
 
   task fix_indopak_wbw: :environment do
+    PaperTrail.enabled = false
+    issues = []
+
     WbwText.find_each do |t|
       word = t.word
       if word.char_type_name != 'end'
-        word.update_columns(
-          text_indopak: t.text_indopak
-        )
+        begin
+        word.update_columns(text_indopak: t.text_indopak.to_s.strip, text_uthmani: t.text_uthmani.to_s.strip, text_imlaei: t.text_imlaei.to_s.strip)
+        rescue Exception => e
+          issues << t.id
+          end
       end
     end
 
-    BackupJob.perform_now
+    BackupJob.perform_now("updated-wbw")
   end
 
   task prepare_wbw_text: :environment do
