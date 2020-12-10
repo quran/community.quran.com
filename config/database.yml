@@ -32,7 +32,8 @@ quran_api_db:
 
 default: &default
   adapter: postgresql
-  database: quran_dev
+  encoding: unicode
+  database: quran_community
   # username: quran
   # password: quran
   # For details on connection pooling, see rails configuration guide
@@ -41,7 +42,7 @@ default: &default
 
 development:
   <<: *default
-  database: quran_dev
+  database: quran_community
 
 bridge:
   <<: *default

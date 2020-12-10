@@ -1,0 +1,44 @@
+<div class="bs-docs-section">
+  <h1 class="page-header">
+    <%= @resource.name %> - <%= @translation.verse.verse_key %>
+
+    <span class=" pull-right">
+      <%= link_to 'Edit', edit_translation_proofreading_path(@translation.verse_id, resource_id: @resource.id), class: 'btn btn-success' %>
+
+      <%= link_to 'Previous ayah', translation_proofreading_path(@translation.verse.id - 1, resource_id: @resource.id), class: 'btn btn-success' %>
+      <%= link_to 'Next ayah', translation_proofreading_path(@translation.verse.id + 1, resource_id: @resource.id), class: 'btn btn-success' %>
+
+      <%= link_to 'Back to filter', translation_proofreadings_path(resource_id: @resource.id), class: 'btn btn-success' %>
+    </span>
+  </h1>
+
+  <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
+    <div class="row">
+      <div class="col-md-12 section">
+        <b>Translation</b>
+        <div id="ayah_text" style="font-size: 30px; margin-top: 10px">
+          <%= @translation.text.to_s.html_safe %>
+        </div>
+      </div>
+
+      <div class="col-md-12 section">
+        <b>Foot notes</b>
+
+        <% @translation.foot_notes.each do |foot_note| %>
+          <div style="font-size: 30px;margin-top: 10px">
+            <strong><%= foot_note.id %></strong><%= foot_note.text.to_s.html_safe %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function (){
+      $("sup").each(function (i, dom){
+          $(dom).append(`(${dom.getAttribute('foot_note')})`)
+      })
+  })
+</script>
+

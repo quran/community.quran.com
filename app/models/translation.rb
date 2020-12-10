@@ -6,6 +6,7 @@ class Translation < QuranApiRecord
   belongs_to :resource_content
   has_many :foot_notes
 
+  accepts_nested_attributes_for :foot_notes
   protected
 
   class << self

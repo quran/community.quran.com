@@ -20,4 +20,5 @@ Rails.application.routes.draw do
   resources :proof_read_comments
   resources :wbw_translations, except: :delete
   resources :wbw_texts, except: :delete
+  resources :translation_proofreadings, except: :delete
 end
