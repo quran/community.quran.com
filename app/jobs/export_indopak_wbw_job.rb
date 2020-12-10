@@ -31,12 +31,15 @@ class ExportIndopakWbwJob < ApplicationJob
     Word.find_each do |word|
       w_type         = ExportRecord.connection.quote(word.char_type_name)
       chapter, verse = word.verse_key.split(':')
-      text_uthmani           = ExportRecord.connection.quote(word.text_uthmani)
+
+      text_madani           = ExportRecord.connection.quote(word.text_uthmani)
       text_indopak           = ExportRecord.connection.quote(word.text_indopak)
-      text_imlaei           = ExportRecord.connection.quote(word.text_imlaei)
-      values          = "(#{chapter}, #{verse}, #{word.position}, #{text_uthmani}, #{text_indopak}, #{text_imlaei}, #{w_type})"
+      text_imlaei = ExportRecord.connection.quote(word.text_imlaei)
+
+      values          = "(#{chapter}, #{verse}, #{word.position}, #{text_madani}, #{text_indopak}, #{text_imlaei}, #{w_type})"
       begin
-        ExportRecord.connection.execute("INSERT INTO words (sura, ayah, word_position, text_uthmani, text_indopak, text_imlaei, word_type) VALUES #{values}")
+        ExportRecord.connection.execute("INSERT INTO words (sura, ayah, word_position, text_uthmani, text_indopak, text_imlaei,
+                                         word_type) VALUES #{values}")
       rescue Exception => e
         puts e.message
       end

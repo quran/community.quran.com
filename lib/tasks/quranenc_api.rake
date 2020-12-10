@@ -135,7 +135,6 @@ namespace :quranenc_api do
       Chapter.find_each do |c|
         url = "https://quranenc.com/ar/api/translation/sura/#{k}/#{c.id}"
 
-
         response = with_rescue_retry([RestClient::Exceptions::ReadTimeout], retries: 3, raise_exception_on_limit: true) do
           RestClient.get(url)
         end
@@ -218,15 +217,15 @@ namespace :quranenc_api do
         tagalog_rwwad: {language: 164, author_name: "Dar Al-Salam Center"},
 
         # only first 6 surah are available
-        # georgian_rwwad: {language: 78, author_name: "Translation Pioneers Center"},
+        # georgian_rwwad: {language: 78, author_name: "Ruwwad Center"},
         bengali_zakaria: {language: 20, author_name: "Dr. Abu Bakr Muhammad Zakaria"},
         bosnian_rwwad: {language: 23, author_name: "Dar Al-Salam Center"},
         serbian_rwwad: {language: 152, author_name: "Dar Al-Salam Center"},
-        albanian_rwwad: {language: 187, author_name: "Translation Pioneers Center"},
+        albanian_rwwad: {language: 187, author_name: "Ruwwad Center"},
         ukrainian_yakubovych: {language: 173, author_name: "Dr. Mikhailo Yaqubovic"},
         japanese_saeedsato: {language: 76, author_name: "Saeed Sato"},
         korean_hamid: {language: 86, author_name: "Hamed Choi"},
-        vietnamese_rwwad: {language: 177, author_name: "Translation Pioneers Center"},
+        vietnamese_rwwad: {language: 177, author_name: "Ruwwad Center"},
         vietnamese_hassan: {language: 177, author_name: "Hasan Abdul-Karim"},
         kazakh_altai: {language: 82, author_name: "Khalifa Altay"},
         tajik_arifi: {language: 160, author_name: "Pioneers of Translation Center"},
@@ -234,7 +233,7 @@ namespace :quranenc_api do
         gujarati_omari: {language: 56, author_name: "Rabila Al-Umry"},
         marathi_ansari: {language: 108, author_name: "Muhammad Shafi’i Ansari"},
         telugu_muhammad: {language: 159, author_name: "Maulana Abder-Rahim ibn Muhammad"},
-        sinhalese_mahir: {language: 145, author_name: "Translation Pioneers Center"},
+        sinhalese_mahir: {language: 145, author_name: "Ruwwad Center"},
         tamil_omar: {language: 158, author_name: "Sheikh Omar Sharif bin Abdul Salam"},
         thai_complex: {language: 161, author_name: "Society of Institutes and Universities"},
         swahili_abubakr: {language: 157, author_name: "Dr. Abdullah Muhammad Abu Bakr and Sheikh Nasir Khamis"},
@@ -407,6 +406,42 @@ namespace :quranenc_api do
         t = t.gsub('[-', '').gsub('Allāh', 'Allah')
         f.update_column :text, t
       end
+    end
+
+    langs = Translation.pluck(:language_id).uniq
+
+    langs.each do |lang|
+      language = Language.find(lang)
+      language.update translations_count: ResourceContent.translations.one_verse.where(language_id: lang).size
+    end
+
+    TranslatedName.where(language_priority: nil).update_all language_priority: 2
+
+    language = Language.find(38)
+    ResourceContent.where(language: 38, priority: nil).update_all priority: 5
+    ResourceContent.translations.where.not(language: 38).where(priority: nil).update_all priority: 5
+
+    Translation.where(language_id: 38).where(priority: nil).update_all(priority: 5)
+
+    Translation.where.not(language_id: 38).where(priority: nil).update_all(priority: 5)
+    TranslatedName.where(language_id: 38).where(language_priority: nil).update_all(language_priority: 1)
+    TranslatedName.where.not(language_id: 38).where(language_priority: nil).update_all(language_priority: 5)
+
+    ResourceContent.find_each do |r|
+      r.translated_names.where(language_id: language.id).first_or_create({
+                                                                                   name: r.name,
+                                                                                   language_name: language.name.downcase
+                                                                               })
+    end
+
+    FootNote.find_each do |f|
+      text = f.text
+      text = text.sub('["*.', '').sub(/\*\./, '').strip
+
+      if text.start_with? '. '
+        text = text.delete_prefix '. '
+      end
+      f.update_column :text, text.sub('["*.', '').sub(/\*\./, '').strip
     end
   end
 end
