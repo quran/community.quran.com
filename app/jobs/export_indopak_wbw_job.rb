@@ -55,3 +55,5 @@ class ExportIndopakWbwJob < ApplicationJob
   class ExportRecord < ActiveRecord::Base
   end
 end
+
+

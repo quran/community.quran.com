@@ -5,6 +5,8 @@ class ResourceContent < QuranApiRecord
   scope :chapter_info, -> { where sub_type: SubType::Info }
   scope :one_verse, -> { where cardinality_type: CardinalityType::OneVerse }
   scope :one_chapter, -> { where cardinality_type: CardinalityType::OneChapter }
+  scope :one_word, -> { where cardinality_type: CardinalityType::OneWord }
+
   scope :approved, -> { where approved: true }
   
   belongs_to :author

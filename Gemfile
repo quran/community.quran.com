@@ -34,7 +34,7 @@ gem 'turbolinks'
 # gem 'capistrano-rails', group: :development
 
 # Detect language from text
-gem "cld3"
+#gem "cld3"
 
 # Admin panel
 #gem 'activeadmin', '~> 2.7.0'

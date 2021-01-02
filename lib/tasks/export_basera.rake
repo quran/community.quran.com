@@ -2,6 +2,7 @@ namespace :export_basera do
 
   class ExportRecord < ActiveRecord::Base
   end
+
   class ExportRecord < ActiveRecord::Base
   end
 
@@ -88,7 +89,6 @@ namespace :export_basera do
     prepare_db()
     approved_translations = ResourceContent.translations.approved.pluck(:id)
 
-=begin
     ExportJuzRecord.delete_all
     Juz.find_each do |j|
       ExportJuzRecord.create(
@@ -202,6 +202,22 @@ namespace :export_basera do
     end
     ExportFootNoteRecord.import(records, validate: false)
 
+    # Export wbw translation resource content
+    ResourceContent.translations.one_word.each do |r|
+      ExportResourceRecord.where(
+          id: r.id,
+          resource_type: 'content',
+          sub_type: 'translation',
+          cardinality_type: r.cardinality_type,
+          name: r.name,
+          language_id: r.language_id,
+          author_id: r.author_id.to_s,
+          is_approved: r.approved?,
+          priority: r.priority,
+          language_name: r.language_name
+      ).first_or_create
+    end
+
     puts 'exporting words'
     records = WordTranslation.order('word_id asc').map do |t|
       ExportWordTranslationRecord.new(
@@ -220,15 +236,15 @@ namespace :export_basera do
       ExportTransliterationRecord.new(
           id: t.id,
           ayah_id: t.resource_id,
-          language: t.language_id,
-          text: t.text
+          language_id: t.language_id,
+          text: t.text,
+          created_at: t.created_at
       )
     end
 
     ExportTransliterationRecord.import(records, validate: false)
 
-
-    puts 'exporting word translteration'
+    puts 'exporting word transliteration'
     records = Transliteration.where(resource_type: 'Word').order('resource_id ASC').map do |t|
       ExportWordTransliterationRecord.new(
           id: t.id,
@@ -239,17 +255,16 @@ namespace :export_basera do
       )
     end
     ExportWordTransliterationRecord.import(records, validate: false)
-=end
 
     puts 'exporting urdu transliteration'
     #records = ArabicTransliteration.all.map do |t|
-      # ExportUrduTransliterationRecord.new(
-        #    id: t.id,
-      #    word_id: t.word_id,
-      #    text: t.text,
-      #    is_continuous: t.continuous?
-      # )
-      # end
+    # ExportUrduTransliterationRecord.new(
+    #    id: t.id,
+    #    word_id: t.word_id,
+    #    text: t.text,
+    #    is_continuous: t.continuous?
+    # )
+    # end
     #ExportUrduTransliterationRecord.import(records, validate: false)
   end
 end

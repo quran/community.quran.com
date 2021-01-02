@@ -1,4 +1,117 @@
 namespace :one_time do
+  task import_dutch_abdulasal: :environment do
+    PaperTrail.enabled = false
+    language = Language.find_by_iso_code 'nl'
+    author = Author.where(name: 'Abdul Islam').first_or_create
+    data_source = DataSource.where(name: 'Quran.com').first_or_create
+
+    resource = ResourceContent.where(
+        author_id: author.id,
+        author_name: author.name,
+        resource_type: "content",
+        data_source: data_source,
+        sub_type: ResourceContent::SubType::Translation,
+        name: author.name,
+        cardinality_type: "1_ayah",
+        language_id: language.id,
+        language_name: language.name.downcase,
+        slug: "nl-abdalsalaam",
+        priority: 50).first_or_initialize
+
+    resource.save validate: false
+
+    class TrAyah < ActiveRecord::Base
+      self.table_name = "verses"
+    end
+
+    TrAyah.establish_connection({
+                                    adapter: 'sqlite3',
+                                    database: "#{Rails.root}/nl_abdalsalaam.db"}
+    )
+
+    TrAyah.all.each do |v|
+      verse = Verse.find_by_verse_key("#{v.sura}:#{v.ayah}")
+
+      translation = verse.translations.where(resource_content: resource).first_or_initialize
+      translation.text = v.text.strip
+      translation.language = language
+      translation.language_name = language.name.downcase
+      translation.resource_name = resource.name
+      translation.priority = resource.priority
+      translation.save
+    end
+  end
+
+  task ur_jalendhari: :environment do
+    PaperTrail.enabled = false
+
+    language = Language.find_by_iso_code 'ur'
+    author = Author.where(name: 'Fatah Muhammad Jalandhari').first_or_create
+    data_source = DataSource.where(name: 'http://qurandatabase.org/').first_or_create
+
+    resource = ResourceContent.where(
+        author_id: author.id,
+        author_name: author.name,
+        resource_type: "content",
+        data_source: data_source,
+        sub_type: ResourceContent::SubType::Translation,
+        name: "Fatah Muhammad Jalandhari",
+        cardinality_type: "1_ayah",
+        language_id: language.id,
+        language_name: language.name.downcase,
+        slug: "ur-fatah-muhammad-jalandhari",
+        priority: 4).first_or_initialize
+
+    resource.save validate: false
+    lines = open("https://gist.githubusercontent.com/naveed-ahmad/2b49c921085838cb2cbc3b2ef95c53ed/raw/cf97c045df4823f18d6ba60da5d0ca04fe7ebb2d/ur-jalendhari.txt").lines
+    lines = lines.to_a
+
+    lines.each_with_index do |line, i|
+      verse = Verse.find_by_verse_index(i + 1)
+      translation = verse.translations.where(resource_content: resource).first_or_initialize
+      translation.text = line.strip
+      translation.language = language
+      translation.language_name = language.name.downcase
+      translation.resource_name = resource.name
+      translation.priority = resource.priority
+      translation.save
+    end
+  end
+
+  task fix_tafheem_format: :environment do
+    Translation.where(resource_content_id: 97).each do |t|
+      t.foot_notes.each do |foot_note|
+        text = foot_note.text
+
+        text = text.split("\\n").map do |part|
+          "<p>#{part}</p>"
+        end
+        foot_note.update_column :text, text.join(' ')
+      end
+    end
+  end
+
+  task fix_it_names: :environment do
+
+    names = open("https://gist.githubusercontent.com/naveed-ahmad/93bbb1fe6e087cce9ba001e786868b19/raw/a2de9c790f5a976cb8d50d4d611d2600152d04fc/names.txt").lines
+    names = names.to_a
+
+    language = Language.find_by(iso_code: 'it')
+    names.each_with_index do |name, i|
+      chapter = Chapter.find_by_chapter_number(i + 1)
+      tr = chapter.translated_names.where(language: language).first_or_initialize
+      tr.name = name.strip
+      tr.save
+    end
+
+    Chapter.order("chapter_number ASC").each do |c|
+      name = names[c.chapter_number - 1].force_encoding("ISO-8859-5")
+      tr = c.translated_names.where(language: language).first_or_initialize
+      tr.name = name.strip
+      tr.save
+    end
+  end
+
   task export_bridges: :environment do
     def fix_bridges_formatting(text, type)
       docs = Nokogiri::HTML::DocumentFragment.parse(text.gsub(/\u00A0/, ''))
@@ -956,10 +1069,10 @@ namespace :one_time do
       word = t.word
       if word.char_type_name != 'end'
         begin
-        word.update_columns(text_indopak: t.text_indopak.to_s.strip, text_uthmani: t.text_uthmani.to_s.strip, text_imlaei: t.text_imlaei.to_s.strip)
+          word.update_columns(text_indopak: t.text_indopak.to_s.strip, text_uthmani: t.text_uthmani.to_s.strip, text_imlaei: t.text_imlaei.to_s.strip)
         rescue Exception => e
           issues << t.id
-          end
+        end
       end
     end
 

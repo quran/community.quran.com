@@ -1,8 +1,6 @@
 class ExportTranslationWithFootNoteJob < ApplicationJob
   queue_as :default
   STORAGE_PATH = "public/assets/exported_databses"
-  SEE_MORE_REF_REGEXP = Regexp.new('(?<ref>\d+:\d+)')
-  TAG_SANITIZER = Rails::Html::WhiteListSanitizer.new
 
   def perform(resource_id, original_file_name)
     resource_content = ResourceContent.find(resource_id)
@@ -53,7 +51,7 @@ class ExportTranslationWithFootNoteJob < ApplicationJob
   end
 
   def prepare_footnote_import_sql(resource)
-    FootNote.where(resource: Translation.where(resource_content_id: resource.id)).map do |footnote|
+    FootNote.where(translation: Translation.where(resource_content_id: resource.id)).map do |footnote|
       text = ExportRecord.connection.quote(footnote.text)
 
       "(#{footnote.id}, #{text})"

@@ -14,6 +14,13 @@ class WbwTextsController < CommunityController
       verses = verses.where(verse_number: params[:filter_verse].to_i)
     end
 
+    if params[:with_issues]
+      pauses = WbwText.where(word_id: Word.where(char_type_id: 4).pluck(:id))
+      words_with_issues = pauses.where("text_indopak != '' OR text_uthmani != '' OR text_imlaei != ''")
+
+      verses = verses.where(id: words_with_issues.pluck(:verse_id).uniq)
+    end
+
     order = if params[:sort_order] && params[:sort_order] == 'desc'
               'desc'
             else

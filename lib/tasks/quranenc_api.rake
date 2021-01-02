@@ -5,9 +5,6 @@ namespace :quranenc_api do
     else
       text.scrub
     end.to_s
-        .sub(/\d+./, '')
-        .sub('#', '')
-        .sub('#VALUE!', '')
         .strip
   end
 
@@ -384,6 +381,33 @@ namespace :quranenc_api do
   end
 
   task fix_sahih_international: :environment do
+    priority = 3
+
+    # English translation on top
+    ResourceContent.translations.where.not(id: [131,149]).where(language_id: 38).each do |r|
+      r.update priority: priority
+      Translation.where(resource_content_id: r.id).update_all priority: priority
+
+      priority += 1
+    end
+
+    # Urdu next
+    ResourceContent.translations.where(language_name: 'urdu').each do |r|
+      r.update priority: priority
+      Translation.where(resource_content_id: r.id).update_all priority: priority
+
+      priority += 1
+    end
+
+    ResourceContent.translations.where.not(id: [131,149], language_id: [38, 174]).each do |r|
+      r.update priority: priority
+      Translation.where(resource_content_id: r.id).update_all priority: priority
+
+      priority += 1
+    end
+
+
+
     PaperTrail.enabled = false
     admin = AdminUser.find_by_email('naveedahmada036@gmail.com')
 
