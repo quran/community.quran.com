@@ -47,7 +47,7 @@ gem 'bootstrap-kaminari-views'
 # Bootstrap view helpers
 gem 'twitter-bootstrap-rails'
 
-gem 'nokogiri', '1.10.10'
+gem 'nokogiri', '1.11.0'
 gem 'pdf-reader'
 
 # authentication
