@@ -56,6 +56,8 @@ GEM
       activeadmin (>= 1.x, < 3)
       jquery-rails (>= 3.0, < 5)
       select2-rails (~> 4.0)
+    activeadmin_froala_editor (0.2.8)
+      activeadmin (~> 2.0)
     activejob (6.0.3.3)
       activesupport (= 6.0.3.3)
       globalid (>= 0.3.6)
@@ -96,8 +98,6 @@ GEM
       activemodel (>= 4.0.0)
       activesupport (>= 4.0.0)
       mime-types (>= 1.16)
-    cld3 (3.3.0)
-      ffi (>= 1.1.0, < 1.12.0)
     coderay (1.1.3)
     coffee-rails (5.0.0)
       coffee-script (>= 2.2.0)
@@ -399,13 +399,13 @@ PLATFORMS
 DEPENDENCIES
   activeadmin-async_panel
   activeadmin-searchable_select
+  activeadmin_froala_editor
   activerecord-import
   annotate
   babosa
   bootstrap-kaminari-views
   byebug
   carrierwave (~> 1.2.3)
-  cld3
   devise
   diffy
   fog-aws

@@ -15,4 +15,8 @@ class Chapter < QuranApiRecord
 
     slugs.where(slug: slug.to_slug.normalize.transliterate.to_s).first_or_create
   end
+
+  def humanize
+    "#{chapter_number} - #{name_simple}"
+  end
 end

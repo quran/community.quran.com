@@ -1,4 +1,12 @@
 namespace :one_time do
+  task add_verse_info_in_related_resources: :environment do
+    Verse.find_each do |v|
+      Translation.where(verse_id: v.id).update_all(chapter_id: v.chapter_id, verse_number: v.verse_number, verse_key: v.verse_key)
+      AudioFile.where(verse_id: v.id).update_all(chapter_id: v.chapter_id, verse_number: v.verse_number, verse_key: v.verse_key)
+      Tafsir.where(verse_id: v.id).update_all(chapter_id: v.chapter_id, verse_number: v.verse_number, verse_key: v.verse_key)
+    end
+  end
+
   task import_dutch_abdulasal: :environment do
     PaperTrail.enabled = false
     language = Language.find_by_iso_code 'nl'

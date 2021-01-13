@@ -3,8 +3,11 @@ ActiveAdmin.register ChapterInfo do
   actions :all, except: :destroy
   ActiveAdminViewHelpers.versionate(self)
 
-  filter :chapter, as: :select, collection: 1..114
-  filter :language
+  filter :chapter, as: :searchable_select,
+         ajax: {resource: Chapter}
+
+  filter :language, as: :searchable_select,
+         ajax: {resource: Language}
 
   permit_params do
     [:text, :language_name, :language_id, :source, :short_text]
@@ -32,7 +35,11 @@ ActiveAdmin.register ChapterInfo do
       row :chapter do |object|
         link_to object.chapter_id, admin_chapter_path(object.chapter)
       end
-      row :text do |resource| div class: resource.language_name do resource.text.to_s.html_safe end end
+      row :text do |resource|
+        div class: resource.language_name do
+          resource.text.to_s.html_safe
+        end
+      end
       row :short_text
       row :language
       row :resource_content
@@ -41,5 +48,26 @@ ActiveAdmin.register ChapterInfo do
     if params[:version]
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
+  end
+
+  form do |f|
+    f.inputs "Chapter Info Details" do
+      f.input :chapter,
+              as: :searchable_select,
+              ajax: {resource: Chapter}
+
+      f.input :language,
+              as: :searchable_select,
+              ajax: {resource: Language}
+
+      f.input :resource_content,
+              as: :searchable_select,
+              ajax: {resource: ResourceContent}
+
+      f.input :source
+      f.input :short_text
+      f.input :text, as: :froala_editor
+    end
+    f.actions
   end
 end

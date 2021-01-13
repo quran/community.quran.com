@@ -1,4 +1,11 @@
 ActiveAdmin.register Chapter do
+ searchable_select_options(scope: Chapter.all,
+                          text_attribute: :humanize,
+                          filter: lambda do |term, scope|
+                              scope.ransack(chapter_number_eq: term, name_like: term).result
+end)
+
+
   menu parent: "Quran", priority: 1
   actions :all, except: [:destroy, :new]
 

@@ -1,4 +1,8 @@
 ActiveAdmin.register Language do
+  searchable_select_options(scope: Language.all,
+                            text_attribute: :name
+  )
+
   menu parent: "Settings", priority: 1
   actions :all, except: :destroy
 

@@ -40,6 +40,7 @@ gem 'turbolinks'
 #gem 'activeadmin', '~> 2.7.0'
 gem 'activeadmin-async_panel'
 gem 'activeadmin-searchable_select'
+gem 'activeadmin_froala_editor'
 gem 'paper_trail', '~> 10.3.1'
 
 gem 'bootstrap-kaminari-views'

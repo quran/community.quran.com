@@ -68,6 +68,9 @@ ActiveAdmin.register ResourceContent do
       row :data_source
       row :mobile_translation_id
       row :sqlite_file_url
+      row :resource_info do
+        div resource.resource_info.to_s.html_safe
+      end
     end
     active_admin_comments
   end
@@ -83,12 +86,12 @@ ActiveAdmin.register ResourceContent do
       f.input :priority
       f.input :mobile_translation_id
 
-
       f.input :cardinality_type, as: :select, collection: ResourceContent.collection_for_cardinality_type
       f.input :resource_type, as: :select, collection: ResourceContent.collection_for_resource_type
       f.input :sub_type, as: :select, collection: ResourceContent.collection_for_sub_type
       f.input :author
       f.input :data_source
+      f.input :resource_info, as: :froala_editor
 
     end
     f.actions
@@ -108,7 +111,8 @@ ActiveAdmin.register ResourceContent do
         :data_source_id,
         :slug,
         :priority,
-        :mobile_translation_id
+        :mobile_translation_id,
+        :resource_info
     ]
   end
 
