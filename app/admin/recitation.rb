@@ -55,7 +55,6 @@ ActiveAdmin.register Recitation do
       f.input :sub_type, as: :select, collection: ResourceContent.collection_for_sub_type
       f.input :author
       f.input :data_source
-      f.input :resource_info, as: :froala_editor
 
     end
     f.actions
