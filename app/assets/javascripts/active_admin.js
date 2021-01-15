@@ -7,5 +7,6 @@
 //= require activeadmin-async_panel
 
 //= require active_admin/searchable_select
-//= require activeadmin/froala_editor/froala_editor.pkgd.min
-//= require activeadmin/froala_editor_input
+
+//= require activeadmin/quill_editor/quill
+//= require activeadmin/quill_editor_input

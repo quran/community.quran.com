@@ -91,7 +91,27 @@ ActiveAdmin.register ResourceContent do
       f.input :sub_type, as: :select, collection: ResourceContent.collection_for_sub_type
       f.input :author
       f.input :data_source
-      f.input :resource_info, as: :froala_editor
+
+      toolbar = [
+          ['bold', 'italic', 'underline', 'strike', 'size'],
+          ['link', 'blockquote', 'code-block'],
+          [{ 'script': 'sub' }, { 'script': 'super' }],
+          [{ 'align': [] }, { list: 'ordered' }, { list: 'bullet' }],
+          [{ 'color': [] }, { 'background': [] }],
+          [header: [], font: []],
+          ['clean'],
+      ]
+
+      f.input :resource_info, as: :quill_editor, input_html: {
+          data: {
+              options:
+                  {
+                      modules: {
+                          toolbar: toolbar
+                      }
+                  }
+          }
+      }
 
     end
     f.actions

@@ -6,6 +6,7 @@ class ResourceContent < QuranApiRecord
   scope :one_verse, -> { where cardinality_type: CardinalityType::OneVerse }
   scope :one_chapter, -> { where cardinality_type: CardinalityType::OneChapter }
   scope :one_word, -> { where cardinality_type: CardinalityType::OneWord }
+  scope :recitations, -> { where sub_type: SubType::Audio}
 
   scope :approved, -> { where approved: true }
   
@@ -67,7 +68,7 @@ class ResourceContent < QuranApiRecord
   end
 
   def recitation?
-    sub_type == ResourceType::Audio || resource_type == ResourceType::Audio
+    sub_type == SubType::Audio || resource_type == ResourceType::Audio
   end
 
   class << self

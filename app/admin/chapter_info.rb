@@ -66,7 +66,28 @@ ActiveAdmin.register ChapterInfo do
 
       f.input :source
       f.input :short_text
-      f.input :text, as: :froala_editor
+
+      toolbar = [
+          ['bold', 'italic', 'underline', 'strike', 'size'],
+          ['link', 'blockquote', 'code-block'],
+          [{ 'script': 'sub' }, { 'script': 'super' }],
+          [{ 'align': [] }, { list: 'ordered' }, { list: 'bullet' }],
+          [{ 'color': [] }, { 'background': [] }],
+          [header: [], font: []],
+          ['clean'],
+      ]
+
+      f.input :text, as: :quill_editor, input_html: {
+          data: {
+              options:
+                  {
+                      modules: {
+                          toolbar: toolbar
+                      }
+                  }
+          }
+      }
+
     end
     f.actions
   end

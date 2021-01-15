@@ -56,7 +56,7 @@ GEM
       activeadmin (>= 1.x, < 3)
       jquery-rails (>= 3.0, < 5)
       select2-rails (~> 4.0)
-    activeadmin_froala_editor (0.2.8)
+    activeadmin_quill_editor (0.3.0)
       activeadmin (~> 2.0)
     activejob (6.0.3.3)
       activesupport (= 6.0.3.3)
@@ -399,7 +399,7 @@ PLATFORMS
 DEPENDENCIES
   activeadmin-async_panel
   activeadmin-searchable_select
-  activeadmin_froala_editor
+  activeadmin_quill_editor
   activerecord-import
   annotate
   babosa
