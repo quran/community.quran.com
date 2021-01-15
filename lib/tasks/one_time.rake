@@ -1,4 +1,20 @@
 namespace :one_time do
+  task add_first_and_last_ayah_of_juz: :environment do
+    ActiveRecord::Migration.add_column :juzs, :verses_count, :integer
+    Juz.find_each do |juz|
+      surah = juz.verse_mapping.keys.map(&:to_i)
+      min, max = surah.min.to_s, surah.max.to_s
+
+      verse_start = [min, juz.verse_mapping[min].split('-').first].join(':')
+      verse_end = [max, juz.verse_mapping[max].split('-').last].join(':')
+
+      first_ayah_of_juz = QuranUtils::Quran.get_ayah_id_from_key(verse_start)
+      last_ayah_of_juz = QuranUtils::Quran.get_ayah_id_from_key(verse_end)
+      verses_count = Verse.where('verse_index >= ? AND verse_index <= ?', first_ayah_of_juz, last_ayah_of_juz).size
+      juz.update_columns(verses_count: verses_count, first_verse_id: first_ayah_of_juz, last_verse_id: last_ayah_of_juz)
+    end
+  end
+
   task add_verse_info_in_related_resources: :environment do
     Verse.find_each do |v|
       Translation.where(verse_id: v.id).update_all(chapter_id: v.chapter_id, verse_number: v.verse_number, verse_key: v.verse_key)

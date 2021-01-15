@@ -58,7 +58,7 @@ namespace :quranenc_api do
       footnote_ids.each_with_index do |node, i|
         footnote = translation.foot_notes.create(text: footnotes[i].to_s.strip, language: resource.language, language_name: resource.language.name.downcase, resource_content: footnote_resource_content)
 
-        translation_text = translation_text.gsub("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
+        translation_text.sub!("#{node}", "<sup foot_note=#{footnote.id}>#{i + 1}</sup>")
       end
 
       if footnote_ids.blank? && footnotes.present?
@@ -294,7 +294,10 @@ namespace :quranenc_api do
         'pashto_zakaria'
     ]
 
-    resource_content_mapping.keys.each do |k|
+    #keys = [:urdu_junagarhi]
+    keys = resource_content_mapping.keys
+
+    keys.each do |k|
       mapping = resource_content_mapping[k]
       language = Language.find(mapping[:language])
 

@@ -9,7 +9,11 @@ ActiveAdmin.register Recitation do
   scope :un_approved, group: :enabled
 
   permit_params do
-    [:reciter_id, :recitation_style_id, :resource_content_id]
+    [
+        :reciter_id,
+        :recitation_style_id,
+        :resource_content_id
+    ]
   end
 
   show do
@@ -28,7 +32,33 @@ ActiveAdmin.register Recitation do
       row :approved do |r|
         r.approved?
       end
+
+      row :resource_info do
+        div resource.resource_info.to_s.html_safe
+      end
     end
+  end
+
+  form do |f|
+    f.inputs "Resource content Details" do
+      f.input :name
+      f.input :author_name
+      f.input :slug
+      f.input :approved
+      f.input :language
+      f.input :language_name
+      f.input :priority
+      f.input :mobile_translation_id
+
+      f.input :cardinality_type, as: :select, collection: ResourceContent.collection_for_cardinality_type
+      f.input :resource_type, as: :select, collection: ResourceContent.collection_for_resource_type
+      f.input :sub_type, as: :select, collection: ResourceContent.collection_for_sub_type
+      f.input :author
+      f.input :data_source
+      f.input :resource_info, as: :froala_editor
+
+    end
+    f.actions
   end
 
   sidebar "Audio files", only: :show do

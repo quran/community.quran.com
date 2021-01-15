@@ -286,7 +286,20 @@ ActiveAdmin.register Verse do
 
   controller do
     def find_resource
-      scoped_collection.includes(:chapter, :media_contents, tafsirs: :resource_content, translations: :resource_content, audio_files: :recitation).find(params[:id]) # prevents N+1 queries to your database
+      collection = scoped_collection
+                       .includes(
+                           :chapter,
+                           :media_contents,
+                           tafsirs: :resource_content,
+                           translations: :resource_content,
+                           audio_files: :recitation
+                       )
+
+      if params[:id].include?(':')
+        collection.find_by_verse_key(params[:id])
+      else
+        collection.find(params[:id])
+      end
     end
   end
 end
