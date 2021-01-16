@@ -7,9 +7,6 @@ namespace :import_isa_gracia do
     language = Language.find_by_iso_code('es')
     footnote_resource_content_id = 197
     resource_content_id = 83
-    resource_name = ResourceContent.find(83).name
-    Translation.where(resource_content_id: resource_content_id).delete_all
-    FootNote.where(resource_content_id: footnote_resource_content_id).delete_all
     
     parsed_html = Nokogiri.parse URI.open(url).read
     chapter_number = 0
@@ -29,8 +26,9 @@ namespace :import_isa_gracia do
         next if verse_number.nil?
         puts verse_number
         verse = chapter.verses.find_by_verse_number(verse_number)
+        translation = verse.translations.where(resource_content_id: resource_content_id).first_or_create
+        translation.foot_notes.delete_all
         foot_note_counter = 0
-        foot_note_ids = []
         text = p_tag.children.collect do |node|
           if node.name == "sup"
             id = node.children.first.attributes["href"].value
@@ -38,21 +36,14 @@ namespace :import_isa_gracia do
               index > 1 ? f_node.text : nil
             end.compact.join
             return nil if foot_note_text.nil?
-            foot_note = FootNote.new(text: foot_note_text,language: language, language_name: language.name.downcase, resource_content_id: footnote_resource_content_id)
-            foot_note.save(validate: false)
-            foot_note_ids << foot_note.id
+            foot_note = translation.foot_notes.create(text: foot_note_text,language: language, language_name: language.name.downcase, resource_content_id: footnote_resource_content_id)
             "<sup foot_note=#{foot_note.id}>#{foot_note_counter += 1}</sup>"
           else
             node.text
           end
         end.compact.join.gsub(/^[0-9\.\s\-]+/, "")
-        
-        translation = verse.translations.where(resource_content_id: resource_content_id).first_or_create
-        translation.language = language
         translation.text = text
-        translation.resource_name = resource_name
         translation.save(validate: false)
-        FootNote.where(id: foot_note_ids).update_all(translation_id: translation.id)
       end
     end
   end
