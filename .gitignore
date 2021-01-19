@@ -23,3 +23,5 @@ public/exported_databses/*
 .ruby-version
 .ruby-gemset
 .DS_Store
+
+useful.rb

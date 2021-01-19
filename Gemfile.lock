@@ -215,7 +215,7 @@ GEM
     mime-types-data (3.2020.0512)
     mimemagic (0.3.5)
     mini_mime (1.0.2)
-    mini_portile2 (2.4.0)
+    mini_portile2 (2.5.0)
     minitest (5.14.2)
     multi_json (1.15.0)
     multipart-post (2.1.1)
@@ -228,8 +228,9 @@ GEM
     netrc (0.11.0)
     newrelic_rpm (6.13.1)
     nio4r (2.5.4)
-    nokogiri (1.10.10)
-      mini_portile2 (~> 2.4.0)
+    nokogiri (1.11.0)
+      mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
     ntlm-http (0.1.1)
     orm_adapter (0.5.0)
     paper_trail (10.3.1)
@@ -255,6 +256,7 @@ GEM
     puma (4.3.6)
       nio4r (~> 2.0)
     raabro (1.4.0)
+    racc (1.5.2)
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
@@ -414,7 +416,7 @@ DEPENDENCIES
   mechanize
   mysql2
   newrelic_rpm
-  nokogiri (= 1.10.10)
+  nokogiri (= 1.11.0)
   paper_trail (~> 10.3.1)
   pdf-reader
   pg
