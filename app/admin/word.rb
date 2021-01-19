@@ -6,13 +6,14 @@ ActiveAdmin.register Word do
   filter :verse_key
   filter :char_type
   filter :page_number
-  filter :text_madani
+  filter :text_uthmani
   filter :text_simple
   filter :code_hex
 
   permit_params do
-    [:verse_id, :position, :text_madani, :text_indopak, :text_simple, :verse_key, :page_number, :class_name, :line_number, :code_dec, :code_hex,
-     :code_hex_v3, :code_dec_v3, :char_type_id, :audio_url, :location, :char_type_name
+    [
+        :verse_id, :position, :text_uthmani, :text_indopak, :text_simple, :verse_key, :page_number, :class_name, :line_number, :code_dec, :code_hex,
+       :code_hex_v3, :code_dec_v3, :char_type_id, :audio_url, :location, :char_type_name
     ]
   end
 
@@ -20,7 +21,7 @@ ActiveAdmin.register Word do
     f.inputs "Word detail" do
       f.input :verse_id
       f.input :position
-      f.input :text_madani, as: :text
+      f.input :text_uthmani, as: :text
       f.input :text_indopak, as: :text
       f.input :text_simple, as: :text
       f.input :verse_key
@@ -46,18 +47,23 @@ ActiveAdmin.register Word do
       row :verse_key
       row :verse_index
       row :position
+
       row :text_uthmani do
         span resource.text_uthmani, class: 'me_quran'
       end
+
       row :text_uthmani_simple do
         span resource.text_uthmani_simple, class: 'me_quran'
       end
+
       row :text_imlaei do
         span resource.text_imlaei, class: 'me_quran'
       end
+
       row :text_imlaei_simple do
         span resource.text_imlaei_simple, class: 'me_quran'
       end
+
       row :text_indopak do
         span resource.text_indopak, class: 'indopak'
       end

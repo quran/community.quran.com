@@ -171,7 +171,7 @@ ActiveAdmin.register Verse do
                 w.text_imlaei_simple
               end
 
-              td class: 'quran-text row-text_indopak' do
+              td class: 'quran-text indopak' do
                 w.text_indopak
               end
 
