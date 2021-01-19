@@ -39,6 +39,9 @@ namespace :import_maududi_tafseer do
   def navigate url, browser
     browser.goto url
     page = Nokogiri::HTML.parse(browser.html)
+
+    # docs = Nokogiri::HTML::DocumentFragment.parse(body)
+
     next_page_query = page.css("#next").children.css("a").first.attributes["href"].value
     return page, next_page_query
   end

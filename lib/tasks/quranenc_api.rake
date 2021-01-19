@@ -295,8 +295,8 @@ namespace :quranenc_api do
         'pashto_zakaria'
     ]
 
-    #keys = [:urdu_junagarhi]
-    keys = resource_content_mapping.keys
+    keys = [:urdu_junagarhi]
+    #keys = resource_content_mapping.keys
 
     keys.each do |k|
       mapping = resource_content_mapping[k]

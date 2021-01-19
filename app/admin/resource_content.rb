@@ -1,6 +1,9 @@
 ActiveAdmin.register ResourceContent do
   searchable_select_options(scope: ResourceContent.all,
-                            text_attribute: :name
+                            text_attribute: :name,
+                            filter: lambda do |term, scope|
+                              scope.ransack(id_eq: term, name_like: term).result
+                            end
   )
   ActiveAdminViewHelpers.render_translated_name_sidebar(self)
 
