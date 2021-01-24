@@ -20,14 +20,8 @@
     </h2>
 
     <div class="row">
-      <b>Text Madani:</b>
+      <b>Text Uthmani:</b>
       <p class="madani"> <%= @verse.text_uthmani %></p>
-    </div>
-
-    <div class="row">
-      <b>Text Indopak:</b> <br/>
-
-      <p class="indopak"> <%= @verse.text_indopak %></p>
     </div>
 
     <% @verse.translations.each do |trans| %>
@@ -42,11 +36,7 @@
 
 <p class="lead">
   <%
-    progress = if params[:language_id] == 174
-                 @verse.urdu_wbw_translation_progress
-               else
-                 @verse.chinese_wbw_translation_progress
-               end
+    progress = @verse.wbw_translation_progress(@language.id)
   %>
 
   Proofreading progress

@@ -1,4 +1,80 @@
 namespace :one_time do
+  task import_missing_translations: :environment do
+    PaperTrail.enabled = false
+
+    mappings = [
+        {
+            language: Language.where(name: 'Amazigh').first_or_create,
+            file: 'ber.mensur.txt',
+            author: "Ramdane At Mansour",
+            name: "Ramdane At Mansour"
+        }, {
+            language: Language.find_by_name('Bulgarian'),
+            file: "bg.theophanov.txt",
+            author: "Tzvetan Theophanov",
+            name: "Tzvetan Theophanov",
+            native: "Теофанов"
+        }, {
+            language: Language.find_by_name("Sindhi"),
+            file: "sd.amroti.txt",
+            author: "Taj Mehmood Amroti",
+            name: "Taj Mehmood Amroti",
+            native: "امروٽي"
+        }, {
+            resource: 44,
+            language: Language.find_by_name("Romanian"),
+            file: "ro.grigore.txt",
+            author: "George Grigore",
+            name: "Grigore",
+            native: "Grigore"
+        }
+    ]
+
+    data_source = DataSource.find_by(name: "Tanzil Project")
+    mappings.each do |mapping|
+      resource = mapping[:resource] ? ResourceContent.find(mapping[:resource]) : ResourceContent.new
+      language = mapping[:language]
+      author = Author.where(name: mapping[:author]).first_or_create
+
+      resource.name = mapping[:name]
+      resource.language = language
+      resource.language_name = language.name
+      resource.author = author
+      resource.author_name = author.name
+      resource.data_source = data_source
+      resource.resource_type = 'content'
+      resource.sub_type = 'translation'
+      resource.cardinality_type = '1_ayah'
+      resource.priority = resource.priority || 90
+      resource.save
+
+      if mapping[:native]
+        resource.translated_names.where(language: language).first_or_create(name: mapping[:native])
+      end
+
+      translations = open("translations/#{mapping[:file]}").lines.to_a
+
+      translations.each_with_index do |text, i|
+        verse = Verse.find_by_verse_index(i + 1)
+        translation = verse.translations.where(resource_content: resource).first_or_initialize
+        translation.text = text.strip
+        translation.language = language
+        translation.language_name = language.name.downcase
+        translation.resource_name = resource.name
+        translation.priority = resource.priority
+        translation.verse_key = verse.verse_key
+        translation.chapter_id = verse.chapter_id
+        translation.verse_number = verse.verse_number
+        translation.juz_number = verse.juz_number
+        translation.hizb_number = verse.hizb_number
+        translation.rub_number = verse.rub_number
+        translation.page_number = verse.page_number
+
+        translation.save
+      end
+    end
+  end
+
   task add_first_and_last_ayah_of_juz: :environment do
     require './lib/utils/quran'
 

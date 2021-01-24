@@ -5,10 +5,14 @@ class ApplicationController < ActionController::Base
 
   protected
   def user_for_paper_trail
-    current_admin_user.try(:id) || 'Unknown user'
+    current_admin_user.try(:id) || current_user.try(:email)
   end
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name])
+  end
+
+  def can_manage?(resource)
+    current_user.user_projects.find_by(resource_content_id: resource.id)
   end
 end

@@ -1,0 +1,15 @@
+<%= semantic_form_for [:admin, UserProject.new] do |form| %>
+  <% form.input(:user_id, as: :hidden, input_html: {value: resource.id}) %>
+  <% form.input(:description, input_html: {rows: 2} ) %>
+  <% form.input(:resource_content) %>
+  <%= form.actions(:submit) %>
+<% end %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.3/chosen.jquery.min.js" data-turbolinks-track="reload"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.3/chosen.min.css" integrity="sha256-4LdsL3Q2cUVVke0CPP9V7cKKromYbo1vBVtmGosZCEQ=" crossorigin="anonymous" data-turbolinks-track="reload"/>
+
+<script>
+    $(function () {
+        $('#user_project_resource_content_id').chosen({allow_single_deselect: true})
+    })
+</script>

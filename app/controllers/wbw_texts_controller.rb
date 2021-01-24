@@ -1,4 +1,6 @@
 class WbwTextsController < CommunityController
+  before_action :check_permission, only: [:new, :create, :edit, :update]
+
   def index
     verses = Verse
 
@@ -40,8 +42,8 @@ class WbwTextsController < CommunityController
   end
 
   def create
-   @verse = Verse.find(params[:verse_id])
-   @verse.update(wbw_translations_params)
+    @verse = Verse.find(params[:verse_id])
+    @verse.update(wbw_translations_params)
 
     redirect_to wbw_text_path(@verse)
   end
@@ -57,5 +59,9 @@ class WbwTextsController < CommunityController
         :user_id,
         :id
     ]
+  end
+
+  def check_permission
+    return redirect_to(root_path, notice: "Sorry you don't have access to this resource.")
   end
 end

@@ -28,6 +28,10 @@ class ExportIndopakWbwJob < ApplicationJob
   end
   
   def prepare_import_sql()
+    hizb= WbwText.where(word_id: Word.where(char_type_name: 'rub-el-hizb').map(&:id))
+    hizb.update_all(text_indopak: "۞", text_uthmani: "۞", text_imlaei: "۞")
+
+
     Word.find_each do |word|
       w_type         = ExportRecord.connection.quote(word.char_type_name)
       chapter, verse = word.verse_key.split(':')
@@ -55,5 +59,7 @@ class ExportIndopakWbwJob < ApplicationJob
   class ExportRecord < ActiveRecord::Base
   end
 end
+
+
 
 

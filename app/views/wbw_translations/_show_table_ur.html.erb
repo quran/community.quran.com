@@ -3,7 +3,6 @@
   <tr>
     <th>Word id</th>
     <th>IndoPak text</th>
-    <th>Uthmani text</th>
     <th>En translation</th>
     <th>Ur Translation</th>
     <th>Proofreading</th>
@@ -17,13 +16,7 @@
 
       <td>
         <span class="indopak">
-        <%= word.ur_wbw_translation&.text_indopak %>
-        </span>
-      </td>
-
-      <td>
-         <span class="madani">
-        <%= word.ur_wbw_translation&.text_madani %>
+        <%= word.text_indopak %>
         </span>
       </td>
 

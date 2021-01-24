@@ -1,5 +1,6 @@
 class TranslationProofreadingsController < CommunityController
   before_action :find_resource
+  before_action :check_permission, only: [:edit, :update, :create]
 
   def show
     @translation = Translation
@@ -71,4 +72,10 @@ class TranslationProofreadingsController < CommunityController
     @resource = ResourceContent.find(params[:resource_id])
   end
 
+  def check_permission
+    unless can_manage?(@resource)
+      url = translation_proofreading_path(params[:id], resource_id: @resource.id)
+      redirect_to url, alert: "Sorry you don't have access to this resource."
+    end
+  end
 end

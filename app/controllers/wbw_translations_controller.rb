@@ -1,18 +1,8 @@
 class WbwTranslationsController < CommunityController
+  before_action :check_permission, only: [:new, :edit, :update, :create]
+
   def index
     verses = Verse
-=begin
-    case params[:filter_progress]
-             when 'completed'
-               Verse.verse_with_full_arabic_transliterations
-             when 'missing'
-               Verse.verses_with_no_arabic_translitration
-             when 'all'
-               Verse.verse_with_words_and_arabic_transliterations
-             else
-               Verse.verses_with_missing_arabic_translitration
-             end
-=end
     params[:language_id] ||= (params[:language_id].presence || 174).to_i
     @language = Language.find(params[:language_id].presence || 174)
 
@@ -97,14 +87,36 @@ class WbwTranslationsController < CommunityController
   end
 
   def eager_load_translations
-    params[:language_id] = (params[:language_id].presence || 174).to_i
-    @language = Language.find(params[:language_id])
-
-    if params[:language_id] == 174
+    if 174 == language.id
+      # Urdu
       [54, 97]
-    else
-      # Chinese 109, 56
+    elsif 185 == language.id
+      # Chinese
       [109, 56]
+    elsif 175 == language.id
+      # Uzbek
+      # 55 Muhammad Sodiq Muhammad Yusuf (Latin) which we're updating to new dialect
+      # 127
+      [55, 127, 101]
+    else
+      []
+    end
+  end
+
+  def check_permission
+    resource = ResourceContent.translations.one_word.where(language: language).first
+
+    unless resource.present? && can_manage?(resource)
+      redirect_to wbw_translations_path(language_id: @language.id), alert: "Sorry you don't have access to this resource"
+    end
+  end
+
+  def language
+    if @language
+      @language
+    else
+      params[:language_id] = (params[:language_id].presence || 174).to_i
+      @language = Language.find(params[:language_id])
     end
   end
 end
