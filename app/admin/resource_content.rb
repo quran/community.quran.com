@@ -71,9 +71,13 @@ ActiveAdmin.register ResourceContent do
       row :data_source
       row :mobile_translation_id
       row :sqlite_file_url
+      row :created_at
+      row :updated_at,
       row :resource_info do
         div resource.resource_info.to_s.html_safe
       end
+      row :created_at
+      row :updated_at
     end
     active_admin_comments
   end

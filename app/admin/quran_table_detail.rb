@@ -6,6 +6,7 @@ ActiveAdmin.register QuranTableDetail do
       row :id
       row :name
       row :enteries
+      row :created_at
       row :updated_at
     end
 

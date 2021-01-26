@@ -18,6 +18,8 @@ ActiveAdmin.register FootNote do
     if params[:version]
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
+    row :created_at
+    row :updated_at
   end
 
   form do |f|

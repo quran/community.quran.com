@@ -42,6 +42,8 @@ ActiveAdmin.register Tafsir do
       row :text do
         resource.text.to_s.html_safe
       end
+      row :created_at
+      row :updated_at
     end
     
     if params[:version]

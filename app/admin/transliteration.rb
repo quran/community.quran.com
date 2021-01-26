@@ -19,6 +19,8 @@ ActiveAdmin.register Transliteration do
     if params[:version]
       ActiveAdminViewHelpers.diff_panel(self, resource)
     end
+    row :created_at
+    row :updated_at
   end
   
   permit_params do

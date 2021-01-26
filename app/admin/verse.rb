@@ -122,6 +122,8 @@ ActiveAdmin.register Verse do
       row :image do |object|
         image_tag object.image_url
       end
+      row :created_at
+      row :updated_at
     end
 
     panel "Words" do

@@ -30,6 +30,8 @@ ActiveAdmin.register WordTranslation do
         end
       end
       row :resource_content
+      row :created_at
+      row :updated_at
     end
 
     if params[:version].to_i > 0

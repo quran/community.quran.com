@@ -11,6 +11,8 @@ ActiveAdmin.register Slug do
       row :chapter
       row :slug
       row :locale
+      row :created_at
+      row :updated_at
     end
   end
 

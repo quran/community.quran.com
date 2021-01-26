@@ -13,6 +13,8 @@ ActiveAdmin.register Author do
       row :id
       row :name
       row :url
+      row :created_at
+      row :updated_at
     end
 
     active_admin_comments

@@ -43,6 +43,8 @@ ActiveAdmin.register ChapterInfo do
       row :short_text
       row :language
       row :resource_content
+      row :created_at
+      row :updated_at
     end
 
     if params[:version]

@@ -57,6 +57,7 @@ ActiveAdmin.register PaperTrail::Version, as: 'ContentChanges' do
         link_to AdminUser.find_by_id(resource.whodunnit).try(:email), [:admin, AdminUser.find_by_id(resource.whodunnit)] rescue "Unknown"
       end
       row :created_at
+      row :updated_at
     end
     
     panel "Attributes of #{resource.item_type} at this version" do

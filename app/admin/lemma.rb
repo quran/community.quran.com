@@ -9,6 +9,8 @@ ActiveAdmin.register Lemma do
       row :id
       row :text_clean
       row :text_madani
+      row :created_at
+      row :updated_at
     end
 
     panel "Ayahs for this lemma" do

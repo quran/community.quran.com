@@ -105,6 +105,8 @@ ActiveAdmin.register Word do
         end
         nil
       end
+      row :created_at
+      row :updated_at
     end
 
     active_admin_comments

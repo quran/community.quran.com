@@ -36,6 +36,8 @@ ActiveAdmin.register Recitation do
       row :resource_info do
         div resource.resource_info.to_s.html_safe
       end
+      row :created_at
+      row :updated_at
     end
   end
 
