@@ -1,5 +1,13 @@
 namespace :one_time do
   task import_missing_translations: :environment do
+    Verse.unscoped.order("verse_index asc").each do |v|
+      codes = v.words.order("position asc").map do |word|
+        word.code_hex.hex.chr
+      end
+
+      v.update(code_v1: codes.join(' '))
+    end
+
     PaperTrail.enabled = false
 
     mappings = [

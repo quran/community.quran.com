@@ -1,0 +1,2 @@
+class ImportantNote < ApplicationRecord
+end
