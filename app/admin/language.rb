@@ -1,5 +1,5 @@
 ActiveAdmin.register Language do
-  searchable_select_options(scope: Language.all,
+  searchable_select_options(scope: Language,
                             text_attribute: :name
   )
 

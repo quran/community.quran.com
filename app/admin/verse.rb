@@ -1,5 +1,5 @@
 ActiveAdmin.register Verse do
-  searchable_select_options(scope: Verse.all,
+  searchable_select_options(scope: Verse,
                             text_attribute: :verse_key
   )
   menu parent: "Quran", priority: 2

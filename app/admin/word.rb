@@ -1,6 +1,6 @@
 ActiveAdmin.register Word do
   menu parent: "Quran", priority: 3
-  searchable_select_options(scope: Word.all,
+  searchable_select_options(scope: Word,
                             text_attribute: :humanize,
                             filter: lambda do |term, scope|
                               scope.ransack(verse_key_eq: term, location_like: term).result

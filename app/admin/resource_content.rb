@@ -1,5 +1,5 @@
 ActiveAdmin.register ResourceContent do
-  searchable_select_options(scope: ResourceContent.all,
+  searchable_select_options(scope: ResourceContent,
                             text_attribute: :name,
                             filter: lambda do |term, scope|
                               scope.ransack(id_eq: term, name_like: term).result
