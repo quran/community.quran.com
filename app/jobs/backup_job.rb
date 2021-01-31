@@ -6,7 +6,7 @@ class BackupJob < ApplicationJob
   def perform(tag=nil)
     if Rails.env.production?
       require "#{Rails.root}/lib/utils/db_backup.rb"
-      SystemUtils::DbBackup.run(tag)
+      Utils::DbBackup.run(tag)
 
       # Delete old dumps
       db_dumps = DatabaseBackup.where(tag: nil).where("created_at < ?", 1.month.ago).order("created_at asc")

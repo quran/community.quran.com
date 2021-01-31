@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SystemUtils
+module Utils
   class DbBackup
     include ActionView::Helpers::NumberHelper
     STORAGE_PATH = "#{Rails.root}/database_dumps"
@@ -8,7 +8,7 @@ module SystemUtils
     
     def self.run(tag)
       databases.each do |key, config|
-        SystemUtils::DbBackup.new(key, config).run(tag)
+        Utils::DbBackup.new(key, config).run(tag)
       end
 
       FileUtils.rm_rf(STORAGE_PATH)
