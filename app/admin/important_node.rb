@@ -58,6 +58,7 @@ ActiveAdmin.register ImportantNote do
               ajax: {resource: Word}
 
       f.input :label
+      f.input :title
 
       toolbar = [
           ['bold', 'italic', 'underline', 'strike', 'size'],
