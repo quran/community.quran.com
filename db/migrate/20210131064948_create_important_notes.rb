@@ -1,6 +1,7 @@
 class CreateImportantNotes < ActiveRecord::Migration[6.0]
   def change
     create_table :important_notes do |t|
+      t.string :title
       t.text :text
       t.string :label
 

@@ -12,7 +12,18 @@ ActiveAdmin.register ImportantNote do
          ajax: {resource: Word}
 
   permit_params do
-    [:text, :label, :chapter_id, :verse_id, :word_id]
+    [:title, :text, :label, :chapter_id, :verse_id, :word_id]
+  end
+
+  index do
+    column :id
+    column :title
+    column :label
+
+    column :verse_id
+    column :word_id
+
+    actions
   end
 
   show do
@@ -23,6 +34,7 @@ ActiveAdmin.register ImportantNote do
       end
       row :verse
       row :word
+      row :title
       row :text do |resource|
         div do
           resource.text.to_s.html_safe
