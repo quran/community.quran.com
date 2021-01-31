@@ -1,4 +1,19 @@
 namespace :one_time do
+  task convert_uzbek_cyrillic_to_latin: :environment do
+    #
+    # Convert "Muhammad Sodik Muhammad" Ubzek translation to latin
+    #
+    Translation.where(resource_content_id: 55).each do |translation|
+      converter = Utils::CyrillicToLatin.new(translation.text)
+      translation.update_column(:text, converter.to_latin)
+
+      translation.foot_notes.each do|foot_note|
+        converter = Utils::CyrillicToLatin.new(foot_note.text)
+        foot_note.update_column(:text, converter.to_latin)
+      end
+    end
+  end
+
   task import_missing_translations: :environment do
     Verse.unscoped.order("verse_index asc").each do |v|
       codes = v.words.order("position asc").map do |word|

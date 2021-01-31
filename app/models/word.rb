@@ -24,7 +24,6 @@ class Word < QuranApiRecord
   has_one :zh_wbw_translation, -> { where language_id: 185}, class_name: 'WbwTranslation'
   # Ubzek
   has_one :uz_wbw_translation, -> { where language_id: 175}, class_name: 'WbwTranslation'
-
   has_one :ur_transliteration, -> { where language_name: 'urdu'}, class_name: 'Transliteration', as: :resource
 
   # Used for export translation
