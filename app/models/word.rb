@@ -45,4 +45,8 @@ class Word < QuranApiRecord
   def code_v3
     "&#x#{code_hex_v3};"
   end
+
+  def humanize
+    "#{location} - #{text_uthmani}"
+  end
 end

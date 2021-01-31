@@ -4,8 +4,7 @@ class CreateImportantNotes < ActiveRecord::Migration[6.0]
       t.text :text
       t.string :label
 
-      t.integer :user_id
-      t.integer :chapter_id
+      t.integer :admin_user_id
       t.integer :verse_id
       t.integer :word_id
 
