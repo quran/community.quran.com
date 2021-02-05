@@ -17,48 +17,44 @@ ActiveAdmin.register_page "Page" do
   content do
     page = params[:page].to_i
 
-    verses = Verse.includes(:words).where(page_number: page).order("verse_number ASC")
+    verses = Verse.unscoped.includes(:words).where(page_number: page).order("verse_index ASC")
     panel "Page verses" do
+      render 'shared/page_font', verses: verses
+
       table do
         thead do
-          td 'Verse'
+          td 'Ayah'
+          td 'Uthmani'
+          td 'V1 font'
           td 'V2 font'
-          td 'V3 font'
-          td 'Text font'
         end
 
         tbody do
           verses.each do |verse|
             tr do
+              td do
+                link_to verse.verse_key, admin_verse_path(verse)
+              end
+
               td class: 'quran-text me_quran' do
-                link_to verse.text_uthmani, admin_verse_path(verse)
+                verse.text_uthmani
               end
 
-              td do
-                span do
+              td class: 'quran-text' do
+                div do
                   verse.words.order("position ASC").each do |w|
-                    span class: "v2p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-                      w.code.html_safe
+                    span class: "p#{w.page_number}-v1 quran-text", id: w.id do
+                      w.code_v1
                     end
                   end
                 end
               end
 
-              td do
-                span do
+              td class: 'quran-text' do
+                div do
                   verse.words.order("position ASC").each do |w|
-                    span class: "v3p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-                      w.code_v3.html_safe
-                    end
-                  end
-                end
-              end
-
-              td do
-                span do
-                  verse.words.order("position ASC").each do |w|
-                    span class: "tp#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-                      w.text_uthmani
+                    span class: "p#{w.page_number}-v2", id: w.id do
+                      w.code_v2
                     end
                   end
                 end
@@ -68,5 +64,26 @@ ActiveAdmin.register_page "Page" do
         end
       end
     end
+
+    panel "Debug font" do
+      form do
+        div style: 'margin-top: 10px; line-height: 2' do
+          label "Code font - v1"
+          textarea class: "p#{page}-v1 quran-text"
+        end
+
+        div style: 'margin-top: 10px; line-height: 2' do
+          label "Code font - v2"
+          textarea class: "p#{page}-v2 quran-text"
+        end
+
+        div style: 'margin-top: 10px; line-height: 2' do
+          label "Uthmani text"
+          textarea class: "me_quran quran-text"
+        end
+      end
+    end
   end
 end
+
+

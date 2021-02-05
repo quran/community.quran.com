@@ -3,26 +3,41 @@ namespace :one_time do
     #
     # Convert "Muhammad Sodik Muhammad" Ubzek translation to latin
     #
-    Translation.where(resource_content_id: 55).each do |translation|
+    PaperTrail.enabled = false
+    Translation.where(resource_content_id: 127).each do |translation|
       converter = Utils::CyrillicToLatin.new(translation.text)
-      translation.update_column(:text, converter.to_latin)
 
-      translation.foot_notes.each do|foot_note|
+      tr = Translation.where(resource_content_id: 55, verse_key: translation.verse_key).first
+      tr.update_column(:text, converter.to_latin)
+
+      tr.foot_notes.each do|foot_note|
         converter = Utils::CyrillicToLatin.new(foot_note.text)
         foot_note.update_column(:text, converter.to_latin)
       end
     end
   end
 
-  task import_missing_translations: :environment do
+  task prepar_ayah_codes: :environment do
+    PaperTrail.enabled = false
+
+    Word.find_each do |word|
+      word.update_column :code_v1, word.code_hex.hex.chr
+    end
+
     Verse.unscoped.order("verse_index asc").each do |v|
-      codes = v.words.order("position asc").map do |word|
+      v1_codes = v.words.order("position asc").map do |word|
         word.code_hex.hex.chr
       end
 
-      v.update(code_v1: codes.join(' '))
-    end
+      v2_codes = v.words.order("position asc").map do |word|
+        word.code_v2
+      end
 
+      v.update(code_v1: v1_codes.join(' '), code_v2: v2_codes.join(' '))
+    end
+  end
+
+  task import_missing_translations: :environment do
     PaperTrail.enabled = false
 
     mappings = [
@@ -1365,47 +1380,19 @@ namespace :one_time do
   task prepare_font_v2_codes_new: :environment do
     PaperTrail.enabled = false
 
-    #codes = File.open("data/v2-font-codes.txt").read
-    word_index = 0
-    issues = []
-
-    codes = ""
+    content = File.open("data/v2-codes/v2_codes.txt").read
+    pages = JSON.parse(content)
 
     1.upto(604).each do |p|
-      page = File.open("#{Rails.root}/data/v2-codes/#{p}.txt").read
-      #codes += page
-      if Word.where(page_number: p).length != page.length
-        issues << p
+      File.open("data/v2-pages/#{p}.html", "wb") do |file|
+        file.puts "<div>#{pages[p.to_s]}</div>"
       end
     end
 
-=begin
-    #NOTE: script for detecting difference in v1 and v2 pages
-    pages = {}
+    code = page_534[word_index].unpack("U*")[0]
 
-    CSV.open("page_words.csv", 'wb') do |csv|
-      csv << ["page", "v1 words", "v2 words", "difference v1-v2"]
+    word.code_hex_v3 = code.to_s(16)
 
-      1.upto(604).each do |p|
-        v2 = File.open("#{Rails.root}/data/v2-codes/#{p}.txt").read.gsub(/s+/,'').length
-        v1 = Word.where(page_number: p).count
-        csv << [p, v1, v2, v1 - v2]
-      end
-    end
-=end
-
-    codes = codes.gsub(/s+/, '')
-
-    Verse.unscoped.order("verse_index asc").each do |v|
-      v.words.order("position asc").each do |word|
-        code = codes[word_index].unpack("U*")[0]
-
-        word.code_hex_v3 = code.to_s(16)
-        word.code_dec_v3 = code
-        word.save validate: false
-        word_index += 1
-      end
-    end
   end
 
   task prepare_font_v2_codes: :environment do
@@ -1437,10 +1424,6 @@ namespace :one_time do
         end
       end
     end
-
-    page_chars = "ﱁﱂﱃﱄﱅﱆﱇﱈﱉﱊﱋﱌﱍﱎﱏﱐﱑﱒﱓﱔﱕﱖﱗﱘﱙﱚﱛﱜﱝﱞﱟﱠﱡﱢﱣﱤﱥﱦﱧﱨﱩﱪﱫﱬﱭﱮﱯﱰﱱﱲﱳﱴﱵﱶﱷﱸﱹﱺﱻﱼﱽﱾﱿﲀﲁﲂﲃﲄﲅﲆﲇﲈﲉﲊﲋﲌﲍﲎﲏﲐﲑﲒﲓﲔﲕﲖﲗﲘﲙﲚﲛﲜﲝﲞﲟﲠﲡﲢﲣﲤﲥﲦﲧﲨﲩﲪﲫﲬﲭﲮﲯﲰﲱﲲﲳﲴﲵﲶﲷﲸﲹﲺﲻﲼﲽﲾﲿﳀﳁﳂﳃﳄﳅﳆﳇﳈﳉﳊﳋﳌﳍﳎﳏﳐﳑﳒﳓﳔﳕﳖﳗﳘﳙﳚﳛﳜﳝﳞﳟﳠﳡﳢﳣﳤﳥﳦﳧﳨﳩﳪﳫﳬﳭﳮﳯﳰﳱﳲﳳﳴﳵﳶﳷﳸﳹﳺﳻﳼ"
-
-
   end
 
   task add_slugs: :environment do

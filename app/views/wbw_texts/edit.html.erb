@@ -35,7 +35,7 @@
 
       <% @verse.words.order("position ASC").each do |w| %>
       <span class="v2p<%= w.page_number %> char-<%= w.char_type_name.to_s.downcase %>" style="font-size: 45px">
-        <%= w.code.html_safe %>
+        <%= w.code_v1 %>
       </span>
       <% end %>
     </p>

@@ -36,10 +36,12 @@ ActiveAdmin.register Verse do
   end
 
   show do
+    render 'shared/page_font', verses: [resource]
+
     attributes_table do
       row :id
-      row :chapter do |object|
-        link_to object.chapter_id, admin_chapter_path(object.chapter_id)
+      row :chapter do
+        link_to resource.chapter_id, admin_chapter_path(resource.chapter_id)
       end
       row :verse_number
       row :verse_index
@@ -51,77 +53,78 @@ ActiveAdmin.register Verse do
       row :sajdah_number
       row :sajdah_type
 
-      row :verse_lemma do |object|
-        link_to_if object.verse_lemma, object.verse_lemma&.text_madani, [:admin, object.verse_lemma]
+      row :verse_lemma do
+        link_to_if resource.verse_lemma, resource.verse_lemma&.text_madani, [:admin, resource.verse_lemma]
       end
 
-      row :verse_stem do |object|
-        link_to_if object.verse_stem, object.verse_stem&.text_madani, [:admin, object.verse_stem]
+      row :verse_stem do
+        link_to_if resource.verse_stem, resource.verse_stem&.text_madani, [:admin, resource.verse_stem]
       end
 
-      row :verse_root do |object|
-        link_to_if object.verse_root, object.verse_root&.value, [:admin, object.verse_root]
+      row :verse_root do
+        link_to_if resource.verse_root, resource.verse_root&.value, [:admin, resource.verse_root]
       end
 
-      row "Imlaei script" do |object|
-        span class: 'quran-text me_quran' do
-          object.text_imlaei
+      row "Imlaei script" do
+        div class: 'quran-text me_quran' do
+          resource.text_imlaei
         end
       end
 
-      row "Imlaei Simple" do |object|
-        span class: 'quran-text me_quran' do
-          object.text_imlaei_simple
+      row "Imlaei Simple" do
+        div class: 'quran-text me_quran' do
+          resource.text_imlaei_simple
         end
       end
 
-      row "Text Uthmani" do |object|
-        span class: 'quran-text me_quran' do
-          object.text_uthmani
+      row "Text Uthmani" do
+        div class: 'quran-text me_quran' do
+          resource.text_uthmani
         end
       end
 
-      row "Uthmani Simple" do |object|
-        span class: 'quran-text me_quran' do
-          object.text_uthmani_simple
+      row "Uthmani Simple" do
+        div class: 'quran-text me_quran' do
+          resource.text_uthmani_simple
         end
       end
 
-      row "Uthmani Simple Tajweed" do |object|
-        span class: 'quran-text me_quran' do
-          object.text_uthmani_tajweed.to_s.html_safe
+      row "Uthmani Simple Tajweed" do
+        div class: 'quran-text me_quran' do
+          resource.text_uthmani_tajweed.to_s.html_safe
         end
       end
 
-      row :text_indopak do |object|
-        span class: 'quran-text indopak' do
-          object.text_indopak.to_s.html_safe
+      row :text_indopak do
+        div class: 'quran-text indopak' do
+          resource.text_indopak.to_s.html_safe
         end
       end
 
-      row :v2_fonts do |object|
-        span do
-          object.words.order("position ASC").each do |w|
-            span class: "v2p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-              w.code.html_safe
-            end
-          end
+      row :text_indopak do
+        div class: 'quran-text indopak' do
+          resource.text_indopak.to_s.html_safe
         end
       end
 
-      row :v3_fonts do |object|
-        span do
-          object.words.includes(:char_type).order("position ASC").each do |w|
-            span class: "v3p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-              w.code_v3.html_safe
-            end
-          end
+      row :v1_code do
+        div class: "quran-text p#{resource.page_number}-v1" do
+          resource.code_v1
         end
       end
 
-      row :image do |object|
-        image_tag object.image_url
+      row :v2_code do
+        div class: "quran-text p#{resource.page_number}-v2" do
+          resource.code_v2
+        end
       end
+
+      row :image do
+        div class: "quran-text" do
+          image_tag resource.image_url
+        end
+      end
+
       row :created_at
       row :updated_at
     end
@@ -131,8 +134,8 @@ ActiveAdmin.register Verse do
         thead do
           td "ID"
           td "Position"
-          td "Code"
-          td "Font v2"
+          td "Code v1"
+          td "Code v2"
           td "Uthmani"
           td "Uthmani Simple"
           td "Imlaei"
@@ -141,39 +144,37 @@ ActiveAdmin.register Verse do
           td "Char type"
         end
 
-        tbody do
+        tbody class: 'quran-text' do
           verse.words.order("position ASC").each do |w|
             tr do
               td link_to(w.id, admin_word_path(w))
               td w.position
 
-              td do
-                "#{w.code_hex}(hex) - #{w.code}(entity)"
+              td class: "p#{w.page_number}-v1" do
+                w.code_v1
               end
 
-              td class: 'quran-text' do
-                span class: "v2p#{w.page_number} char-#{w.char_type_name.to_s.downcase}" do
-                  w.code.html_safe
-                end
+              td class: "p#{w.page_number}-v2" do
+                w.code_v2
               end
 
-              td class: 'quran-text me_quran' do
+              td class: 'me_quran' do
                 w.text_uthmani
               end
 
-              td class: 'quran-text me_quran' do
+              td class: 'me_quran' do
                 w.text_uthmani_simple
               end
 
-              td class: 'quran-text me_quran' do
+              td class: 'me_quran' do
                 w.text_imlaei
               end
 
-              td class: 'quran-text me_quran' do
+              td class: 'me_quran' do
                 w.text_imlaei_simple
               end
 
-              td class: 'quran-text indopak' do
+              td class: 'indopak' do
                 w.text_indopak
               end
 

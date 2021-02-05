@@ -56,8 +56,7 @@ body{
   font-size: 30px;
 }
 
-.row-text_indopak td{
-  font-family: pdms;
+.row td span.quran-text{
   direction: rtl;
 }
 
@@ -78,48 +77,3 @@ body{
   font-family: quran_common_font;
 }
 
-@mixin word_font($page) {
-  @font-face {
-    font-family: tp#{$page};
-    src: font-url('embed_ttf/tp#{$page}.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: v2p#{$page};
-    src: font-url('ttf/v2/p#{$page}.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: v3p#{$page};
-    src: font-url('ttf/p#{$page}.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  .tp#{$page}{
-    font-family: tp#{$page};
-    font-size: 25px;
-  }
-
-  .v2p#{$page} {
-    font-family: v2p#{$page};
-    font-size: 25px;
-  }
-
-  .v3p#{$page} {
-    font-family: v3p#{$page};
-    font-size: 25px;
-
-    &.char-sajdah, &.char-end, &.char-rub-el-hizb, &.char-pause{
-      font-family: quran_common_font !important;
-    }
-  }
-}
-
-@for $i from 1 through 604 {
-  @include word_font($i);
-}

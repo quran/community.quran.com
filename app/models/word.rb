@@ -18,13 +18,13 @@ class Word < QuranApiRecord
   has_one :word_root
   has_one :root, through: :word_root
   has_one :pause_mark
-  has_one  :audio_file, as: :resource
+  has_one :audio_file, as: :resource
 
-  has_one :ur_wbw_translation, -> { where language_id: 174}, class_name: 'WbwTranslation'
-  has_one :zh_wbw_translation, -> { where language_id: 185}, class_name: 'WbwTranslation'
+  has_one :ur_wbw_translation, -> { where language_id: 174 }, class_name: 'WbwTranslation'
+  has_one :zh_wbw_translation, -> { where language_id: 185 }, class_name: 'WbwTranslation'
   # Ubzek
-  has_one :uz_wbw_translation, -> { where language_id: 175}, class_name: 'WbwTranslation'
-  has_one :ur_transliteration, -> { where language_name: 'urdu'}, class_name: 'Transliteration', as: :resource
+  has_one :uz_wbw_translation, -> { where language_id: 175 }, class_name: 'WbwTranslation'
+  has_one :ur_transliteration, -> { where language_name: 'urdu' }, class_name: 'Transliteration', as: :resource
 
   # Used for export translation
   ['en', 'id', 'bn', 'ur'].each do |lang|
@@ -34,18 +34,38 @@ class Word < QuranApiRecord
   has_one :word_corpus
   has_one :arabic_transliteration
 
-  scope :words, -> { where char_type_id: 1}
+  scope :words, -> { where char_type_id: 1 }
   default_scope { order 'position asc' }
 
-  def code
+  def v1_hex_to_char
     "&#x#{code_hex};"
   end
 
-  def code_v3
-    "&#x#{code_hex_v3};"
+  def v2_hex_to_char
+    code_v2.presence # || "&#x#{code_hex_v2};"
   end
 
   def humanize
     "#{location} - #{text_uthmani}"
+  end
+
+  def word?
+    'word' == char_type_name
+  end
+
+  def pause_mark?
+    'pause' == char_type_name
+  end
+
+  def sajdah?
+    'sajdah' == char_type_name
+  end
+
+  def ayah_mark?
+    'end' == char_type_name
+  end
+
+  def hizb?
+    'rub-el-hizb' == char_type_name
   end
 end

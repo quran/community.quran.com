@@ -19,7 +19,7 @@ ActiveAdmin.register Word do
   permit_params do
     [
         :verse_id, :position, :text_uthmani, :text_indopak, :text_simple, :verse_key, :page_number, :class_name, :line_number, :code_dec, :code_hex,
-       :code_hex_v3, :code_dec_v3, :char_type_id, :audio_url, :location, :char_type_name
+        :code_hex_v3, :code_dec_v3, :char_type_id, :audio_url, :location, :char_type_name
     ]
   end
 
@@ -47,6 +47,8 @@ ActiveAdmin.register Word do
   end
 
   show do
+    render 'shared/page_font', verses: [resource.verse]
+
     attributes_table do
       row :id
       row :verse
@@ -54,56 +56,52 @@ ActiveAdmin.register Word do
       row :verse_index
       row :position
 
-      row :text_uthmani do
-        span resource.text_uthmani, class: 'me_quran'
-      end
-
-      row :text_uthmani_simple do
-        span resource.text_uthmani_simple, class: 'me_quran'
-      end
-
-      row :text_imlaei do
-        span resource.text_imlaei, class: 'me_quran'
-      end
-
-      row :text_imlaei_simple do
-        span resource.text_imlaei_simple, class: 'me_quran'
-      end
-
-      row :text_indopak do
-        span resource.text_indopak, class: 'indopak'
-      end
-
-      row :page_number do |resource|
+      row :page_number do
         link_to resource.page_number, "/admin/page?page#{resource.page_number}"
       end
 
-      row :font do |resource|
-        (span class: "v2p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
-          resource.code.html_safe
-        end)
+      row :char_type
+
+      row :text_uthmani do
+        span resource.text_uthmani, class: 'me_quran quran-text'
       end
 
-      row :font_v3 do |resource|
-        (span class: "v3p#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
-          resource.code_v3.html_safe
-        end)
+      row :text_uthmani_simple do
+        span resource.text_uthmani_simple, class: 'me_quran quran-text'
       end
 
-      row :text_font do |resource|
-        (span class: "pt#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
-          resource.code_v3.html_safe
-        end)
+      row :text_imlaei do
+        span resource.text_imlaei, class: 'me_quran quran-text'
       end
 
-      row :image do |resource|
+      row :text_imlaei_simple do
+        span resource.text_imlaei_simple, class: 'me_quran quran-text'
+      end
+
+      row :text_indopak do
+        span resource.text_indopak, class: 'indopak quran-text'
+      end
+
+      row :code_v1 do
+        span class: "p#{resource.page_number}-v1 quran-text" do
+          resource.code_v1
+        end
+      end
+
+      row :code_v2 do
+        span class: "p#{resource.page_number}-v2 quran-text" do
+          resource.code_v2
+        end
+      end
+
+      row :image do
         # image_tag resource.image_url if resource.image_url
       end
 
       row :image_blob
       row :word_corpus
       row :word_lemma
-      row :synonyms do |resource|
+      row :synonyms do
         resource.synonyms.each do |s|
           span do
             link_to s.text, [:admin, s], class: 'ml-2'
@@ -156,24 +154,6 @@ ActiveAdmin.register Word do
       end
     end
 =end
-
-    column :font do |resource|
-      (span class: "v2p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
-        resource.code.html_safe
-      end)
-    end
-
-    column :fontv3 do |resource|
-      (span class: "v3p#{resource.page_number} char-#{resource.char_type.name.to_s.downcase}" do
-        resource.code_v3.html_safe
-      end)
-    end
-
-    column :text_font do |resource|
-      (span class: "tp#{resource.page_number} char-#{resource.char_type_name.to_s.downcase}" do
-        resource.text_uthmani
-      end)
-    end
 
     column :text_uthmani
     column :text_uthmani_simple
