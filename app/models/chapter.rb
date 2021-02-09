@@ -10,10 +10,19 @@ class Chapter < QuranApiRecord
 
   has_paper_trail on: :update, ignore: [:created_at, :updated_at]
 
-  def add_slug(slug, locale=nil)
+  def add_slug(slug, locale = 'en', is_default = false)
     require 'babosa'
 
-    slugs.where(slug: slug.to_slug.normalize.transliterate.to_s).first_or_create
+    slug = slugs.where(slug: slug.to_slug.normalize.transliterate.to_s).first_or_initialize
+
+    if slug.locale.blank?
+      slug.locale = locale
+    end
+
+    slug.is_default = is_default
+    slug.save
+
+    slug
   end
 
   def humanize

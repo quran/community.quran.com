@@ -2,14 +2,19 @@ class ExportTranslationJob < ApplicationJob
   queue_as :default
   STORAGE_PATH = "public/assets/exported_databses"
   SEE_MORE_REF_REGEXP = Regexp.new('(?<ref>\d+:\d+)')
-  TAG_SANITIZER = Rails::Html::WhiteListSanitizer.new
+  FOOT_NOTE_REG = /<sup foot_note=\d+>\d+<\/sup>/
 
-  def perform(resource_id, original_file_name)
+  TAG_SANITIZER = Rails::Html::WhiteListSanitizer.new
+  attr_reader :include_footnote
+
+  def perform(resource_id, original_file_name, include_footnote)
     whitelisted_tags = if (resource_id == 149)
                          %w(span b)
                        else
                          []
                        end
+
+    @include_footnote = include_footnote
 
     resource_content = ResourceContent.find(resource_id)
 
@@ -61,10 +66,10 @@ class ExportTranslationJob < ApplicationJob
     text = translation.text.gsub('"', '')
 
     translation.foot_notes.each do |f|
-      reg = /<sup foot_note=#{f.id}>\d+<\/sup>/
+      #reg = /<sup foot_note=#{f.id}>\d+<\/sup>/
 
-      text = text.gsub(reg) do
-        "[[#{f.text.gsub('"', '')}]]"
+      text = text.gsub(FOOT_NOTE_REG) do
+        include_footnote ? "[[#{f.text.gsub('"', '')}]]"  : ''
       end
     end
 

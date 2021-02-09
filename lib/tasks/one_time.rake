@@ -10,7 +10,7 @@ namespace :one_time do
       tr = Translation.where(resource_content_id: 55, verse_key: translation.verse_key).first
       tr.update_column(:text, converter.to_latin)
 
-      tr.foot_notes.each do|foot_note|
+      tr.foot_notes.each do |foot_note|
         converter = Utils::CyrillicToLatin.new(foot_note.text)
         foot_note.update_column(:text, converter.to_latin)
       end
@@ -18,6 +18,10 @@ namespace :one_time do
   end
 
   task prepar_ayah_codes: :environment do
+    Tafsir.where("text like ?", "%Alla0h%").update_all("text = REPLACE(text, 'Alla0h', 'Allah')")
+    Tafsir.where("text like ?", "%Jibr0l%").update_all("text = REPLACE(text, 'Jibr0l', 'Jibril')")
+    Tafsir.where("text like ?", "%Hلad0th%").update_all("text = REPLACE(text, 'Hلad0th', 'Hadith')")
+
     PaperTrail.enabled = false
 
     Word.find_each do |word|
@@ -35,6 +39,24 @@ namespace :one_time do
 
       v.update(code_v1: v1_codes.join(' '), code_v2: v2_codes.join(' '))
     end
+
+    CSV.open("word-codes.csv", "wb") do |csv|
+      csv << ["id", "v1", "v2"]
+      Word.find_each do |word|
+        csv << [word.id, word.code_v1, word.code_v2]
+      end
+    end
+
+    # move this data to staging
+=begin
+    file = "https://gist.githubusercontent.com/naveed-ahmad/72c5dbb9457d2da2ff808f59b5414d43/raw/f88e825e5a7c3f49383061d7c707db8e3c1b1e87/word-codes.cs"
+    content = open(file).read
+
+    CSV.parse(content, headers: true).each do |row|
+      word = Word.find(row[0])
+      word.update(code_v1: row[1], code_v2: row[2])
+    end
+=end
   end
 
   task import_missing_translations: :environment do
@@ -1430,25 +1452,25 @@ namespace :one_time do
     PaperTrail.enabled = false
     Translation.where(resource_content_id: [140, 133, 110, 35]).find_each do |trans|
       trans.update_column :text, trans.text.gsub(/\d+[.]/, '').strip
-    end && true
+    end
+
     Translation.where(resource_content_id: 95).find_each do |trans|
       trans.update_column :text, trans.text.sub(/\(\d+:\d+\)\s/, '').strip
     end
 
     Chapter.includes(translated_names: :language).find_each do |c|
+      c.add_slug(c.name_simple, 'en', true)
+      c.add_slug(c.name_complex, 'en')
+      c.add_slug("surah #{c.name_simple}", 'en')
+      c.add_slug("surah #{c.name_complex}", 'en')
+      c.add_slug(c.name_arabic, 'ar')
+      c.add_slug("#{c.name_arabic} سورہ", 'ar')
+      c.add_slug("quran #{c.chapter_number.ordinalize} surah", 'en')
+      c.add_slug("#{c.chapter_number.ordinalize} surah", 'en')
+      c.add_slug("surah #{c.chapter_number}", 'en')
+
       c.translated_names.each do |t|
         c.add_slug(t.name, t.language.iso_code)
-
-        c.add_slug(c.name_simple, t.language.iso_code)
-        c.add_slug(c.name_complex, t.language.iso_code)
-
-        c.add_slug("surah #{c.name_simple}", t.language.iso_code)
-        c.add_slug("surah #{c.name_complex}", t.language.iso_code)
-
-        c.add_slug(c.name_arabic, 'ar')
-        c.add_slug("#{c.name_arabic} سورہ", 'ar')
-
-        c.add_slug("quran #{c.chapter_number.ordinalize} surah", 'en')
       end
     end
   end

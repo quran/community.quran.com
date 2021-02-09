@@ -1,6 +1,5 @@
 namespace :tajweed do
   task parse: :environment do
-    require "#{Rails.root}/lib/utils/tajweed_text.rb"
     require 'open-uri'
 
     Verse.find_each do |v|
@@ -10,7 +9,6 @@ namespace :tajweed do
       text = JSON.parse(URI.open(url).read)['data']['text']
 
       parser = Utils::TajweedText.new text
-
       tajweed = parser.parse_buckwalter_tajweed(text)
 
       v.update_column :text_uthmani_tajweed, tajweed
