@@ -93,7 +93,7 @@ end
 gem 'sidekiq', '~> 5.2.2'
 gem 'sidekiq-scheduler', '~> 3.0.1'
 gem 'sinatra', require: false
-gem 'carrierwave', '~> 1.2.3'
+gem 'carrierwave', '~> 1.3.2'
 gem "fog-aws"
 gem "rest-client"
 gem 'tzinfo-data'
