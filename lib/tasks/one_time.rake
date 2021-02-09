@@ -17,6 +17,41 @@ namespace :one_time do
     end
   end
 
+  task fix_uzbek_latin_footnotes: :environment do
+    #
+    # Fixes "Muhammad Sodik Muhammad" Ubzek translation's footnotes
+    #
+    PaperTrail.enabled = false
+    language = Language.find_by_iso_code('uz')
+  
+    footnote_resource_content_id = ResourceContent.where(
+      name: '	Muhammad Sodiq Muhammad Yusuf (Latin)', cardinality_type: '1_word',
+      language_id: 175, language_name: 'uzbek', sub_type: 'footnote', resource_type: 'content',
+      author_name: 'Muhammad Sodik Muhammad Yusuf', data_source_id: 14, author_id: 93
+    ).first_or_create.id
+  
+    Translation.where(resource_content_id: 127).each do |translation|
+      tr = Translation.where(resource_content_id: 55, verse_key: translation.verse_key).first
+      tr.foot_notes.delete_all
+      translation_text = Nokogiri::HTML.parse(translation.text).css('p').children.collect do |node|
+        if node.name == 'sup'
+          counter = node.text.gsub(/\(\d+\)/, '')
+          cyrilic_foot_note = FootNote.find(node.attributes['foot_note'].value)
+          converter = Utils::CyrillicToLatin.new(cyrilic_foot_note.text)
+          foot_note = tr.foot_notes.create(
+            text: converter.to_latin, language: language,
+            language_name: language.name.downcase, resource_content_id: footnote_resource_content_id
+          )
+          "<sup foot_note=#{foot_note.id}>#{counter}</sup>"
+        else
+          node.to_s
+        end
+      end.compact.join
+      converter = Utils::CyrillicToLatin.new(translation_text)
+      tr.update_column(:text, converter.to_latin)
+    end
+  end
+
   task prepar_ayah_codes: :environment do
     PaperTrail.enabled = false
 
