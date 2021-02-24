@@ -4,7 +4,9 @@ ActiveAdmin.register MuhsafPage do
 
   index do
     id_column
-
+    column :page_number do |page|
+      link_to page.page_number, "/admin/page?page=#{page.page_number}", class: "btn"
+    end
     column :first_verse_id
     column :last_verse_id
     column :verses_count
