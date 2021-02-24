@@ -5,6 +5,10 @@ ActiveAdmin.register FootNote do
 
   filter :language
   filter :translation_id
+  filter :language_id, as: :searchable_select,
+         ajax: {resource: Language}
+  filter :resource_content_id, as: :searchable_select,
+         ajax: {resource: ResourceContent}
 
   show do
       attributes_table do

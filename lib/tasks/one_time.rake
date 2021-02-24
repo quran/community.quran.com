@@ -1,4 +1,28 @@
 namespace :one_time do
+  task create_pages: :environment do
+    1.upto(604).each do |page_num|
+      page = MuhsafPage.where(page_number: page_num).first_or_initialize
+      verses = Verse.order("verse_index ASC").where(page_number: page_num)
+      page.first_verse_id = verses.first.id
+      page.last_verse_id = verses.last.id
+      page.verses_count = verses.size
+
+      map = {}
+
+      verses.each do |verse|
+        if map[verse.chapter_id]
+          next
+        end
+
+        chapter_verses = verses.where(chapter_id: verse.chapter_id)
+        map[verse.chapter_id] = "#{chapter_verses.first.verse_number}-#{chapter_verses.last.verse_number}"
+      end
+
+      page.verse_mapping = map
+      page.save
+    end
+  end
+
   task convert_uzbek_cyrillic_to_latin: :environment do
     #
     # Convert "Muhammad Sodik Muhammad" Ubzek translation to latin
@@ -23,31 +47,33 @@ namespace :one_time do
     #
     PaperTrail.enabled = false
     language = Language.find_by_iso_code('uz')
-  
-    footnote_resource_content_id = ResourceContent.where(
-      name: '	Muhammad Sodiq Muhammad Yusuf (Latin)', cardinality_type: '1_word',
-      language_id: 175, language_name: 'uzbek', sub_type: 'footnote', resource_type: 'content',
-      author_name: 'Muhammad Sodik Muhammad Yusuf', data_source_id: 14, author_id: 93
-    ).first_or_create.id
-  
+
+    footnote_resource_content = ResourceContent.find(195)
+    footnote_resource_content_2 = ResourceContent.new(footnote_resource_content.attributes.except('id'))
+    footnote_resource_content_2.save(validate: false)
+    footnote_resource_content_2.sub_type = 'footnote'
+    footnote_resource_content_id = 195
+
     Translation.where(resource_content_id: 127).each do |translation|
       tr = Translation.where(resource_content_id: 55, verse_key: translation.verse_key).first
       tr.foot_notes.delete_all
-      translation_text = Nokogiri::HTML.parse(translation.text).css('p').children.collect do |node|
-        if node.name == 'sup'
-          counter = node.text.gsub(/\(\d+\)/, '')
-          cyrilic_foot_note = FootNote.find(node.attributes['foot_note'].value)
-          converter = Utils::CyrillicToLatin.new(cyrilic_foot_note.text)
-          foot_note = tr.foot_notes.create(
-            text: converter.to_latin, language: language,
-            language_name: language.name.downcase, resource_content_id: footnote_resource_content_id
-          )
-          "<sup foot_note=#{foot_note.id}>#{counter}</sup>"
-        else
-          node.to_s
-        end
-      end.compact.join
-      converter = Utils::CyrillicToLatin.new(translation_text)
+
+      docs = Nokogiri::HTML::DocumentFragment.parse(translation.text)
+      docs.css("sup").each do |node|
+        cyrilic_foot_note = FootNote.find(node.attributes['foot_note'].value)
+        converter = Utils::CyrillicToLatin.new(cyrilic_foot_note.text)
+
+        foot_note = tr.foot_notes.create(
+            text: converter.to_latin,
+            language: language,
+            language_name: language.name.downcase,
+            resource_content_id: footnote_resource_content_id
+        )
+
+        node.attributes['foot_note'].value = foot_note.id.to_s
+      end
+
+      converter = Utils::CyrillicToLatin.new(docs.to_s)
       tr.update_column(:text, converter.to_latin)
     end
   end
@@ -1494,7 +1520,6 @@ namespace :one_time do
     end
 
     Chapter.includes(translated_names: :language).find_each do |c|
-      c.add_slug(c.name_simple, 'en', true)
       c.add_slug(c.name_complex, 'en')
       c.add_slug("surah #{c.name_simple}", 'en')
       c.add_slug("surah #{c.name_complex}", 'en')
@@ -1507,6 +1532,7 @@ namespace :one_time do
       c.translated_names.each do |t|
         c.add_slug(t.name, t.language.iso_code)
       end
+      c.add_slug(c.name_simple, 'en', true)
     end
   end
 

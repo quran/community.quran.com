@@ -39,6 +39,7 @@ class ResourceContent < QuranApiRecord
     Font = 'font'
     Image = 'image'
     Info = 'info'
+    FootNote = 'footnote'
     Video = 'video'
     Audio = 'audio'
   end
@@ -61,6 +62,10 @@ class ResourceContent < QuranApiRecord
 
   def chapter_info?
     sub_type == SubType::Info
+  end
+
+  def foot_note?
+    sub_type == SubType::FootNote
   end
 
   def video?

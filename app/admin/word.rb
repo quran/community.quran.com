@@ -15,6 +15,10 @@ ActiveAdmin.register Word do
   filter :text_uthmani
   filter :text_simple
   filter :code_hex
+  filter :language, as: :searchable_select,
+         ajax: {resource: Language}
+  filter :verse_id, as: :searchable_select,
+         ajax: {resource: Verse}
 
   permit_params do
     [

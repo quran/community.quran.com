@@ -11,11 +11,18 @@ ActiveAdmin.register ResourceContent do
   actions :all, except: :destroy
 
   filter :approved
-  filter :language
   filter :name
-  filter :cardinality_type, as: :select, collection: -> do ResourceContent.collection_for_cardinality_type end
-  filter :resource_type, as: :select, collection: -> do ResourceContent.collection_for_resource_type end
-  filter :sub_type,  as: :select, collection: -> do ResourceContent.collection_for_sub_type end
+  filter :cardinality_type, as: :select, collection: -> do
+    ResourceContent.collection_for_cardinality_type
+  end
+  filter :resource_type, as: :select, collection: -> do
+    ResourceContent.collection_for_resource_type
+  end
+  filter :sub_type, as: :select, collection: -> do
+    ResourceContent.collection_for_sub_type
+  end
+  filter :language_id, as: :searchable_select,
+         ajax: {resource: Language}
 
   action_item :show, only: :show do
     link_to approve_admin_resource_content_path(resource), method: :put, data: {confirm: "Are you sure?"} do
@@ -33,10 +40,10 @@ ActiveAdmin.register ResourceContent do
     resource = ResourceContent.find_by(id: params[:translation] || params[:id])
     #TODO: use sidekie
     file_path = ExportTranslationJob.new.perform(resource.id, params[:resource_content][:name])
-    
+
     send_file file_path
   end
- 
+
   index do
     id_column
 
@@ -100,9 +107,9 @@ ActiveAdmin.register ResourceContent do
       toolbar = [
           ['bold', 'italic', 'underline', 'strike', 'size'],
           ['link', 'blockquote', 'code-block'],
-          [{ 'script': 'sub' }, { 'script': 'super' }],
-          [{ 'align': [] }, { list: 'ordered' }, { list: 'bullet' }],
-          [{ 'color': [] }, { 'background': [] }],
+          [{'script': 'sub'}, {'script': 'super'}],
+          [{'align': []}, {list: 'ordered'}, {list: 'bullet'}],
+          [{'color': []}, {'background': []}],
           [header: [], font: []],
           ['clean'],
       ]
@@ -159,15 +166,17 @@ ActiveAdmin.register ResourceContent do
         link_to "Media content", "/admin/media_contents?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
       elsif resource.recitation?
         link_to "Audio recitations", "/admin/recitations?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
+      elsif resource.foot_note?
+        link_to "Footnotes", "/admin/foot_notes?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
       end
     end
   end
 
-  sidebar "Export to sqlite db", only: :show, if: -> { resource.translation? || resource.tafisr? }  do
+  sidebar "Export to sqlite db", only: :show, if: -> { resource.translation? || resource.tafisr? } do
     div do
       semantic_form_for resource, url: export_sqlite_admin_resource_content_path(resource), html: {method: 'put'} do |form|
         form.input(:name, label: false, hint: 'Enter file name', required: true) +
-        form.submit("Export!!")
+            form.submit("Export!!")
       end
     end
   end

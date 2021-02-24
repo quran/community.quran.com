@@ -1,0 +1,2 @@
+class MuhsafPage < QuranApiRecord
+end
