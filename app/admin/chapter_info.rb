@@ -9,6 +9,8 @@ ActiveAdmin.register ChapterInfo do
   filter :language, as: :searchable_select,
          ajax: {resource: Language}
 
+  filter :text
+
   permit_params do
     [:text, :language_name, :language_id, :source, :short_text]
   end
