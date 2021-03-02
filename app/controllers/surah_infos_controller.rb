@@ -72,8 +72,14 @@ class SurahInfosController < CommunityController
       @language
     else
       # default will be English
-      params[:language_id] = (params[:language_id].presence || 38).to_i
-      @language = Language.find(params[:language_id])
+      params[:language_id] = (params[:language].presence || resource&.language_id || 38).to_i
+      @language = Language.find(params[:language])
+    end
+  end
+
+  def resource
+    if params[:resource_id]
+      ResourceContent.find_by(id: params[:resource_id])
     end
   end
 end

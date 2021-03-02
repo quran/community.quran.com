@@ -40,8 +40,8 @@
           </td>
 
           <td>
-            <%= link_to 'Show', surah_info_path(info.chapter_id, resource_id: @resource.id), class: 'btn btn-success' %>
-            <%= link_to 'Edit', edit_surah_info_path(info.chapter_id, resource_id: @resource.id), class: 'btn btn-success' %>
+            <%= link_to 'Show', surah_info_path(info.chapter_id, resource_id: @resource.id, language: info.language_id), class: 'btn btn-success' %>
+            <%= link_to 'Edit', edit_surah_info_path(info.chapter_id, resource_id: @resource.id, language: info.language_id), class: 'btn btn-success' %>
           </td>
         </tr>
       <% end %>

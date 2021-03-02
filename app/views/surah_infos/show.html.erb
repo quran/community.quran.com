@@ -5,13 +5,13 @@
     <span class=" pull-right">
       <%= link_to 'Edit', edit_surah_info_path(@info.chapter_id, resource_id: @resource.id), class: 'btn btn-success' %>
 
-      <%= link_to 'Previous Surah', translation_proofreading_path(@info.chapter_id - 1, resource_id: @resource.id), class: 'btn btn-success' if @info.chapter_id > 1 %>
-      <%= link_to 'Next Surah', translation_proofreading_path(@info.chapter_id + 1, resource_id: @resource.id), class: 'btn btn-success' if @info.chapter_id < 114 %>
+      <%= link_to 'Previous Surah', surah_info_path(@info.chapter_id - 1, resource_id: @resource.id, language: @info.language_id), class: 'btn btn-success' if @info.chapter_id > 1 %>
+      <%= link_to 'Next Surah', surah_info_path(@info.chapter_id + 1, resource_id: @resource.id, language: @info.language_id), class: 'btn btn-success' if @info.chapter_id < 114 %>
 
-      <%= link_to 'Back to Index', surah_infos_path(language_id: @info.language_id), class: 'btn btn-success' %>
+      <%= link_to 'Back to Index', surah_infos_path(language: @info.language_id), class: 'btn btn-success' %>
 
       <% if @access %>
-        <%= link_to '#_', class: 'btn btn-primary', data: {url: history_surah_info_path(@info.chapter_id, resource_id: @resource.id, language_id: @info.language_id), toggle: "ajax-modal"} do %>
+        <%= link_to '#_', class: 'btn btn-primary', data: {url: history_surah_info_path(@info.chapter_id, resource_id: @resource.id, language: @info.language_id), toggle: "ajax-modal"} do %>
           <i class="fa fa-history"></i> Edit History
        <% end %>
       <% end %>

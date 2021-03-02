@@ -27,7 +27,7 @@
           </td>
 
           <td>
-            <%= link_to "View Changes", changes_surah_info_path(@info.chapter_id, version: version.id, resource_id: @resource.id, language_id: @info.language_id), target: '_blank' %>
+            <%= link_to "View Changes", changes_surah_info_path(@info.chapter_id, version: version.id, resource_id: @resource.id, language: @info.language_id), target: '_blank' %>
           </td>
         </tr>
       <% end %>

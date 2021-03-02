@@ -10,11 +10,11 @@
     Chapter info change history
 
     <span class="pull-right">
-      <%= link_to changes_surah_info_path(@info.chapter_id, version: params[:version], resource_id: @resource.id, language_id: @info.language_id, diff: 'column') do %>
+      <%= link_to changes_surah_info_path(@info.chapter_id, version: params[:version], resource_id: @resource.id, language: @info.language_id, diff: 'column') do %>
         <i class="fa fa-columns"></i>
       <% end %>
 
-      <%= link_to changes_surah_info_path(@info.chapter_id, version: params[:version], resource_id: @resource.id, language_id: @info.language_id, diff: 'rows') do %>
+      <%= link_to changes_surah_info_path(@info.chapter_id, version: params[:version], resource_id: @resource.id, language: @info.language_id, diff: 'rows') do %>
         <i class="fa fa-bars"></i>
       <% end %>
     </span>
