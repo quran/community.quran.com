@@ -1,0 +1,58 @@
+<div class="row" id="editor-wrap">
+  <div class="col-12">
+    <h2>
+      <%= @resource.name %> - Surah <%= @info.chapter.name_simple %>
+    </h2>
+  </div>
+
+  <div class="col-md-12">
+    <%= form_with model: @info, url: surah_info_path(@info.chapter_id, resource_id: @resource.id), method: :put, html: {class: 'form', autocomplete: 'off', id: 'info-form'} do |form| %>
+      <div class="form-group">
+        <%= form.label :short_text, class: 'form-label' %>
+        <%= form.text_area :short_text, class: 'form-control', row: 2 %>
+      </div>
+
+      <div class="form-group">
+        <%= form.label :text, 'Surah Info text', class: 'form-label' %>
+
+        <div class="quill-editor--active">
+          <%= form.hidden_field :text, id: 'info-text' %>
+          <div data-aa-quill-content="1" id=quill-editor>
+            <%= @info.text.to_s.html_safe %>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= link_to 'Cancel', surah_info_path(language_id: @info.language_id), class: 'btn btn-default' %>
+        <%= form.submit "Save Surah Info", class: 'btn btn-success', data: {disable_with: 'Please wait...'} %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<script>
+    window.quillEdior = new Quill(
+        document.querySelector('#quill-editor'), {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ["bold", "italic", "underline", "strike", "size"],
+                    ["link", "blockquote", "code-block"],
+                    [{"script": "sub"}, {"script": "super"}],
+                    [{"align": []}, {"list": "ordered"}, {"list": "bullet"}],
+                    [{"color": []}, {"background": []}],
+                    [{"header": [], "font": []}], ["clean"]]
+            }
+        });
+
+    var from = document.querySelector('#info-form');
+
+    from.onsubmit = function () {
+        var input = document.querySelector('#info-text')
+        if (!window.quillEdior.editor.isBlank()) {
+            input.value = window.quillEdior.root.innerHTML
+        }
+    }
+</script>

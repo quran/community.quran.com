@@ -1,6 +1,7 @@
 <%= semantic_form_for [:admin, UserProject.new] do |form| %>
   <% form.input(:user_id, as: :hidden, input_html: {value: resource.id}) %>
   <% form.input(:description, input_html: {rows: 2} ) %>
+
   <% form.input(:resource_content) %>
   <%= form.actions(:submit) %>
 <% end %>

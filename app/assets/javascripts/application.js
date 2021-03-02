@@ -18,4 +18,5 @@
 //= require utilities/arabic_keyboard
 //= require utilities/image_zoomer
 //= require auto_size
-
+//= require activeadmin/quill_editor/quill
+//= require activeadmin/quill_editor_input

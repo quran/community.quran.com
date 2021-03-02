@@ -1,0 +1,53 @@
+<div class="bs-docs-section surah-info">
+  <h1 class="page-header">
+    <%= @resource.name %> For Surah <%= @info.chapter.name_simple %>
+
+    <span class=" pull-right">
+      <%= link_to 'Edit', edit_surah_info_path(@info.chapter_id, resource_id: @resource.id), class: 'btn btn-success' %>
+
+      <%= link_to 'Previous Surah', translation_proofreading_path(@info.chapter_id - 1, resource_id: @resource.id), class: 'btn btn-success' if @info.chapter_id > 1 %>
+      <%= link_to 'Next Surah', translation_proofreading_path(@info.chapter_id + 1, resource_id: @resource.id), class: 'btn btn-success' if @info.chapter_id < 114 %>
+
+      <%= link_to 'Back to Index', surah_infos_path(language_id: @info.language_id), class: 'btn btn-success' %>
+    </span>
+  </h1>
+
+  <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="ayah_text" style="font-size: 30px; margin-top: 10px">
+          <% if (source = @resource.data_source) %>
+            This info was fetch from
+            <%= source.name %> - <%= source.url %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="alert alert-dismissible">
+    <h2>Short text</h2>
+
+    <div class="row">
+      <div class="col-md-12 section">
+        <div id="ayah_text" style="font-size: 30px; margin-top: 10px">
+          <%= @info.short_text %>
+        </div>
+      </div>
+    </div>
+
+    <h2>Full Surah info</h2>
+
+    <div class="row">
+      <div class="col-md-12 section">
+        <div id="ayah_text" style="font-size: 30px; margin-top: 10px">
+          <%= @info.text.to_s.html_safe %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

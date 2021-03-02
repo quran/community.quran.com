@@ -1,23 +1,12 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
- * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require home
- *= require fonts
- *= require bootstrap-modal
- *= require jquery-ui-position.min
- *= require transliteration
- *= require proof_read_comments
- *= require arabic_transliterations
- */
+@import "home";
+@import  "fonts";
+@import  "bootstrap-modal";
+@import  "jquery-ui-position.min";
+@import  "transliteration";
+@import  "proof_read_comments";
+@import  "arabic_transliterations";
+@import 'activeadmin/quill_editor/quill.snow';
+@import "quill_field";
 
 .diff ul {
     background: #fff;
@@ -96,4 +85,15 @@
     color: #b00;
     text-decoration: none;
 
+}
+
+
+.surah-info{
+  h2{
+   font-size:  45px;
+  }
+
+  h3{
+    font-size:  35px;
+  }
 }

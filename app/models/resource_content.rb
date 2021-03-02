@@ -44,6 +44,10 @@ class ResourceContent < QuranApiRecord
     Audio = 'audio'
   end
 
+  def name
+    "#{read_attribute(:name)} - #{language_name}"
+  end
+
   def toggle_approve!
     update_attribute :approved, !self.approved?
   end

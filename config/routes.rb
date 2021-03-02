@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   root to: 'community#splash'
   post '/contact', to: 'contact_us#message'
 
-  devise_for :users
+  devise_for :users, controllers: {registrations: 'users/registrations'}
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -21,4 +21,5 @@ Rails.application.routes.draw do
   resources :wbw_translations, except: :delete
   resources :wbw_texts, except: :delete
   resources :translation_proofreadings, except: :delete
+  resources :surah_infos, except: :delete
 end

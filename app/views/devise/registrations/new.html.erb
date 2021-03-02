@@ -19,11 +19,20 @@
         <%= f.label :email %>
         <%= f.email_field :email, required: true, class: 'form-control' %>
       </div>
+
+      <div class="form-group">
+        <%= f.label :about_me, "Tell us more about yourself" %>
+        <%= f.text_area :about_me, required: true, class: 'form-control' %>
+        <p class="help-block">
+          Please list down your skills, languages you're fluent in, how much time you can contribute each week etc.
+        </p>
+      </div>
       
       <div class="form-group">
         <%= f.label :password %>
         <%= f.password_field :password, required: true, class: 'form-control' %>
       </div>
+
       <div class="form-group">
         <%= f.label :password_confirmation %>
         <%= f.password_field :password_confirmation, required: true, class: 'form-control' %>

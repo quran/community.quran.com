@@ -7,6 +7,10 @@ class User < ApplicationRecord
   has_many :user_projects
 
   def active_for_authentication?
-    approved?
+    if created_at > 1.day.ago
+      true
+    else
+      approved?
+    end
   end
 end

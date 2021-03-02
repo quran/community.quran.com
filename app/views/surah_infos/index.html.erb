@@ -1,0 +1,47 @@
+<div class="bs-docs-section transliteration">
+  <h1 class="page-header">
+    <%= @resource.name %>
+  </h1>
+
+  <% if @access %>
+    <p class="lead">
+      <%= @access.admin_notes.to_s.html_safe %>
+    </p>
+  <% end %>
+
+  <figure class="highlight">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th><%= sort_order_link 'Surah', :chapter_id, resource_id: @resource.id %></th>
+        <th>Language</th>
+        <th>Short text</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @surah_infos.each do |info| %>
+        <tr>
+          <th scope="row"><%= info.chapter_id %></th>
+
+          <td>
+            <%= info.language.name %>
+          </td>
+
+          <td>
+            <%= info.short_text %>
+          </td>
+
+          <td>
+            <%= link_to 'Show', surah_info_path(info.chapter_id, resource_id: @resource.id), class: 'btn btn-success' %>
+            <%= link_to 'Edit', edit_surah_info_path(info.chapter_id, resource_id: @resource.id), class: 'btn btn-success' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </figure>
+</div>
+
+
