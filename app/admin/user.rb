@@ -41,10 +41,10 @@ ActiveAdmin.register User do
       end
 
       tbody do
-        resource.user_projects.each do |p|
+        resource.user_projects.each do |project|
           tr do
-            td p.resource_content_id
-            td link_to(p.resource_content.name, [:admin, p.resource_content])
+            td link_to project.resource_content_id, [:admin, project]
+            td link_to(project.resource_content.name, [:admin, project.resource_content])
           end
         end
       end
