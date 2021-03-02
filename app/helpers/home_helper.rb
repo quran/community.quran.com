@@ -1,4 +1,9 @@
 module HomeHelper
+  def whodunnit(version)
+    if id = version.whodunnit
+      User.find_by_id(id)&.email
+    end
+  end
 
   def content_tag_if(add_tag, tag_name, content)
     if add_tag

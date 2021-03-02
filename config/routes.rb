@@ -21,5 +21,10 @@ Rails.application.routes.draw do
   resources :wbw_translations, except: :delete
   resources :wbw_texts, except: :delete
   resources :translation_proofreadings, except: :delete
-  resources :surah_infos, except: :delete
+  resources :surah_infos, except: :delete do
+    member do
+      get :history
+      get :changes
+    end
+  end
 end

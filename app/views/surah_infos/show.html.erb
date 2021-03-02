@@ -9,6 +9,12 @@
       <%= link_to 'Next Surah', translation_proofreading_path(@info.chapter_id + 1, resource_id: @resource.id), class: 'btn btn-success' if @info.chapter_id < 114 %>
 
       <%= link_to 'Back to Index', surah_infos_path(language_id: @info.language_id), class: 'btn btn-success' %>
+
+      <% if @access %>
+        <%= link_to '#_', class: 'btn btn-primary', data: {url: history_surah_info_path(@info.chapter_id, resource_id: @resource.id, language_id: @info.language_id), toggle: "ajax-modal"} do %>
+          <i class="fa fa-comment"></i> Edit History
+       <% end %>
+      <% end %>
     </span>
   </h1>
 
@@ -24,7 +30,6 @@
       </div>
     </div>
   </div>
-
 
   <div class="alert alert-dismissible">
     <h2>Short text</h2>
@@ -47,7 +52,15 @@
       </div>
     </div>
   </div>
-
 </div>
 
+<script>
+  $("[data-toggle='ajax-modal']").on("click", (event)=> {
+      event.preventDefault();
+      let target = $(event.currentTarget);
+      let url = target.data("url");
+
+      new AjaxModal().loadModal(url)
+  })
+</script>
 

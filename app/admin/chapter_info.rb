@@ -74,9 +74,9 @@ ActiveAdmin.register ChapterInfo do
       toolbar = [
           ['bold', 'italic', 'underline', 'strike', 'size'],
           ['link', 'blockquote', 'code-block'],
-          [{ 'script': 'sub' }, { 'script': 'super' }],
-          [{ 'align': [] }, { list: 'ordered' }, { list: 'bullet' }],
-          [{ 'color': [] }, { 'background': [] }],
+          [{'script': 'sub'}, {'script': 'super'}],
+          [{'align': []}, {list: 'ordered'}, {list: 'bullet'}],
+          [{'color': []}, {'background': []}],
           [header: [], font: []],
           ['clean'],
       ]

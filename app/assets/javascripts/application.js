@@ -20,3 +20,4 @@
 //= require auto_size
 //= require activeadmin/quill_editor/quill
 //= require activeadmin/quill_editor_input
+//= require utilities/ajax-modal

@@ -4,9 +4,15 @@
   </h1>
 
   <% if @access %>
-    <p class="lead">
-      <%= @access.admin_notes.to_s.html_safe %>
-    </p>
+    <div class="bs-callout bs-callout-info alert alert-dismissible" role="alert">
+      <div class="row">
+        <div class="col-md-12">
+          <div style="font-size: 30px; margin-top: 10px">
+            <%= @access.admin_notes.to_s.html_safe %>
+          </div>
+        </div>
+      </div>
+    </div>
   <% end %>
 
   <figure class="highlight">

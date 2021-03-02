@@ -7,6 +7,6 @@ class CommunityController < ApplicationController
   
   protected
   def user_for_paper_trail
-    current_user
+    current_user.try(:id) || current_user.try(:email)
   end
 end

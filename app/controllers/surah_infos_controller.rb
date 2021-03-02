@@ -1,6 +1,6 @@
 class SurahInfosController < CommunityController
   before_action :load_access
-  before_action :check_permission, only: [:new, :edit, :update, :create]
+  before_action :check_permission, only: [:new, :edit, :update, :create, :history, :changes]
 
   def index
     @surah_infos = ChapterInfo.order("chapter_id ASC").where(language: language)
@@ -8,6 +8,20 @@ class SurahInfosController < CommunityController
 
   def show
     @info = ChapterInfo.where(language: language, chapter_id: params[:id]).first
+  end
+
+  def history
+    @info = ChapterInfo.where(language: language, chapter_id: params[:id]).first
+    render layout: false
+  end
+
+  def changes
+    @info = ChapterInfo.where(language: language, chapter_id: params[:id]).first
+
+    version = @info.versions.find(params[:version])
+    @version_object = version.reify #@info.paper_trail.version_at params[:version]
+
+    @next = @version_object.paper_trail.next_version
   end
 
   def edit
