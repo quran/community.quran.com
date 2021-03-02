@@ -1,42 +1,32 @@
+<%
+  @version_object.paper_trail.next_version
+
+  text_diff = Diffy::SplitDiff.new(@version_object.text.to_s, @next.text.to_s, format: :html, allow_empty_diff: true) rescue nil
+  short_text_diff = Diffy::SplitDiff.new(@next.short_text.to_s, @version_object.short_text.to_s, format: :html, allow_empty_diff: false) rescue nil
+%>
+
 <div class="bs-docs-section surah-info">
   <h1 class="page-header">
     Chapter info change history
+
+    <span class="pull-right">
+      <%= link_to changes_surah_info_path(@info.chapter_id, version: params[:version], resource_id: @resource.id, language_id: @info.language_id, diff: 'column') do %>
+        <i class="fa fa-columns"></i>
+      <% end %>
+
+      <%= link_to changes_surah_info_path(@info.chapter_id, version: params[:version], resource_id: @resource.id, language_id: @info.language_id, diff: 'rows') do %>
+        <i class="fa fa-bars"></i>
+      <% end %>
+    </span>
   </h1>
 
   <div class="row" style="font-size: 30px; margin-top: 10px">
     <div class="col-md-12 section">
-      <div class="row">
-        <%
-          @version_object.paper_trail.next_version
-
-          text_diff = Diffy::SplitDiff.new(@version_object.text.to_s, @next.text.to_s, format: :html, allow_empty_diff: true) rescue nil
-          short_text_diff = Diffy::SplitDiff.new(@next.short_text.to_s, @version_object.short_text.to_s, format: :html, allow_empty_diff: false) rescue nil
-        %>
-
-
-        <% if text_diff %>
-          <div class="col-md-6">
-            <h2>New Text</h2>
-            <%= text_diff.left.to_s.html_safe %>
-          </div>
-
-          <div class="col-md-6">
-            <h2>Old Text</h2>
-            <%= text_diff.right.to_s.html_safe %>
-          </div>
-        <% else %>
-          <h2>This was first version</h2>
-          <%= @version_object.text.to_s.html_safe %>
-        <% end %>
-
-        <% if short_text_diff %>
-          <h2>New Short Text</h2>
-
-          <%= short_text_diff.left.to_s.html_safe %>
-          <h2>Old Short Text</h2>
-          <%= raw short_text_diff.right.to_s.html_safe %>
-        <% end %>
-      </div>
+      <% if params[:diff] == 'rows' %>
+        <%= render 'diff_row_view', text_diff: text_diff, short_text_diff: short_text_diff %>
+      <% else %>
+        <%= render 'diff_column_view', text_diff: text_diff, short_text_diff: short_text_diff %>
+      <% end %>
     </div>
   </div>
 </div>

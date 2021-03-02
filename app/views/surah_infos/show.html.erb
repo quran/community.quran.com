@@ -12,7 +12,7 @@
 
       <% if @access %>
         <%= link_to '#_', class: 'btn btn-primary', data: {url: history_surah_info_path(@info.chapter_id, resource_id: @resource.id, language_id: @info.language_id), toggle: "ajax-modal"} do %>
-          <i class="fa fa-comment"></i> Edit History
+          <i class="fa fa-history"></i> Edit History
        <% end %>
       <% end %>
     </span>
