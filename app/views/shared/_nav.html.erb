@@ -15,7 +15,9 @@
   
   <%= menu_group pull: :right do %>
     <% if current_user %>
-      <%= menu_item 'Log out', destroy_user_session_path, method: :delete %>
+      <%= drop_down "Salam, #{current_user.first_name}" do %>
+        <%= menu_item 'Log out', destroy_user_session_path, method: :delete %>
+      <% end %>
     <% else %>
       <%= menu_item 'Log in', new_user_session_path %>
     <% end %>

@@ -1,6 +1,16 @@
 ActiveAdmin.register User do
   permit_params :email, :first_name, :last_name, :password, :approved, on: :user
 
+  action_item :impersonate, only: :show do
+    link_to impersonate_admin_user_path(resource), method: :put, data: {confirm: "Are you sure?"} do
+      'Impersonate'
+    end
+  end
+
+  member_action :impersonate, method: 'put' do
+    warden.set_user(resource,{scope: :user, run_callbacks:  false})
+  end
+
   index do
     selectable_column
     id_column

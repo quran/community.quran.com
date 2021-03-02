@@ -97,3 +97,6 @@ gem 'carrierwave', '~> 1.3.2'
 gem "fog-aws"
 gem "rest-client"
 gem 'tzinfo-data'
+
+# Switch between users
+gem 'pretender'
