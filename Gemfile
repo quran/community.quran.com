@@ -100,3 +100,6 @@ gem 'tzinfo-data'
 
 # Switch between users
 gem 'pretender'
+
+#cors
+gem 'rack-cors', require: 'rack/cors'

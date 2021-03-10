@@ -25,3 +25,5 @@ public/exported_databses/*
 .DS_Store
 
 useful.rb
+/notes
+/notes/*

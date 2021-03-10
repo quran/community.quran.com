@@ -27,4 +27,7 @@ Rails.application.routes.draw do
       get :changes
     end
   end
+  namespace :api do
+    resources :feedbacks, only: [:create]
+  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_02_102652) do
+ActiveRecord::Schema.define(version: 2021_03_09_191749) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,12 +18,12 @@ ActiveRecord::Schema.define(version: 2021_03_02_102652) do
   create_table "active_admin_comments", id: :serial, force: :cascade do |t|
     t.string "namespace"
     t.text "body"
-    t.string "resource_id", null: false
     t.string "resource_type", null: false
+    t.integer "resource_id", null: false
     t.string "author_type"
     t.integer "author_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
@@ -69,12 +69,23 @@ ActiveRecord::Schema.define(version: 2021_03_02_102652) do
     t.string "database_name"
     t.string "file"
     t.string "size"
+    t.string "tag"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "tag"
+  end
+
+  create_table "feedbacks", force: :cascade do |t|
+    t.string "title"
+    t.text "message"
+    t.string "email"
+    t.string "url"
+    t.string "image"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "important_notes", force: :cascade do |t|
+    t.string "title"
     t.text "text"
     t.string "label"
     t.integer "admin_user_id"
@@ -82,7 +93,6 @@ ActiveRecord::Schema.define(version: 2021_03_02_102652) do
     t.integer "word_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "title"
   end
 
   create_table "pause_marks", id: :serial, force: :cascade do |t|
@@ -152,7 +162,6 @@ ActiveRecord::Schema.define(version: 2021_03_02_102652) do
     t.datetime "locked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "projects"
     t.text "about_me"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -167,6 +176,7 @@ ActiveRecord::Schema.define(version: 2021_03_02_102652) do
     t.string "whodunnit"
     t.text "object"
     t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   create_table "wbw_texts", force: :cascade do |t|
