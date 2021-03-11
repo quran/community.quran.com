@@ -27,13 +27,6 @@
             <p class="help-block">Filter by Ayah</p>
           </div>
 
-          <!-- Don't need this for now
-          <div class="form-group">
-            <%#= select_tag :filter_progress, options_for_select([['Ayah with missing wbw translation', 'missing'], ['Ayah with full translation', 'completed'], ['Ayah with approved translation', 'approved'],['All ayah', 'all']], params[:filter_progress]), class: 'form-control', data: { placeholder: 'Filter by progress' } %>
-            <p class="help-block">Filter by Ayah progress</p>
-          </div>
-          -->
-
           <div class="form-group">
             <%= submit_tag 'Filter', class: 'btn btn-success', data: {disable_with: 'Please wait..'} %>
           </div>
@@ -72,8 +65,8 @@
           </td>
 
           <td>
-            <%= link_to 'Show', wbw_translation_path(verse.id, language_id: @language.id), class: 'btn btn-success' %>
-            <%= link_to 'Contribute', new_wbw_translation_path(ayah: verse.id, language_id: @language.id), class: 'btn btn-success' %>
+            <%= link_to 'Show', wbw_translation_path(verse.id, language: @language.id), class: 'btn btn-success' %>
+            <%= link_to 'Contribute', new_wbw_translation_path(ayah: verse.id, language: @language.id), class: 'btn btn-success' %>
           </td>
         </tr>
       <% end %>

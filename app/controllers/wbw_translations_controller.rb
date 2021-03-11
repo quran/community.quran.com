@@ -1,11 +1,12 @@
 class WbwTranslationsController < CommunityController
+  attr_reader :language
+  DEFAULT_LANGUAGE = 174 # Urdu
+
+  before_action :detect_language
   before_action :check_permission, only: [:new, :edit, :update, :create]
 
   def index
     verses = Verse
-    params[:language_id] ||= (params[:language_id].presence || 174).to_i
-    @language = Language.find(params[:language_id].presence || 174)
-
     if params[:filter_juz].to_i > 0
       verses = verses.where(juz_number: params[:filter_juz].to_i)
     end
@@ -29,37 +30,25 @@ class WbwTranslationsController < CommunityController
 
   def show
     @verse = Verse
-                 .includes(:translations, :words)
-                 .where(translations: {resource_content_id: eager_load_translations})
-                 .find(params[:id])
+               .includes(:translations, :words)
+               .where(translations: { resource_content_id: eager_load_translations })
+               .find(params[:id])
   end
 
   def new
     @verse = Verse
-                 .includes(:chapter, :translations)
-                 .where(translations: {resource_content_id: eager_load_translations})
-                 .find(params[:ayah])
+               .includes(:chapter, :translations)
+               .where(translations: { resource_content_id: eager_load_translations })
+               .find(params[:ayah])
 
-
-    madani_text = @verse.text_uthmani.strip.split(/\s+/)
-    pause_mark_count = 0
     @wbw_translations = []
 
     @verse.words.order('position asc').each_with_index do |word, i|
       next if word.char_type_name == 'end'
       wbw_translation = @verse
-                            .wbw_translations
-                            .where(language_id: params[:language_id])
-                            .find_or_initialize_by(word_id: word.id)
-
-      wbw_translation.text_indopak ||= word.text_indopak
-
-      if word.char_type_name == 'word'
-        wbw_translation.text_madani ||= madani_text[i - pause_mark_count]
-      else
-        wbw_translation.text_madani ||= word.text_uthmani
-        pause_mark_count += 1
-      end
+                          .wbw_translations
+                          .where(language_id: language.id)
+                          .find_or_initialize_by(word_id: word.id)
 
       @wbw_translations << wbw_translation
     end
@@ -67,22 +56,20 @@ class WbwTranslationsController < CommunityController
 
   def create
     @verse = Verse.find(params[:verse_id])
-    @verse.update_attributes wbw_translations_params
+    @verse.update(wbw_translations_params)
 
-    redirect_to wbw_translation_path(@verse, language_id: params[:language_id])
+    redirect_to wbw_translation_path(@verse, language: language.id)
   end
 
   protected
 
   def wbw_translations_params
     params.require(:verse).permit wbw_translations_attributes: [
-        :word_id,
-        :language_id,
-        :text_madani,
-        :text_indopak,
-        :text,
-        :user_id,
-        :id
+      :id,
+      :word_id,
+      :language_id,
+      :text,
+      :user_id,
     ]
   end
 
@@ -95,8 +82,6 @@ class WbwTranslationsController < CommunityController
       [109, 56]
     elsif 175 == language.id
       # Uzbek
-      # 55 Muhammad Sodiq Muhammad Yusuf (Latin) which we're updating to new dialect
-      # 127
       [55, 127, 101]
     else
       []
@@ -107,16 +92,15 @@ class WbwTranslationsController < CommunityController
     resource = ResourceContent.translations.one_word.where(language: language).first
 
     unless resource.present? && can_manage?(resource)
-      redirect_to wbw_translations_path(language_id: @language.id), alert: "Sorry you don't have access to this resource"
+      redirect_to wbw_translations_path(language: @language.id), alert: "Sorry you don't have access to this resource"
     end
   end
 
-  def language
-    if @language
-      @language
-    else
-      params[:language_id] = (params[:language_id].presence || 174).to_i
-      @language = Language.find(params[:language_id])
-    end
+  protected
+
+  def detect_language
+    lang_from_params = (params[:language].presence || DEFAULT_LANGUAGE).to_i
+    @language = Language.find_by_id(lang_from_params) || Language.find(DEFAULT_LANGUAGE)
+    params[:language] = @language.id
   end
 end

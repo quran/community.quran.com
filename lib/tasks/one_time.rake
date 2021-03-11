@@ -1,4 +1,88 @@
 namespace :one_time do
+  task import_tafeehm_csv: :environment do
+    PaperTrail.enabled = false
+
+    # delete en and ur footnotes
+    FootNote.where(resource_content_id: 96).delete_all
+    FootNote.where(resource_content_id: 98).delete_all
+    PaperTrail.enabled = true
+
+    en_translation_file = "tahfeem/tahfeem/tahfeem_en.csv"
+    en_footnotes_file = "tahfeem/tahfeem_footnotes_en.csv"
+
+    ur_translation_file = "tahfeem/tahfeem/tahfeem_ur.csv"
+    ur_footnotes_file = "tahfeem/tahfeem/tahfeem_footnotes_ur.csv"
+
+    en_translation_resource = ResourceContent.find(95)
+    en_footnote_resource = ResourceContent.find(96)
+
+    ur_translation_resource = ResourceContent.find(97)
+    ur_footnote_resource = ResourceContent.find(98)
+
+    en_translations = open(en_translation_file).read
+    en_footnotes = open(en_footnotes_file).read
+
+    ur_translations = open(ur_translation_file).read
+    ur_footnotes = open(ur_footnotes_file).read
+
+    en_translation_ids_mapping = {}
+    ur_translation_ids_mapping = {}
+
+    en = Language.find(38)
+    ur = Language.find(174)
+
+    CSV.parse(en_translations, headers: true).each do |row|
+      verse = Verse.find(row['verse_id'])
+
+      translation = verse.translations.find_by(resource_content_id: en_translation_resource.id)
+      translation.text = row['text']
+      translation.save
+
+      en_translation_ids_mapping[row['id']] = translation.id
+    end
+
+    CSV.parse(en_footnotes, headers: true).each do |row|
+      if row['text'].to_s.present? && row['translation_id']
+        translation = Translation.find(en_translation_ids_mapping[row['translation_id']])
+
+        FootNote.create(
+          id: row['id'],
+          translation: translation,
+          text: row['text'].strip,
+          language: en,
+          language_name: en.name.downcase,
+          resource_content: en_footnote_resource)
+      end
+    end
+
+
+    # Urdu
+    CSV.parse(ur_translations, headers: true).each do |row|
+      verse = Verse.find(row['verse_id'])
+
+      translation = verse.translations.find_by(resource_content_id: ur_translation_resource.id)
+      translation.text = row['text']
+      translation.save
+
+      ur_translation_ids_mapping[row['id']] = translation.id
+    end
+
+    CSV.parse(ur_footnotes, headers: true).each do |row|
+      if row['text'].to_s.present?
+        translation = Translation.find(ur_translation_ids_mapping[row['translation_id']])
+
+        FootNote.create(
+          id: row['id'],
+          translation: translation,
+          text: row['text'].strip,
+          language: ur,
+          language_name: ur.name.downcase,
+          resource_content: ur_footnote_resource)
+      end
+    end
+
+  end
+
   task create_pages: :environment do
     1.upto(604).each do |page_num|
       page = MuhsafPage.where(page_number: page_num).first_or_initialize
@@ -64,10 +148,10 @@ namespace :one_time do
         converter = Utils::CyrillicToLatin.new(cyrilic_foot_note.text)
 
         foot_note = tr.foot_notes.create(
-            text: converter.to_latin,
-            language: language,
-            language_name: language.name.downcase,
-            resource_content_id: footnote_resource_content_id
+          text: converter.to_latin,
+          language: language,
+          language_name: language.name.downcase,
+          resource_content_id: footnote_resource_content_id
         )
 
         node.attributes['foot_note'].value = foot_note.id.to_s
@@ -124,31 +208,31 @@ namespace :one_time do
     PaperTrail.enabled = false
 
     mappings = [
-        {
-            language: Language.where(name: 'Amazigh').first_or_create,
-            file: 'ber.mensur.txt',
-            author: "Ramdane At Mansour",
-            name: "Ramdane At Mansour"
-        }, {
-            language: Language.find_by_name('Bulgarian'),
-            file: "bg.theophanov.txt",
-            author: "Tzvetan Theophanov",
-            name: "Tzvetan Theophanov",
-            native: "Теофанов"
-        }, {
-            language: Language.find_by_name("Sindhi"),
-            file: "sd.amroti.txt",
-            author: "Taj Mehmood Amroti",
-            name: "Taj Mehmood Amroti",
-            native: "امروٽي"
-        }, {
-            resource: 44,
-            language: Language.find_by_name("Romanian"),
-            file: "ro.grigore.txt",
-            author: "George Grigore",
-            name: "Grigore",
-            native: "Grigore"
-        }
+      {
+        language: Language.where(name: 'Amazigh').first_or_create,
+        file: 'ber.mensur.txt',
+        author: "Ramdane At Mansour",
+        name: "Ramdane At Mansour"
+      }, {
+        language: Language.find_by_name('Bulgarian'),
+        file: "bg.theophanov.txt",
+        author: "Tzvetan Theophanov",
+        name: "Tzvetan Theophanov",
+        native: "Теофанов"
+      }, {
+        language: Language.find_by_name("Sindhi"),
+        file: "sd.amroti.txt",
+        author: "Taj Mehmood Amroti",
+        name: "Taj Mehmood Amroti",
+        native: "امروٽي"
+      }, {
+        resource: 44,
+        language: Language.find_by_name("Romanian"),
+        file: "ro.grigore.txt",
+        author: "George Grigore",
+        name: "Grigore",
+        native: "Grigore"
+      }
     ]
 
     data_source = DataSource.find_by(name: "Tanzil Project")
@@ -228,17 +312,17 @@ namespace :one_time do
     data_source = DataSource.where(name: 'Quran.com').first_or_create
 
     resource = ResourceContent.where(
-        author_id: author.id,
-        author_name: author.name,
-        resource_type: "content",
-        data_source: data_source,
-        sub_type: ResourceContent::SubType::Translation,
-        name: author.name,
-        cardinality_type: "1_ayah",
-        language_id: language.id,
-        language_name: language.name.downcase,
-        slug: "nl-abdalsalaam",
-        priority: 50).first_or_initialize
+      author_id: author.id,
+      author_name: author.name,
+      resource_type: "content",
+      data_source: data_source,
+      sub_type: ResourceContent::SubType::Translation,
+      name: author.name,
+      cardinality_type: "1_ayah",
+      language_id: language.id,
+      language_name: language.name.downcase,
+      slug: "nl-abdalsalaam",
+      priority: 50).first_or_initialize
 
     resource.save validate: false
 
@@ -247,8 +331,8 @@ namespace :one_time do
     end
 
     TrAyah.establish_connection({
-                                    adapter: 'sqlite3',
-                                    database: "#{Rails.root}/nl_abdalsalaam.db"}
+                                  adapter: 'sqlite3',
+                                  database: "#{Rails.root}/nl_abdalsalaam.db" }
     )
 
     TrAyah.all.each do |v|
@@ -272,17 +356,17 @@ namespace :one_time do
     data_source = DataSource.where(name: 'http://qurandatabase.org/').first_or_create
 
     resource = ResourceContent.where(
-        author_id: author.id,
-        author_name: author.name,
-        resource_type: "content",
-        data_source: data_source,
-        sub_type: ResourceContent::SubType::Translation,
-        name: "Fatah Muhammad Jalandhari",
-        cardinality_type: "1_ayah",
-        language_id: language.id,
-        language_name: language.name.downcase,
-        slug: "ur-fatah-muhammad-jalandhari",
-        priority: 4).first_or_initialize
+      author_id: author.id,
+      author_name: author.name,
+      resource_type: "content",
+      data_source: data_source,
+      sub_type: ResourceContent::SubType::Translation,
+      name: "Fatah Muhammad Jalandhari",
+      cardinality_type: "1_ayah",
+      language_id: language.id,
+      language_name: language.name.downcase,
+      slug: "ur-fatah-muhammad-jalandhari",
+      priority: 4).first_or_initialize
 
     resource.save validate: false
     lines = open("https://gist.githubusercontent.com/naveed-ahmad/2b49c921085838cb2cbc3b2ef95c53ed/raw/cf97c045df4823f18d6ba60da5d0ca04fe7ebb2d/ur-jalendhari.txt").lines
@@ -422,16 +506,16 @@ namespace :one_time do
     author = Author.find(112)
 
     resource = ResourceContent.where(
-        author_id: author.id,
-        author_name: author.name,
-        resource_type: "content",
-        sub_type: "tafsir",
-        name: "Russian Tafseer Al Saddi",
-        cardinality_type: "1_ayah",
-        language_id: language.id,
-        language_name: language.name.downcase,
-        slug: "ru-tafseer-al-saddi",
-        priority: 5).first_or_initialize
+      author_id: author.id,
+      author_name: author.name,
+      resource_type: "content",
+      sub_type: "tafsir",
+      name: "Russian Tafseer Al Saddi",
+      cardinality_type: "1_ayah",
+      language_id: language.id,
+      language_name: language.name.downcase,
+      slug: "ru-tafseer-al-saddi",
+      priority: 5).first_or_initialize
 
     resource.save validate: false
 
@@ -443,9 +527,9 @@ namespace :one_time do
       verse = Verse.find_by_verse_key("#{surah}:#{ayah}")
 
       tafsir = Tafsir.where(
-          verse_id: verse.id,
-          language_id: language.id,
-          resource_content_id: resource.id,
+        verse_id: verse.id,
+        language_id: language.id,
+        resource_content_id: resource.id,
       ).first_or_initialize
 
       tafsir.text = t['tafsir']
@@ -458,58 +542,57 @@ namespace :one_time do
     language = Language.find_by_iso_code 'bn'
 
     resource = ResourceContent.where(
-        author_id: author.id,
-        data_source_id: data_source.id,
-        author_name: author.name,
-        resource_type: "content",
-        sub_type: "tafsir",
-        name: names[:name],
-        cardinality_type: "1_ayah",
-        language_id: language.id,
-        language_name: "bengali",
-        slug: "bn-#{names[:name].downcase.gsub(/\s+/, '-')}",
-        priority: 5).first_or_create
-
+      author_id: author.id,
+      data_source_id: data_source.id,
+      author_name: author.name,
+      resource_type: "content",
+      sub_type: "tafsir",
+      name: names[:name],
+      cardinality_type: "1_ayah",
+      language_id: language.id,
+      language_name: "bengali",
+      slug: "bn-#{names[:name].downcase.gsub(/\s+/, '-')}",
+      priority: 5).first_or_create
 
     BnTafsir.all.each do |t|
       verse = Verse.find_by_verse_key("#{t.sura}:#{t.ayah}")
       tafsir = Tafsir.where(
-          verse_id: verse.id,
-          language_id: language.id,
-          resource_content_id: resource.id,
+        verse_id: verse.id,
+        language_id: language.id,
+        resource_content_id: resource.id,
       ).first_or_initialize
 
       mapping = {
-          bn_taisirul: {
-              name: 'Taisirul Quran',
-              author: 'Tawheed Publication'
-          },
-          bn_bayaan: {
-              name: 'Rawai Al-bayan',
-              author: 'Bayaan Foundation'
-          },
-          bn_mujibur: {
-              name: 'Sheikh Mujibur Rahman',
-              author: 'Darussalaam Publication'
-          }
+        bn_taisirul: {
+          name: 'Taisirul Quran',
+          author: 'Tawheed Publication'
+        },
+        bn_bayaan: {
+          name: 'Rawai Al-bayan',
+          author: 'Bayaan Foundation'
+        },
+        bn_mujibur: {
+          name: 'Sheikh Mujibur Rahman',
+          author: 'Darussalaam Publication'
+        }
       }
 
       tafisr_mapping = {
-          bn_tafsir_kathir: {
-              name: 'তাফসির ইবনে কাছের রহ',
-              author: 'Tawheed Publication',
-              slug: 'bn-tafseer-ibn-e-kaseer'
-          },
-          bn_tafsirbayaan: {
-              name: 'Tafsir Ahsanul Bayaan',
-              author: 'Bayaan Foundation',
-              slug: 'bn-tafseer-ahsanul-bayaan'
-          },
-          bn_tafsirzakaria: {
-              name: 'Tafsir Abu Bakr Zakaria',
-              author: 'King Fahd Quran Printing Complex',
-              slug: 'bn-tafseer-abu-bakr-zakaria'
-          }
+        bn_tafsir_kathir: {
+          name: 'তাফসির ইবনে কাছের রহ',
+          author: 'Tawheed Publication',
+          slug: 'bn-tafseer-ibn-e-kaseer'
+        },
+        bn_tafsirbayaan: {
+          name: 'Tafsir Ahsanul Bayaan',
+          author: 'Bayaan Foundation',
+          slug: 'bn-tafseer-ahsanul-bayaan'
+        },
+        bn_tafsirzakaria: {
+          name: 'Tafsir Abu Bakr Zakaria',
+          author: 'King Fahd Quran Printing Complex',
+          slug: 'bn-tafseer-abu-bakr-zakaria'
+        }
       }
 
       class BnTranslation < ActiveRecord::Base
@@ -522,33 +605,32 @@ namespace :one_time do
 
       tafisr_mapping.each do |key, names|
         BnTafsir.establish_connection(
-            {adapter: 'sqlite3',
-             database: "#{Rails.root}/data/bn/#{key}.db"
-            })
+          { adapter: 'sqlite3',
+            database: "#{Rails.root}/data/bn/#{key}.db"
+          })
 
         author = Author.where(name: names[:author]).first_or_create
         data_source = DataSource.where(name: 'Greentech Apps Foundation').first_or_create
 
         resource = ResourceContent.where(
-            author_id: author.id,
-            data_source_id: data_source.id,
-            author_name: author.name,
-            resource_type: "content",
-            sub_type: "tafsir",
-            name: names[:name],
-            cardinality_type: "1_ayah",
-            language_id: language.id,
-            language_name: "bengali",
-            slug: "bn-#{names[:name].downcase.gsub(/\s+/, '-')}",
-            priority: 5).first_or_create
-
+          author_id: author.id,
+          data_source_id: data_source.id,
+          author_name: author.name,
+          resource_type: "content",
+          sub_type: "tafsir",
+          name: names[:name],
+          cardinality_type: "1_ayah",
+          language_id: language.id,
+          language_name: "bengali",
+          slug: "bn-#{names[:name].downcase.gsub(/\s+/, '-')}",
+          priority: 5).first_or_create
 
         BnTafsir.all.each do |t|
           verse = Verse.find_by_verse_key("#{t.sura}:#{t.ayah}")
           tafsir = Tafsir.where(
-              verse_id: verse.id,
-              language_id: language.id,
-              resource_content_id: resource.id,
+            verse_id: verse.id,
+            language_id: language.id,
+            resource_content_id: resource.id,
           ).first_or_initialize
 
           tafsir.text = t.text.strip
@@ -562,33 +644,32 @@ namespace :one_time do
 
       mapping.each do |key, names|
         BnTranslation.establish_connection(
-            {adapter: 'sqlite3',
-             database: "#{Rails.root}/data/bn/#{key}.db"
-            })
+          { adapter: 'sqlite3',
+            database: "#{Rails.root}/data/bn/#{key}.db"
+          })
 
         author = Author.where(name: names[:author]).first_or_create
         data_source = DataSource.where(name: 'Greentech Apps Foundation').first_or_create
 
         resource = ResourceContent.where(
-            author_id: author.id,
-            data_source_id: data_source.id,
-            author_name: author.name,
-            resource_type: "content",
-            sub_type: "translation",
-            name: names[:name],
-            cardinality_type: "1_ayah",
-            language_id: language.id,
-            language_name: "bengali",
-            slug: "bn-#{names[:name].downcase.gsub(/\s+/, '-')}",
-            priority: 5).first_or_create
-
+          author_id: author.id,
+          data_source_id: data_source.id,
+          author_name: author.name,
+          resource_type: "content",
+          sub_type: "translation",
+          name: names[:name],
+          cardinality_type: "1_ayah",
+          language_id: language.id,
+          language_name: "bengali",
+          slug: "bn-#{names[:name].downcase.gsub(/\s+/, '-')}",
+          priority: 5).first_or_create
 
         BnTranslation.all.each do |t|
           verse = Verse.find_by_verse_key("#{t.sura}:#{t.ayah}")
           translation = Translation.where(
-              verse_id: verse.id,
-              language_id: language.id,
-              resource_content_id: resource.id,
+            verse_id: verse.id,
+            language_id: language.id,
+            resource_content_id: resource.id,
           ).first_or_initialize
 
           translation.text = t.text.strip
@@ -646,9 +727,9 @@ namespace :one_time do
           word.code_hex.hex.chr
         end
 
-        json[v.verse_key] = {page: v.page_number,
-                             text: codes.join(' '),
-                             text_uthmani: v.text_uthmani
+        json[v.verse_key] = { page: v.page_number,
+                              text: codes.join(' '),
+                              text_uthmani: v.text_uthmani
         }
       end
 
@@ -658,45 +739,42 @@ namespace :one_time do
     File.open("en.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 131}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 131 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
     end
-
 
     File.open("bn.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 167}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 167 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
     end
-
 
     File.open("hi.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 122}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 122 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
     end
 
-
     File.open("id.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 134}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 134 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
@@ -705,21 +783,20 @@ namespace :one_time do
     File.open("en-bridges.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 149}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 149 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
     end
 
-
     File.open("fr.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 136}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 136 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
@@ -728,32 +805,30 @@ namespace :one_time do
     File.open("tr.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 77}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 77 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
     end
-
 
     File.open("tajweed.json", "wb") do |file|
       json = {}
 
       Verse.unscoped.order("verse_index asc").each do |v|
-        json[v.verse_key] = {page: v.page_number, text: "#{v.text_uthmani_tajweed}"}
+        json[v.verse_key] = { page: v.page_number, text: "#{v.text_uthmani_tajweed}" }
       end
 
       file.puts json.to_json
     end
 
-
     File.open("ur.json", "wb") do |file|
       json = {}
 
-      Verse.unscoped.eager_load(:translations).where(translations: {resource_content_id: 151}).order("verse_index asc").each do |v|
+      Verse.unscoped.eager_load(:translations).where(translations: { resource_content_id: 151 }).order("verse_index asc").each do |v|
         text = v.translations.first.text
-        json[v.verse_key] = {text: text}
+        json[v.verse_key] = { text: text }
       end
 
       file.puts json.to_json
@@ -772,48 +847,46 @@ namespace :one_time do
     ActiveRecord::Base.logger = nil
     Word.where(char_type_name: 'end').each do |w|
       tr = WordTranslation.where(
-          word: w,
-          language_id: 174,
-          resource_content_id: 104,
-          priority: 1,
+        word: w,
+        language_id: 174,
+        resource_content_id: 104,
+        priority: 1,
       ).first_or_create
 
       tr.text = "آیت  #{w.verse.verse_number}"
       tr.save
 
-
       tr = WordTranslation.where(
-          word: w,
-          language_id: 20,
-          resource_content_id: 99,
-          priority: 1,
+        word: w,
+        language_id: 20,
+        resource_content_id: 99,
+        priority: 1,
       ).first_or_create
 
       tr.text = "শ্লোক #{w.verse.verse_number}"
       tr.save
 
       tr = WordTranslation.where(
-          word: w,
-          language_id: 67,
-          resource_content_id: 100,
-          priority: 1
+        word: w,
+        language_id: 67,
+        resource_content_id: 100,
+        priority: 1
       ).first_or_create
 
       tr.text = "Ayat #{w.verse.verse_number}"
       tr.save
 
       tr = WordTranslation.where(
-          word: w,
-          language_name: "english",
-          language_id: 38,
-          resource_content_id: 59,
-          priority: 5
+        word: w,
+        language_name: "english",
+        language_id: 38,
+        resource_content_id: 59,
+        priority: 5
       ).first_or_create
 
       tr.text = "Ayah #{w.verse.verse_number}"
       tr.save
     end
-
 
     WordTranslation.where(language_id: 20).update_all priority: 1, language_name: 'bengali'
     WordTranslation.where(language_id: 174).update_all priority: 1, language_name: 'urdu'
@@ -834,11 +907,11 @@ namespace :one_time do
 
       text = to_arabic(v.verse_number)
       last_word.update_columns(
-          text_indopak: text,
-          text_uthmani: text,
-          text_imlaei_simple: text,
-          text_imlaei: text,
-          text_uthmani_simple: text
+        text_indopak: text,
+        text_uthmani: text,
+        text_imlaei_simple: text,
+        text_imlaei: text,
+        text_uthmani_simple: text
       )
     end
 
@@ -888,20 +961,18 @@ namespace :one_time do
     PaperTrail.enabled = false
     ActiveRecord::Base.logger = nil
 
-
     urdu = Language.find_by(name: 'Urdu')
     data_source = DataSource.where(name: 'www.equranlibrary.com').first_or_create
 
-
     tafsir_resource_content = ResourceContent.where(
-        name: 'تفسیر ابنِ کثیر',
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Tafsir,
-        language: urdu,
-        data_source: data_source,
-        language_name: urdu.name.downcase,
-        slug: 'tafseer-ibn-e-kaseer-urdu'
+      name: 'تفسیر ابنِ کثیر',
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Tafsir,
+      language: urdu,
+      data_source: data_source,
+      language_name: urdu.name.downcase,
+      slug: 'tafseer-ibn-e-kaseer-urdu'
     ).first_or_create
 
     Tafsir.where(resource_content: tafsir_resource_content).delete_all
@@ -959,30 +1030,30 @@ namespace :one_time do
     author.translated_names.where(language: urdu).first_or_create(language_name: urdu.name.downcase, name: translator_name)
 
     translation_resource_content = ResourceContent.where(
-        name: "بیان القرآن",
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Translation,
-        language: urdu,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: urdu.name.downcase,
-        priority: 3,
-        slug: 'bayan-ul-quran'
+      name: "بیان القرآن",
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Translation,
+      language: urdu,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: urdu.name.downcase,
+      priority: 3,
+      slug: 'bayan-ul-quran'
     ).first_or_create
 
     tafsir_resource_content = ResourceContent.where(
-        name: 'تفسیر بیان القرآن',
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Tafsir,
-        language: urdu,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: urdu.name.downcase,
-        slug: 'tafsir-bayan-ul-quran'
+      name: 'تفسیر بیان القرآن',
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Tafsir,
+      language: urdu,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: urdu.name.downcase,
+      slug: 'tafsir-bayan-ul-quran'
     ).first_or_create
 
     Translation.where(resource_content: translation_resource_content).delete_all
@@ -1052,29 +1123,29 @@ namespace :one_time do
     author.translated_names.where(language_id: 174).first_or_create(language_name: 'urdu', name: 'مفتی محمد شفیع')
 
     translation_resource_content = ResourceContent.where(
-        name: tafsir_name,
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Translation,
-        language: language,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: 'english',
-        priority: 3,
-        slug: 'en-maarif-ul-quran'
+      name: tafsir_name,
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Translation,
+      language: language,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: 'english',
+      priority: 3,
+      slug: 'en-maarif-ul-quran'
     ).first_or_create
 
     tafsir_resource_content = ResourceContent.where(
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Tafsir,
-        language: language,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: 'english',
-        slug: 'en-maarif-ul-quran'
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Tafsir,
+      language: language,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: 'english',
+      slug: 'en-maarif-ul-quran'
     ).first_or_create
 
     Translation.where(resource_content: translation_resource_content).delete_all
@@ -1146,29 +1217,29 @@ namespace :one_time do
     author.translated_names.where(language: urdu).first_or_create(language_name: urdu.name.downcase, name: translator_name)
 
     translation_resource_content = ResourceContent.where(
-        name: tafsir_name,
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Translation,
-        language: urdu,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: urdu.name.downcase,
-        priority: 3,
-        slug: 'urdu-sayyid-qatab'
+      name: tafsir_name,
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Translation,
+      language: urdu,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: urdu.name.downcase,
+      priority: 3,
+      slug: 'urdu-sayyid-qatab'
     ).first_or_create
 
     tafsir_resource_content = ResourceContent.where(
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Tafsir,
-        language: urdu,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: urdu.name.downcase,
-        slug: 'urdu-sayyid-qatab'
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Tafsir,
+      language: urdu,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: urdu.name.downcase,
+      slug: 'urdu-sayyid-qatab'
     ).first_or_create
 
     Translation.where(resource_content: translation_resource_content).delete_all
@@ -1304,10 +1375,10 @@ namespace :one_time do
   task prepare_wbw_text: :environment do
     Word.unscoped.order('verse_id asc').each do |w|
       WbwText.where(word_id: w.id).first_or_create({
-                                                       verse_id: w.verse_id,
-                                                       text_indopak: w.text_indopak,
-                                                       text_uthmani: w.text_madani,
-                                                       text_imlaei: w.text_imlaei
+                                                     verse_id: w.verse_id,
+                                                     text_indopak: w.text_indopak,
+                                                     text_uthmani: w.text_madani,
+                                                     text_imlaei: w.text_imlaei
                                                    })
     end
 
@@ -1344,7 +1415,6 @@ namespace :one_time do
       end
     end
 
-
     url = "http://tanzil.net/tanzil/php/get-aya.php"
     require 'rest-client'
 
@@ -1352,7 +1422,7 @@ namespace :one_time do
     verse_index = 1
     while (start < 6236) do
       response = with_rescue_retry([RestClient::Exceptions::ReadTimeout], retries: 3, raise_exception_on_limit: true) do
-        RestClient.post(url, {type: 'uthmani', transType: 'en.itani', pageNum: 1, startAya: start, endAya: start + 10, version: 1.5}, {accept: 'application/json', Referer: 'http://tanzil.net/', Origin: 'http://tanzil.net'})
+        RestClient.post(url, { type: 'uthmani', transType: 'en.itani', pageNum: 1, startAya: start, endAya: start + 10, version: 1.5 }, { accept: 'application/json', Referer: 'http://tanzil.net/', Origin: 'http://tanzil.net' })
       end
 
       verses = JSON.parse(response.body)['quran']
@@ -1407,20 +1477,16 @@ namespace :one_time do
 
     AudioFile.update_all("url = REPLACE(url, '//mirrors.quranicaudio.com/everyayah/Abdul_Basit_Murattal_64kbps/', 'AbdulBaset/Murattal/mp3')")
 
-
     files = AudioFile.where("url ilike ?", "AbdulBaset/Murattal%")
 
     files.update_all("url = REPLACE(url, 'AbdulBaset/Murattal/', 'AbdulBaset/Murattal/mp3/')")
-
 
     update_all("url = REPLACE(url, 'verses/', '')")
 
     Word.where("audio_url ilike ?", "verses/%").update_all("audio_url = REPLACE(audio_url, 'verses/', '')")
 
-
     p = UpdatedPost.where("content ilike ?", "%strength.runnersconnect.net/dev/wp-content/uploads/2014/06/%")
     p.update_all("content = REPLACE(content, 'strength.runnersconnect.net/dev/wp-content/uploads/2014/06/', 'cdn-strength-training.runnersconnect.net/Images/')")
-
 
     codes.each do |id, indexes|
       indexes = indexes.compact.uniq
@@ -1545,30 +1611,29 @@ namespace :one_time do
     ur_translation_resource = ResourceContent.find(104)
 
     ur_wbw_transliteration_resource = ResourceContent.where(
-        cardinality_type: ResourceContent::CardinalityType::OneWord,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Translation,
-        language: urdu,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: urdu.name.downcase,
-        slug: 'urdu-wbw-translation'
+      cardinality_type: ResourceContent::CardinalityType::OneWord,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Translation,
+      language: urdu,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: urdu.name.downcase,
+      slug: 'urdu-wbw-translation'
     ).first_or_create
 
     ur_ayah_transliteration_resource = ResourceContent.where(
-        cardinality_type: ResourceContent::CardinalityType::OneVerse,
-        resource_type: ResourceContent::ResourceType::Content,
-        sub_type: ResourceContent::SubType::Translation,
-        language: urdu,
-        author: author,
-        author_name: author.name,
-        data_source: data_source,
-        language_name: urdu.name.downcase,
-        slug: 'urdu-transliteration',
-        name: 'Urdu/Arabic Transliteration'
+      cardinality_type: ResourceContent::CardinalityType::OneVerse,
+      resource_type: ResourceContent::ResourceType::Content,
+      sub_type: ResourceContent::SubType::Translation,
+      language: urdu,
+      author: author,
+      author_name: author.name,
+      data_source: data_source,
+      language_name: urdu.name.downcase,
+      slug: 'urdu-transliteration',
+      name: 'Urdu/Arabic Transliteration'
     ).first_or_create
-
 
     Translation.where(resource_content: ur_ayah_transliteration_resource).delete_all
     Transliteration.where(resource_content: ur_wbw_transliteration_resource).delete_all
@@ -1591,16 +1656,16 @@ namespace :one_time do
   task format_indopak_num: :environment do
     def change_number(n)
       mapping = {
-          "٠" => "۰﻿",
-          "١" => "۱﻿",
-          "٢" => "۲﻿",
-          "٣" => "۳﻿",
-          "٤" => "۴﻿",
-          "٥" => "۵﻿",
-          "٦" => "۶﻿",
-          "٧" => "۷",
-          "٨" => "۸",
-          "٩" => "۹﻿"
+        "٠" => "۰﻿",
+        "١" => "۱﻿",
+        "٢" => "۲﻿",
+        "٣" => "۳﻿",
+        "٤" => "۴﻿",
+        "٥" => "۵﻿",
+        "٦" => "۶﻿",
+        "٧" => "۷",
+        "٨" => "۸",
+        "٩" => "۹﻿"
       }
       n.chars.map do |c|
         mapping[c]
@@ -1635,8 +1700,8 @@ namespace :one_time do
     db = "#{Rails.root}/data/ar_naskh.db"
 
     connection = {
-        adapter: 'sqlite3',
-        database: db
+      adapter: 'sqlite3',
+      database: db
     }
 
     class ExportRecord < ActiveRecord::Base
@@ -1713,8 +1778,8 @@ namespace :one_time do
     PaperTrail.enabled = false
 
     UrTafsir.establish_connection({
-                                      adapter: 'sqlite3',
-                                      database: "#{Rails.root}/ibnekathir.ur.db"
+                                    adapter: 'sqlite3',
+                                    database: "#{Rails.root}/ibnekathir.ur.db"
 
                                   })
 
@@ -1735,28 +1800,28 @@ namespace :one_time do
     language = Language.find_by_name 'Ukrainian'
 
     resource_content = ResourceContent.where({
-                                                 author_id: author.id,
-                                                 author_name: author.name,
-                                                 resource_type: "content",
-                                                 sub_type: "translation",
-                                                 name: author.name,
-                                                 description: 'Якубович Extracted by: crimean.org',
-                                                 cardinality_type: "1_ayah",
-                                                 language_id: language.id,
-                                                 language_name: "ukrainian",
-                                                 slug: 'mykhaylo-yakubovych-with-tafsir'}).first_or_create
+                                               author_id: author.id,
+                                               author_name: author.name,
+                                               resource_type: "content",
+                                               sub_type: "translation",
+                                               name: author.name,
+                                               description: 'Якубович Extracted by: crimean.org',
+                                               cardinality_type: "1_ayah",
+                                               language_id: language.id,
+                                               language_name: "ukrainian",
+                                               slug: 'mykhaylo-yakubovych-with-tafsir' }).first_or_create
 
     footnote_resource_content = ResourceContent.where({
-                                                          author_id: author.id,
-                                                          author_name: author.name,
-                                                          resource_type: "content",
-                                                          sub_type: "footnote",
-                                                          name: 'Якубович Extracted by: crimean.org',
-                                                          description: 'Якубович Extracted by: crimean.org',
-                                                          cardinality_type: "1_ayah",
-                                                          language_id: language.id,
-                                                          language_name: "ukrainian",
-                                                          slug: 'mykhaylo-yakubovych-footnote'}).first_or_create
+                                                        author_id: author.id,
+                                                        author_name: author.name,
+                                                        resource_type: "content",
+                                                        sub_type: "footnote",
+                                                        name: 'Якубович Extracted by: crimean.org',
+                                                        description: 'Якубович Extracted by: crimean.org',
+                                                        cardinality_type: "1_ayah",
+                                                        language_id: language.id,
+                                                        language_name: "ukrainian",
+                                                        slug: 'mykhaylo-yakubovych-footnote' }).first_or_create
 
     url = "https://gist.githubusercontent.com/naveed-ahmad/b642d6b22ca020f5f385b7e983e1ceb9/raw/21ee6a78b92c929e175b1151e478cc4bbf1e8d07/transaction.docx.html"
 
@@ -1833,31 +1898,30 @@ namespace :one_time do
     a = 2
 
     resource_content = ResourceContent.where({
-                                                 author_id: author.id,
-                                                 author_name: author.name,
-                                                 resource_type: "content",
-                                                 sub_type: "translation",
-                                                 name: author.name,
-                                                 description: 'Dr. Mustafa Khattab, The Clear Quran(With Tafsir)',
-                                                 cardinality_type: "1_ayah",
-                                                 language_id: language.id,
-                                                 language_name: "english",
-                                                 data_source: data_source,
-                                                 slug: 'clearquran-with-tafsir'}).first_or_create
+                                               author_id: author.id,
+                                               author_name: author.name,
+                                               resource_type: "content",
+                                               sub_type: "translation",
+                                               name: author.name,
+                                               description: 'Dr. Mustafa Khattab, The Clear Quran(With Tafsir)',
+                                               cardinality_type: "1_ayah",
+                                               language_id: language.id,
+                                               language_name: "english",
+                                               data_source: data_source,
+                                               slug: 'clearquran-with-tafsir' }).first_or_create
 
     footnote_resource_content = ResourceContent.where({
-                                                          author_id: author.id,
-                                                          author_name: author.name,
-                                                          resource_type: "content",
-                                                          sub_type: "footnote",
-                                                          name: 'Dr. Mustafa Khattab, The Clear Quran footnotes(With Tafsir)',
-                                                          description: 'Dr. Mustafa Khattab, The Clear Quran footnotes(With Tafsir)',
-                                                          cardinality_type: "1_ayah",
-                                                          language_id: language.id,
-                                                          language_name: "english",
-                                                          data_source: data_source,
-                                                          slug: 'clearquran-with-tafsir-footnote'}).first_or_create
-
+                                                        author_id: author.id,
+                                                        author_name: author.name,
+                                                        resource_type: "content",
+                                                        sub_type: "footnote",
+                                                        name: 'Dr. Mustafa Khattab, The Clear Quran footnotes(With Tafsir)',
+                                                        description: 'Dr. Mustafa Khattab, The Clear Quran footnotes(With Tafsir)',
+                                                        cardinality_type: "1_ayah",
+                                                        language_id: language.id,
+                                                        language_name: "english",
+                                                        data_source: data_source,
+                                                        slug: 'clearquran-with-tafsir-footnote' }).first_or_create
 
     docs.search('ol .c1').each_with_index do |verse_node, v_index|
       text = verse_node.text.strip
@@ -1888,8 +1952,8 @@ namespace :one_time do
 
   task add_urdu_wbw_translation2: :environment do
     class WbwTranslation < ActiveRecord::Base
-      self.establish_connection({adapter: 'sqlite3',
-                                 database: "#{Rails.root}/db/data/urdu_wbw.db"
+      self.establish_connection({ adapter: 'sqlite3',
+                                  database: "#{Rails.root}/db/data/urdu_wbw.db"
                                 })
 
       self.table_name = "quran_word"
@@ -1963,8 +2027,8 @@ namespace :one_time do
 
   task add_urdu_wbw_translation: :environment do
     class WbwTranslation < ActiveRecord::Base
-      self.establish_connection({adapter: 'sqlite3',
-                                 database: "#{Rails.root}/db/data/urdu_wbw.db"
+      self.establish_connection({ adapter: 'sqlite3',
+                                  database: "#{Rails.root}/db/data/urdu_wbw.db"
                                 })
 
       self.table_name = "quran_word"

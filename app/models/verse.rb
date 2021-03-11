@@ -2,9 +2,9 @@ class Verse < QuranApiRecord
   has_paper_trail on: [:update, :destroy], ignore: [:created_at, :updated_at]
 
   belongs_to :chapter, inverse_of: :verses, counter_cache: true
-  belongs_to :verse_root
-  belongs_to :verse_lemma
-  belongs_to :verse_stem
+  belongs_to :verse_root, optional: true
+  belongs_to :verse_lemma, optional: true
+  belongs_to :verse_stem, optional: true
   
   has_many :tafsirs
   has_many :words
