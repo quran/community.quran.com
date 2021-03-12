@@ -77,7 +77,7 @@ class Verse < QuranApiRecord
   def wbw_translation_progress(language_id)
     total_words = words.words.count
     words_with_translations = WbwTranslation.where(verse_id: id, language_id: language_id).count
-    missing_count = total_words - words_with_translations
+    missing_count = [total_words - words_with_translations, 0].max
 
     (100 - (missing_count / total_words.to_f)*100).to_i.abs
   end

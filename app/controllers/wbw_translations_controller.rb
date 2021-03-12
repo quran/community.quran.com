@@ -97,7 +97,6 @@ class WbwTranslationsController < CommunityController
   end
 
   protected
-
   def detect_language
     lang_from_params = (params[:language].presence || DEFAULT_LANGUAGE).to_i
     @language = Language.find_by_id(lang_from_params) || Language.find(DEFAULT_LANGUAGE)

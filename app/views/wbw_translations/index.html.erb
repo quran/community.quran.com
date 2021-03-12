@@ -11,7 +11,8 @@
   <div class="bs-example">
     <div class="filters row">
       <div class="col-lg-12">
-        <%= form_tag wbw_translations_path(language: @language.id), method: :get, class: 'form-inline' do %>
+        <%= form_tag wbw_translations_path, method: :get, class: 'form-inline' do %>
+          <%= hidden_field_tag :language, @language.id %>
           <div class="form-group">
             <%= select_tag :filter_juz, options_for_select(1..30, params[:filter_juz]), include_blank: true, class: 'form-control', data: {placeholder: 'Filter by para'} %>
             <p class="help-block">Filter by Para</p>
