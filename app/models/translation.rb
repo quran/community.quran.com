@@ -1,9 +1,9 @@
 class Translation < QuranApiRecord
   has_paper_trail on: :update, ignore: [:created_at, :updated_at]
+  include Resourceable
 
   belongs_to :verse
   belongs_to :language
-  belongs_to :resource_content
   has_many :foot_notes
 
   accepts_nested_attributes_for :foot_notes

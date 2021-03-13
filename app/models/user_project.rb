@@ -1,4 +1,5 @@
 class UserProject < ApplicationRecord
+  include Resourceable
+
   belongs_to :user
-  belongs_to :resource_content
 end

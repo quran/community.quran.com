@@ -1,6 +1,7 @@
 class Recitation < QuranApiRecord
+  include Resourceable
+
   belongs_to :reciter
-  belongs_to :resource_content
   belongs_to :recitation_style
 
   delegate :approved?, to: :resource_content
