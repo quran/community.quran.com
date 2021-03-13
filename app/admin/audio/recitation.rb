@@ -1,4 +1,6 @@
 ActiveAdmin.register Audio::Recitation do
+  active_admin_import(validate: false, on_duplicate_key_update: true)
+
   menu parent: "QuranicAudio"
   actions :all, except: :destroy
   searchable_select_options(scope: Audio::Recitation,

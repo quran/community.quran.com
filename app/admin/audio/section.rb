@@ -1,4 +1,6 @@
 ActiveAdmin.register Audio::Section do
+  active_admin_import(validate: false, on_duplicate_key_update: true)
+
   menu parent: "QuranicAudio"
   permit_params :name
 
