@@ -32,6 +32,6 @@ class Audio::Recitation < QuranApiRecord
   protected
 
   def generate_audio_files
-    Audio::GenerateSurahAudioFilesJob.perform_now(recitation_id: id)
+    # Audio::GenerateSurahAudioFilesJob.perform_now(recitation_id: id)
   end
 end
