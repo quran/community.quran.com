@@ -195,7 +195,6 @@ def run
       verses = Verse.unscoped.where(chapter_id: chapter.id).order("verse_index ASC")
 
       if chapter.id != 1 && docs.search(mapping[chapter.id]).length != verses.count
-        binding.pry
         next
       end
 

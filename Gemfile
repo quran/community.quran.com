@@ -56,9 +56,13 @@ gem 'newrelic_rpm'
 
 # Generate embed code and get metadata of video etc
 # gem 'video_info'
+# metadata for audio file
+gem 'wahwah', require: false
+gem 'id3tag', '~> 0.14.0', require: false
 
 # github.com/JeremyGeros/differ
 gem 'diffy'
+
 # For Slug generation
 gem 'babosa', require: false
 

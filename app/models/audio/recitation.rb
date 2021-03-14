@@ -23,6 +23,15 @@ class Audio::Recitation < QuranApiRecord
 
   has_many :chapter_audio_files, class_name: 'Audio::ChapterAudioFile', foreign_key: :audio_recitation_id
   has_many :related_recitations, class_name: 'Audio::RelatedRecitation', foreign_key: :audio_recitation_id
-  belongs_to :section, class_name: 'Audio::Section'
   has_many :audio_change_logs, class_name: 'Audio::ChangeLog', foreign_key: :audio_recitation_id
+  belongs_to :section, class_name: 'Audio::Section'
+  belongs_to :recitation_style, optional: true
+
+  after_create :generate_audio_files
+
+  protected
+
+  def generate_audio_files
+    Audio::GenerateSurahAudioFilesJob.perform_now(recitation_id: id)
+  end
 end

@@ -1,5 +1,15 @@
 ActiveAdmin.register Audio::Recitation do
   active_admin_import(validate: false, on_duplicate_key_update: true)
+  permit_params :name,
+                :arabic_name,
+                :description,
+                :file_formats,
+                :home,
+                :relative_path,
+                :torrent_filename,
+                :torrent_info_hash,
+                :section_id,
+                :resource_content_id
 
   menu parent: "QuranicAudio"
   actions :all, except: :destroy
@@ -16,10 +26,9 @@ ActiveAdmin.register Audio::Recitation do
   filter :torrent_leechers
   filter :torrent_seeders
   filter :recitation_style, as: :searchable_select,
-         ajax: {resource: RecitationStyle}
-
+         ajax: { resource: RecitationStyle }
   filter :section, as: :searchable_select,
-         ajax: {resource: Audio::Section}
+         ajax: { resource: Audio::Section }
 
   index do
     id_column
