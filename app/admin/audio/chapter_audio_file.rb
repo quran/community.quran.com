@@ -6,10 +6,12 @@ ActiveAdmin.register Audio::ChapterAudioFile do
 
   filter :audio_recitation, as: :searchable_select,
          ajax: {resource: Audio::Recitation}
+  filter :resource_content_id, as: :searchable_select,
+         ajax: {resource: ResourceContent}
 
   filter :chapter_id
   filter :format
-
+  filter :recitation_style
 
   index do
     id_column

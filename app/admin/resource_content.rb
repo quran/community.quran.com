@@ -165,7 +165,11 @@ ActiveAdmin.register ResourceContent do
       elsif resource.video?
         link_to "Media content", "/admin/media_contents?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
       elsif resource.recitation?
-        link_to "Audio recitations", "/admin/recitations?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
+        if resource.chapter?
+          link_to "Surah recitations", "/admin/audio_chapter_audio_files?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
+        else
+          link_to "Ayah recitations", "/admin/recitations?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
+        end
       elsif resource.foot_note?
         link_to "Footnotes", "/admin/foot_notes?utf8=%E2%9C%93&q%5Bresource_content_id_eq%5D=#{resource.id}"
       end

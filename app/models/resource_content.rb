@@ -80,6 +80,18 @@ class ResourceContent < QuranApiRecord
     sub_type == SubType::Audio || resource_type == ResourceType::Audio
   end
 
+  def chapter?
+    cardinality_type == CardinalityType::OneChapter
+  end
+
+  def verse?
+    cardinality_type == CardinalityType::OneVerse
+  end
+
+  def word?
+    cardinality_type == CardinalityType::OneWord
+  end
+
   class << self
     def collection_for_resource_type
       ResourceContent::ResourceType.constants.map do |c|

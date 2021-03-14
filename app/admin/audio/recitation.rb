@@ -29,6 +29,9 @@ ActiveAdmin.register Audio::Recitation do
          ajax: { resource: RecitationStyle }
   filter :section, as: :searchable_select,
          ajax: { resource: Audio::Section }
+  filter :resource_content_id, as: :searchable_select,
+         ajax: {resource: ResourceContent}
+
 
   index do
     id_column

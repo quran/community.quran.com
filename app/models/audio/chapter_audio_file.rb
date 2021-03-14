@@ -25,6 +25,8 @@
 #  index_audio_chapter_audio_files_on_format               (format)
 #
 class Audio::ChapterAudioFile < QuranApiRecord
+  include Resourceable
+
   belongs_to :audio_recitation, class_name: 'Audio::Recitation'
   belongs_to :chapter
 
