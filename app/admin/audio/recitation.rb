@@ -15,6 +15,9 @@ ActiveAdmin.register Audio::Recitation do
   filter :home
   filter :torrent_leechers
   filter :torrent_seeders
+  filter :recitation_style, as: :searchable_select,
+         ajax: {resource: RecitationStyle}
+
   filter :section, as: :searchable_select,
          ajax: {resource: Audio::Section}
 
